@@ -80,9 +80,9 @@ export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributio
       <CardHeader className="p-3">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-sm">AI vs ATS Scoring</CardTitle>
+            <CardTitle className="text-sm">Candidate Distribution</CardTitle>
             <p className="text-[10px] text-muted-foreground mt-0.5">
-              AI (blue) vs ATS (red)
+              <span className="text-primary font-medium">FunnelHQ</span> vs <span className="text-destructive font-medium">ATS</span>
             </p>
             {aiQuery && (
               <div className="mt-1 flex items-center gap-1 text-[10px]">
@@ -149,8 +149,8 @@ export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributio
                 fontSize: "10px"
               }}
               formatter={(value: any, name: string) => {
-                if (name === "aiDensity") return [`${Number(value).toFixed(2)}`, "AI Interview Density"];
-                if (name === "atsDensity") return [`${Number(value).toFixed(2)}`, "ATS Resume Density"];
+                if (name === "aiDensity") return [`${Number(value).toFixed(2)}`, "FunnelHQ"];
+                if (name === "atsDensity") return [`${Number(value).toFixed(2)}`, "ATS"];
                 if (name === "starredDensity") return [`${Number(value).toFixed(2)}`, "Top Performers"];
                 return [value, name];
               }}
@@ -172,7 +172,7 @@ export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributio
               strokeWidth={1.5}
               strokeDasharray="3 3"
               fill="url(#atsDensityGradient)"
-              name="ATS Resume"
+              name="ATS"
             />
             
             {/* Starred candidates density */}
@@ -186,14 +186,14 @@ export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributio
               name="Top Performers"
             />
             
-            {/* AI Interview Analysis - more discriminative */}
+            {/* FunnelHQ Analysis - more discriminative */}
             <Area
               type="monotone"
               dataKey="aiDensity"
               stroke="hsl(var(--primary))"
               strokeWidth={2}
               fill="url(#aiDensityGradient)"
-              name="AI Interview"
+              name="FunnelHQ"
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -208,7 +208,7 @@ export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributio
               <h4 className="font-semibold text-[10px] text-foreground mb-0.5">Key Insight</h4>
               <p className="text-[9px] text-muted-foreground leading-tight">
                 <span className="text-destructive font-medium">ATS</span> clusters at 75-95. 
-                <span className="text-primary font-medium"> AI</span> shows wider distribution.
+                <span className="text-primary font-medium"> FunnelHQ</span> shows wider distribution.
               </p>
             </div>
           </div>
