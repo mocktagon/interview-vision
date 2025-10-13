@@ -71,6 +71,21 @@ export interface Candidate {
     environment: 'mountain' | 'beach' | 'forest' | 'city';
     symbol: 'compass' | 'bridge' | 'tree' | 'puzzle';
   };
+  atsScore?: {
+    overall: number;
+    resumeMatch: number;
+    skillsMatch: number;
+    experienceMatch: number;
+    educationMatch: number;
+  };
+  aiInterviewScore?: {
+    overall: number;
+    technicalSkills: number;
+    problemSolving: number;
+    communication: number;
+    culturalFit: number;
+    leadership: number;
+  };
 }
 
 export interface CandidateListStats {

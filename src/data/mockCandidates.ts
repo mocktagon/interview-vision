@@ -96,6 +96,21 @@ export const mockCandidates: Candidate[] = [
       color: 'blue',
       environment: 'city',
       symbol: 'compass'
+    },
+    atsScore: {
+      overall: 72,
+      resumeMatch: 75,
+      skillsMatch: 68,
+      experienceMatch: 78,
+      educationMatch: 70
+    },
+    aiInterviewScore: {
+      overall: 92,
+      technicalSkills: 94,
+      problemSolving: 91,
+      communication: 95,
+      culturalFit: 90,
+      leadership: 88
     }
   },
   {
