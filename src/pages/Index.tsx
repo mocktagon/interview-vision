@@ -93,9 +93,9 @@ const Index = () => {
       </header>
 
       <main className="container mx-auto px-6 py-8">
-        <div className="flex gap-6 items-start">
-          {/* Left Side - Main Content (Candidates) */}
-          <div className="flex-1 min-w-0 space-y-6">
+        <div className="flex gap-6 items-start relative">
+          {/* Left Side - Main Content (Scrollable Candidates) */}
+          <div className={`transition-all duration-300 ${isAnalyticsPanelOpen ? 'w-[calc(70%-1.5rem)]' : 'w-[calc(100%-3rem)]'} space-y-6`}>
             {/* KPI Cards - Horizontal Row */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <KPICard
@@ -156,7 +156,7 @@ const Index = () => {
               </Select>
             </div>
 
-            {/* Candidates Grid */}
+            {/* Candidates Grid - Scrollable */}
             <div>
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-2">
@@ -168,7 +168,7 @@ const Index = () => {
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 {filteredCandidates.map((candidate) => (
                   <CandidateCard
                     key={candidate.id}
@@ -186,16 +186,16 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Right Side - Analytics Panel (Sticky & Collapsible) */}
+          {/* Right Side - Analytics Panel (Fixed & Collapsible) */}
           <div className={`transition-all duration-300 ${isAnalyticsPanelOpen ? 'w-[30%]' : 'w-12'}`}>
-            <div className="sticky top-8">
+            <div className="fixed top-24 right-6" style={{ width: isAnalyticsPanelOpen ? 'calc(30% - 3rem)' : '3rem' }}>
               <Collapsible open={isAnalyticsPanelOpen} onOpenChange={setIsAnalyticsPanelOpen}>
                 <div className="relative">
                   <CollapsibleTrigger asChild>
                     <Button
                       variant="outline"
                       size="icon"
-                      className="absolute -left-6 top-4 z-10 h-8 w-8 rounded-full border-2 bg-background shadow-md hover:bg-primary hover:text-primary-foreground"
+                      className="absolute -left-6 top-4 z-10 h-8 w-8 rounded-full border-2 bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
                     >
                       {isAnalyticsPanelOpen ? (
                         <ChevronRight className="h-4 w-4" />
@@ -206,7 +206,7 @@ const Index = () => {
                   </CollapsibleTrigger>
                   
                   <CollapsibleContent className="animate-accordion-down">
-                    <div className="space-y-4">
+                    <div className="max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 space-y-4">
                       <ScoreDistributionChart candidates={filteredCandidates} />
                     </div>
                   </CollapsibleContent>

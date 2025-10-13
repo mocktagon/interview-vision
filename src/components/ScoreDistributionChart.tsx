@@ -102,9 +102,9 @@ export const ScoreDistributionChart = ({ candidates }: ScoreDistributionChartPro
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={350}>
-          <AreaChart data={kdeData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+      <CardContent className="p-4">
+        <ResponsiveContainer width="100%" height={250}>
+          <AreaChart data={kdeData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
             <defs>
               <linearGradient id="aiDensityGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.6}/>
@@ -191,56 +191,56 @@ export const ScoreDistributionChart = ({ candidates }: ScoreDistributionChartPro
         </ResponsiveContainer>
         
         {/* Key Insight */}
-        <div className="mt-4 p-4 rounded-lg bg-primary/5 border border-primary/20">
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Star className="h-5 w-5 text-primary" />
+        <div className="mt-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
+          <div className="flex items-start gap-2">
+            <div className="p-1.5 rounded-lg bg-primary/10 flex-shrink-0">
+              <Star className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <h4 className="font-semibold text-sm text-foreground mb-1">Key Insight</h4>
-              <p className="text-sm text-muted-foreground">
-                <span className="text-destructive font-medium">ATS scores (red dashed line)</span> cluster narrowly between 75-95, 
-                failing to differentiate candidates. <span className="text-primary font-medium">AI interview analysis (blue solid)</span> shows 
-                wider distribution with clear separation of top performers, providing actionable hiring insights.
+              <h4 className="font-semibold text-xs text-foreground mb-1">Key Insight</h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                <span className="text-destructive font-medium">ATS scores</span> cluster narrowly (75-95), 
+                failing to differentiate. <span className="text-primary font-medium">AI analysis</span> shows 
+                wider distribution with clear top performer separation.
               </p>
             </div>
           </div>
         </div>
         
-        <div className="mt-6 grid grid-cols-5 gap-3">
-          <div className="text-center p-3 rounded-lg border border-success/30 bg-success/5">
-            <div className="text-xs text-muted-foreground mb-1">Top Stars</div>
-            <div className="text-xl font-bold text-success">90-100</div>
-            <div className="text-sm text-muted-foreground mt-1">
-              {candidates.filter(c => (c.scores.overall || 0) >= 90).length} candidates
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="text-center p-2 rounded-lg border border-success/30 bg-success/5">
+            <div className="text-[10px] text-muted-foreground mb-1">Top Stars</div>
+            <div className="text-sm font-bold text-success">90-100</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">
+              {candidates.filter(c => (c.scores.overall || 0) >= 90).length}
             </div>
           </div>
-          <div className="text-center p-3 rounded-lg border border-primary/30 bg-primary/5">
-            <div className="text-xs text-muted-foreground mb-1">High Performers</div>
-            <div className="text-xl font-bold text-primary">80-89</div>
-            <div className="text-sm text-muted-foreground mt-1">
-              {candidates.filter(c => (c.scores.overall || 0) >= 80 && (c.scores.overall || 0) < 90).length} candidates
+          <div className="text-center p-2 rounded-lg border border-primary/30 bg-primary/5">
+            <div className="text-[10px] text-muted-foreground mb-1">High</div>
+            <div className="text-sm font-bold text-primary">80-89</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">
+              {candidates.filter(c => (c.scores.overall || 0) >= 80 && (c.scores.overall || 0) < 90).length}
             </div>
           </div>
-          <div className="text-center p-3 rounded-lg border border-accent/30 bg-accent/5">
-            <div className="text-xs text-muted-foreground mb-1">Good</div>
-            <div className="text-xl font-bold text-accent">70-79</div>
-            <div className="text-sm text-muted-foreground mt-1">
-              {candidates.filter(c => (c.scores.overall || 0) >= 70 && (c.scores.overall || 0) < 80).length} candidates
+          <div className="text-center p-2 rounded-lg border border-accent/30 bg-accent/5">
+            <div className="text-[10px] text-muted-foreground mb-1">Good</div>
+            <div className="text-sm font-bold text-accent">70-79</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">
+              {candidates.filter(c => (c.scores.overall || 0) >= 70 && (c.scores.overall || 0) < 80).length}
             </div>
           </div>
-          <div className="text-center p-3 rounded-lg border border-warning/30 bg-warning/5">
-            <div className="text-xs text-muted-foreground mb-1">Average</div>
-            <div className="text-xl font-bold text-warning">60-69</div>
-            <div className="text-sm text-muted-foreground mt-1">
-              {candidates.filter(c => (c.scores.overall || 0) >= 60 && (c.scores.overall || 0) < 70).length} candidates
+          <div className="text-center p-2 rounded-lg border border-warning/30 bg-warning/5">
+            <div className="text-[10px] text-muted-foreground mb-1">Average</div>
+            <div className="text-sm font-bold text-warning">60-69</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">
+              {candidates.filter(c => (c.scores.overall || 0) >= 60 && (c.scores.overall || 0) < 70).length}
             </div>
           </div>
-          <div className="text-center p-3 rounded-lg border border-muted bg-muted/5">
-            <div className="text-xs text-muted-foreground mb-1">Below Average</div>
-            <div className="text-xl font-bold text-muted-foreground">0-59</div>
-            <div className="text-sm text-muted-foreground mt-1">
-              {candidates.filter(c => (c.scores.overall || 0) < 60).length} candidates
+          <div className="text-center p-2 rounded-lg border border-muted bg-muted/5">
+            <div className="text-[10px] text-muted-foreground mb-1">Below</div>
+            <div className="text-sm font-bold text-muted-foreground">0-59</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">
+              {candidates.filter(c => (c.scores.overall || 0) < 60).length}
             </div>
           </div>
         </div>
