@@ -206,7 +206,7 @@ const Index = () => {
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                 {filteredCandidates.map((candidate) => (
                   <CandidateCard
                     key={candidate.id}

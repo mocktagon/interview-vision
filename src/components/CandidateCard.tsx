@@ -91,109 +91,109 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
   const performanceLevel = getPerformanceLevel(overallScore);
 
   return (
-    <Card className="p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group" onClick={() => onViewDetails(candidate)}>
+    <Card className="p-3 hover:shadow-lg transition-all duration-200 cursor-pointer group" onClick={() => onViewDetails(candidate)}>
       {/* Header */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-start gap-3 flex-1">
-          <Avatar className="h-12 w-12">
+      <div className="flex items-start justify-between mb-2">
+        <div className="flex items-start gap-2 flex-1">
+          <Avatar className="h-10 w-10">
             <AvatarImage 
               src={candidate.profilePicture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(candidate.name)}`} 
               alt={candidate.name} 
             />
-            <AvatarFallback>{initials}</AvatarFallback>
+            <AvatarFallback className="text-xs">{initials}</AvatarFallback>
           </Avatar>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors truncate">
               {candidate.name}
             </h3>
-            <p className="text-sm font-medium text-primary mb-1">{candidate.role}</p>
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <Briefcase className="h-3 w-3" />
-                {candidate.experience} yrs
+            <p className="text-xs font-medium text-primary truncate">{candidate.role}</p>
+            <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
+              <span className="flex items-center gap-0.5">
+                <Briefcase className="h-2.5 w-2.5" />
+                {candidate.experience}y
               </span>
-              <span className="flex items-center gap-1">
-                <MapPin className="h-3 w-3" />
+              <span className="flex items-center gap-0.5 truncate">
+                <MapPin className="h-2.5 w-2.5" />
                 {candidate.location}
               </span>
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-end gap-2">
+        <div className="flex flex-col items-end gap-1">
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
+            className="h-6 w-6"
             onClick={(e) => {
               e.stopPropagation();
               onToggleStar?.(candidate.id);
             }}
           >
-            <Star className={`h-4 w-4 ${candidate.starred ? 'fill-accent text-accent' : 'text-muted-foreground'}`} />
+            <Star className={`h-3 w-3 ${candidate.starred ? 'fill-accent text-accent' : 'text-muted-foreground'}`} />
           </Button>
-          <Badge className={stageColors[candidate.stage]}>
+          <Badge className={`${stageColors[candidate.stage]} text-[9px] px-1.5 py-0`}>
             {stageLabels[candidate.stage]}
           </Badge>
         </div>
       </div>
 
       {/* Performance Badge */}
-      <div className="mb-4">
-        <Badge className={`${performanceLevel.colorClass} font-medium border`}>
-          <Award className="h-3 w-3 mr-1.5" />
+      <div className="mb-2">
+        <Badge className={`${performanceLevel.colorClass} font-medium border text-[10px] px-2 py-0.5`}>
+          <Award className="h-2.5 w-2.5 mr-1" />
           {performanceLevel.label} ({overallScore})
         </Badge>
       </div>
 
       {/* Assessment Scores */}
-      <div className="mb-4 space-y-3">
-        <div className="flex items-center justify-between text-sm">
-          <span className="font-medium text-foreground">Assessment Progress</span>
+      <div className="mb-2 space-y-1.5">
+        <div className="flex items-center justify-between text-[10px]">
+          <span className="font-medium text-foreground">Assessment</span>
         </div>
         
-        <div className="space-y-2">
+        <div className="space-y-1">
           {candidate.scores.screening && (
-            <div className="space-y-1">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Screening Round</span>
-                <span className="font-semibold text-chart-1">{candidate.scores.screening}/100</span>
+            <div className="space-y-0.5">
+              <div className="flex items-center justify-between text-[9px]">
+                <span className="text-muted-foreground">Screening</span>
+                <span className="font-semibold text-chart-1">{candidate.scores.screening}</span>
               </div>
-              <Progress value={candidate.scores.screening} className="h-1.5" />
+              <Progress value={candidate.scores.screening} className="h-1" />
             </div>
           )}
           
           {candidate.scores.prelims && (
-            <div className="space-y-1">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Preliminary Assessment</span>
-                <span className="font-semibold text-chart-2">{candidate.scores.prelims}/100</span>
+            <div className="space-y-0.5">
+              <div className="flex items-center justify-between text-[9px]">
+                <span className="text-muted-foreground">Prelims</span>
+                <span className="font-semibold text-chart-2">{candidate.scores.prelims}</span>
               </div>
-              <Progress value={candidate.scores.prelims} className="h-1.5" />
+              <Progress value={candidate.scores.prelims} className="h-1" />
             </div>
           )}
           
           {candidate.scores.fitment && (
-            <div className="space-y-1">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Role Fitment</span>
-                <span className="font-semibold text-chart-3">{candidate.scores.fitment}/100</span>
+            <div className="space-y-0.5">
+              <div className="flex items-center justify-between text-[9px]">
+                <span className="text-muted-foreground">Fitment</span>
+                <span className="font-semibold text-chart-3">{candidate.scores.fitment}</span>
               </div>
-              <Progress value={candidate.scores.fitment} className="h-1.5" />
+              <Progress value={candidate.scores.fitment} className="h-1" />
             </div>
           )}
         </div>
       </div>
 
       {/* Top Skills */}
-      <div className="mb-4">
-        <p className="text-xs font-medium text-muted-foreground mb-2">Top Skills</p>
-        <div className="space-y-2">
-          {topSkills.map(([skill, score]) => (
+      <div className="mb-2">
+        <p className="text-[9px] font-medium text-muted-foreground mb-1">Top Skills</p>
+        <div className="space-y-1">
+          {topSkills.slice(0, 2).map(([skill, score]) => (
             <div key={skill} className="flex items-center justify-between">
-              <span className="text-xs text-foreground">{skill}</span>
-              <div className="flex items-center gap-2">
-                <Progress value={score} className="h-1.5 w-20" />
-                <span className="text-xs font-semibold text-foreground w-8 text-right">{score}%</span>
+              <span className="text-[9px] text-foreground truncate">{skill}</span>
+              <div className="flex items-center gap-1">
+                <Progress value={score} className="h-0.5 w-12" />
+                <span className="text-[9px] font-semibold text-foreground w-6 text-right">{score}%</span>
               </div>
             </div>
           ))}
@@ -202,17 +202,17 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
 
       {/* Eligible Roles */}
       {candidate.eligibleForRoles && candidate.eligibleForRoles.length > 0 && (
-        <div className="mb-4">
-          <p className="text-xs font-medium text-muted-foreground mb-2">Eligible For</p>
-          <div className="flex flex-wrap gap-1">
+        <div className="mb-2">
+          <p className="text-[9px] font-medium text-muted-foreground mb-1">Eligible For</p>
+          <div className="flex flex-wrap gap-0.5">
             {candidate.eligibleForRoles.slice(0, 2).map((role) => (
-              <Badge key={role} variant="secondary" className="text-xs">
+              <Badge key={role} variant="secondary" className="text-[8px] px-1.5 py-0">
                 {role}
               </Badge>
             ))}
             {candidate.eligibleForRoles.length > 2 && (
-              <Badge variant="secondary" className="text-xs">
-                +{candidate.eligibleForRoles.length - 2} more
+              <Badge variant="secondary" className="text-[8px] px-1.5 py-0">
+                +{candidate.eligibleForRoles.length - 2}
               </Badge>
             )}
           </div>
@@ -221,55 +221,28 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
 
       {/* Psych Assessment */}
       {candidate.psychAssessment && (
-        <div className="pt-3 border-t border-border">
-          <p className="text-xs font-medium text-muted-foreground mb-2">Profile</p>
-          <div className="flex items-center gap-1.5">
-            <span className="text-lg">{psychIcons[candidate.psychAssessment.animal]}</span>
-            <span className="text-lg">{psychIcons[candidate.psychAssessment.environment]}</span>
+        <div className="pt-2 border-t border-border">
+          <p className="text-[9px] font-medium text-muted-foreground mb-1">Profile</p>
+          <div className="flex items-center gap-1">
+            <span className="text-sm">{psychIcons[candidate.psychAssessment.animal]}</span>
+            <span className="text-sm">{psychIcons[candidate.psychAssessment.environment]}</span>
           </div>
         </div>
       )}
 
-      {/* Contact & Availability */}
-      <div className="pt-3 border-t border-border space-y-3">
-        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Clock className="h-3 w-3" />
-            {candidate.availability}
-          </div>
-          <div className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" />
-            {new Date(candidate.appliedDate).toLocaleDateString()}
-          </div>
-        </div>
-
-        {/* CTAs */}
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex-1"
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddToList?.(candidate.id, 'existing');
-            }}
-          >
-            <List className="h-3 w-3" />
-            Add to List
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex-1"
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddToList?.(candidate.id, 'new');
-            }}
-          >
-            <Plus className="h-3 w-3" />
-            New List
-          </Button>
-        </div>
+      {/* Contact & Availability - Removed to save space */}
+      <div className="pt-2 border-t border-border mt-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full text-[10px] h-7 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            onViewDetails(candidate);
+          }}
+        >
+          View Details
+        </Button>
       </div>
     </Card>
   );
