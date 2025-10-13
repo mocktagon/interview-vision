@@ -2,7 +2,6 @@ import { useState, useMemo } from "react";
 import { mockCandidates } from "@/data/mockCandidates";
 import { Candidate } from "@/types/candidate";
 import { KPICard } from "@/components/KPICard";
-import { FunnelChart } from "@/components/FunnelChart";
 import { CandidateCard } from "@/components/CandidateCard";
 import { CandidateDrawer } from "@/components/CandidateDrawer";
 import { ScoreDistributionChart } from "@/components/ScoreDistributionChart";
@@ -23,9 +22,12 @@ import {
   Search,
   Filter,
   LayoutGrid,
-  ArrowLeft
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -33,6 +35,7 @@ const Index = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [stageFilter, setStageFilter] = useState<string>("all");
+  const [isAnalyticsPanelOpen, setIsAnalyticsPanelOpen] = useState(true);
 
   const filteredCandidates = useMemo(() => {
     return mockCandidates.filter(candidate => {
@@ -89,105 +92,128 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-6 py-8 space-y-8">
-        {/* Score Distribution */}
-        <ScoreDistributionChart candidates={filteredCandidates} />
-
-        {/* Stats Section - 2/3 KPIs, 1/3 Chart */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* KPI Cards - Takes 2/3 */}
-          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <KPICard
-              title="Total Candidates"
-              value={filteredCandidates.length}
-              subtitle="Active in pipeline"
-              icon={Users}
-              variant="default"
-            />
-            <KPICard
-              title="Eligible for Fitment"
-              value={stats.eligible}
-              subtitle="Matched to roles"
-              icon={CheckCircle}
-              variant="success"
-            />
-            <KPICard
-              title="Top Performers"
-              value={stats.topPerformers}
-              subtitle="Top 10% of candidates"
-              icon={Star}
-              variant="accent"
-              trend={{ value: 12, isPositive: true }}
-            />
-            <KPICard
-              title="Average Score"
-              value={stats.avgScore}
-              subtitle="Overall assessment"
-              icon={TrendingUp}
-              variant="primary"
-            />
-          </div>
-          
-          {/* Funnel Chart - Takes 1/3 */}
-          <div className="lg:col-span-1">
-            <FunnelChart candidates={filteredCandidates} />
-          </div>
-        </div>
-
-        {/* Search and Filters */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search candidates by name, role, or email..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Select value={stageFilter} onValueChange={setStageFilter}>
-            <SelectTrigger className="w-full sm:w-[200px]">
-              <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Filter by stage" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Stages</SelectItem>
-              <SelectItem value="screening">Screening</SelectItem>
-              <SelectItem value="prelims">Preliminary</SelectItem>
-              <SelectItem value="fitment">Fitment</SelectItem>
-              <SelectItem value="final">Final Review</SelectItem>
-              <SelectItem value="selected">Selected</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Candidates Grid */}
-        <div>
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-2">
-              <LayoutGrid className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-semibold">Candidate Profiles</h2>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Comprehensive candidate information with multi-stage assessment scores
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCandidates.map((candidate) => (
-              <CandidateCard
-                key={candidate.id}
-                candidate={candidate}
-                onViewDetails={handleViewCandidate}
+      <main className="container mx-auto px-6 py-8">
+        <div className="flex gap-6 items-start">
+          {/* Left Side - Main Content (Candidates) */}
+          <div className="flex-1 min-w-0 space-y-6">
+            {/* KPI Cards - Horizontal Row */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <KPICard
+                title="Total Candidates"
+                value={filteredCandidates.length}
+                subtitle="Active in pipeline"
+                icon={Users}
+                variant="default"
               />
-            ))}
-          </div>
-          
-          {filteredCandidates.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">No candidates match your filters</p>
+              <KPICard
+                title="Eligible for Fitment"
+                value={stats.eligible}
+                subtitle="Matched to roles"
+                icon={CheckCircle}
+                variant="success"
+              />
+              <KPICard
+                title="Top Performers"
+                value={stats.topPerformers}
+                subtitle="Top 10% of candidates"
+                icon={Star}
+                variant="accent"
+                trend={{ value: 12, isPositive: true }}
+              />
+              <KPICard
+                title="Average Score"
+                value={stats.avgScore}
+                subtitle="Overall assessment"
+                icon={TrendingUp}
+                variant="primary"
+              />
             </div>
-          )}
+
+            {/* Search and Filters */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search candidates by name, role, or email..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select value={stageFilter} onValueChange={setStageFilter}>
+                <SelectTrigger className="w-full sm:w-[200px]">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Filter by stage" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Stages</SelectItem>
+                  <SelectItem value="screening">Screening</SelectItem>
+                  <SelectItem value="prelims">Preliminary</SelectItem>
+                  <SelectItem value="fitment">Fitment</SelectItem>
+                  <SelectItem value="final">Final Review</SelectItem>
+                  <SelectItem value="selected">Selected</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Candidates Grid */}
+            <div>
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <LayoutGrid className="h-5 w-5 text-primary" />
+                  <h2 className="text-xl font-semibold">Candidate Profiles</h2>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Comprehensive candidate information with multi-stage assessment scores
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {filteredCandidates.map((candidate) => (
+                  <CandidateCard
+                    key={candidate.id}
+                    candidate={candidate}
+                    onViewDetails={handleViewCandidate}
+                  />
+                ))}
+              </div>
+              
+              {filteredCandidates.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">No candidates match your filters</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Side - Analytics Panel (Sticky & Collapsible) */}
+          <div className={`transition-all duration-300 ${isAnalyticsPanelOpen ? 'w-[30%]' : 'w-12'}`}>
+            <div className="sticky top-8">
+              <Collapsible open={isAnalyticsPanelOpen} onOpenChange={setIsAnalyticsPanelOpen}>
+                <div className="relative">
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="absolute -left-6 top-4 z-10 h-8 w-8 rounded-full border-2 bg-background shadow-md hover:bg-primary hover:text-primary-foreground"
+                    >
+                      {isAnalyticsPanelOpen ? (
+                        <ChevronRight className="h-4 w-4" />
+                      ) : (
+                        <ChevronLeft className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </CollapsibleTrigger>
+                  
+                  <CollapsibleContent className="animate-accordion-down">
+                    <div className="space-y-4">
+                      <ScoreDistributionChart candidates={filteredCandidates} />
+                    </div>
+                  </CollapsibleContent>
+                </div>
+              </Collapsible>
+            </div>
+          </div>
         </div>
       </main>
 

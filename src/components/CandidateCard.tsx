@@ -12,7 +12,8 @@ import {
   Calendar,
   Briefcase,
   Plus,
-  List
+  List,
+  Award
 } from "lucide-react";
 
 interface CandidateCardProps {
@@ -21,6 +22,29 @@ interface CandidateCardProps {
   onToggleStar?: (candidateId: string) => void;
   onAddToList?: (candidateId: string, listType: 'existing' | 'new') => void;
 }
+
+const getPerformanceLevel = (score: number) => {
+  if (score >= 90) return { 
+    label: "Top Star", 
+    colorClass: "bg-success/10 text-success border-success/30"
+  };
+  if (score >= 80) return { 
+    label: "High Performer", 
+    colorClass: "bg-primary/10 text-primary border-primary/30"
+  };
+  if (score >= 70) return { 
+    label: "Good", 
+    colorClass: "bg-accent/10 text-accent border-accent/30"
+  };
+  if (score >= 60) return { 
+    label: "Average", 
+    colorClass: "bg-warning/10 text-warning border-warning/30"
+  };
+  return { 
+    label: "Below Average", 
+    colorClass: "bg-muted/50 text-muted-foreground border-muted"
+  };
+};
 
 const stageColors: Record<string, string> = {
   screening: 'bg-chart-1/10 text-chart-1 border-chart-1/20',
@@ -63,6 +87,9 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
     .toUpperCase()
     .slice(0, 2);
 
+  const overallScore = candidate.scores.overall || 0;
+  const performanceLevel = getPerformanceLevel(overallScore);
+
   return (
     <Card className="p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group" onClick={() => onViewDetails(candidate)}>
       {/* Header */}
@@ -92,7 +119,7 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col items-end gap-2">
           <Button
             variant="ghost"
             size="icon"
@@ -108,6 +135,14 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
             {stageLabels[candidate.stage]}
           </Badge>
         </div>
+      </div>
+
+      {/* Performance Badge */}
+      <div className="mb-4">
+        <Badge className={`${performanceLevel.colorClass} font-medium border`}>
+          <Award className="h-3 w-3 mr-1.5" />
+          {performanceLevel.label} ({overallScore})
+        </Badge>
       </div>
 
       {/* Assessment Scores */}
