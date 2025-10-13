@@ -5,8 +5,6 @@ import { KPICard } from "@/components/KPICard";
 import { FunnelChart } from "@/components/FunnelChart";
 import { CandidateCard } from "@/components/CandidateCard";
 import { CandidateDrawer } from "@/components/CandidateDrawer";
-import { ATSvsAIChart } from "@/components/ATSvsAIChart";
-import { FunnelComparisonChart } from "@/components/FunnelComparisonChart";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -91,28 +89,6 @@ const Index = () => {
       </header>
 
       <main className="container mx-auto px-6 py-8 space-y-8">
-        {/* ATS vs AI Comparison Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ATSvsAIChart 
-            data={[
-              { category: "Technical", ats: 68, ai: 94 },
-              { category: "Problem Solving", ats: 65, ai: 91 },
-              { category: "Communication", ats: 70, ai: 95 },
-              { category: "Cultural Fit", ats: 60, ai: 90 },
-              { category: "Leadership", ats: 62, ai: 88 },
-            ]}
-          />
-          <FunnelComparisonChart 
-            data={[
-              { stage: "Applied", atsCount: 75, aiCount: 92, total: 100 },
-              { stage: "Screening", atsCount: 45, aiCount: 78, total: 85 },
-              { stage: "Technical", atsCount: 28, aiCount: 62, total: 70 },
-              { stage: "Final Round", atsCount: 15, aiCount: 45, total: 50 },
-              { stage: "Offers", atsCount: 8, aiCount: 28, total: 30 },
-            ]}
-          />
-        </div>
-
         {/* Stats Section - 2/3 KPIs, 1/3 Chart */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* KPI Cards - Takes 2/3 */}

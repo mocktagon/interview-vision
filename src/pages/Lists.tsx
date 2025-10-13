@@ -5,8 +5,6 @@ import { CandidateList } from "@/types/list";
 import { ListCard } from "@/components/ListCard";
 import { EmptyListCard } from "@/components/EmptyListCard";
 import { KPICard } from "@/components/KPICard";
-import { ATSvsAIChart } from "@/components/ATSvsAIChart";
-import { FunnelComparisonChart } from "@/components/FunnelComparisonChart";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FolderOpen, Users, Star, CheckCircle, Search, Plus, TrendingUp, Zap, Sparkles, ArrowRight, Brain, MessageSquare, Award } from "lucide-react";
@@ -89,32 +87,6 @@ const Lists = () => {
             </div>
           </CardContent>
         </Card>
-
-        {/* ATS vs AI Analytics */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ATSvsAIChart 
-            title="List Performance: ATS vs AI"
-            description="Aggregate scoring across all talent pools"
-            data={[
-              { category: "Skills Match", ats: 71, ai: 92 },
-              { category: "Experience", ats: 68, ai: 88 },
-              { category: "Cultural Fit", ats: 62, ai: 90 },
-              { category: "Communication", ats: 65, ai: 94 },
-              { category: "Leadership", ats: 60, ai: 86 },
-            ]}
-          />
-          <FunnelComparisonChart 
-            title="Pipeline Quality: ATS vs AI Screening"
-            data={[
-              { stage: "Total Applicants", atsCount: 180, aiCount: 264, total: 300 },
-              { stage: "Qualified", atsCount: 120, aiCount: 216, total: 240 },
-              { stage: "Interviewed", atsCount: 60, aiCount: 156, total: 180 },
-              { stage: "Shortlisted", atsCount: 24, aiCount: 96, total: 120 },
-              { stage: "Offered", atsCount: 12, aiCount: 54, total: 60 },
-            ]}
-          />
-        </div>
-
 
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">

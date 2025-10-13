@@ -37,7 +37,6 @@ import {
   Zap
 } from "lucide-react";
 import { SkillsRadar } from "./SkillsRadar";
-import { CandidateScoreComparison } from "./CandidateScoreComparison";
 
 interface CandidateDrawerProps {
   candidate: Candidate | null;
@@ -136,15 +135,6 @@ export function CandidateDrawer({ candidate, open, onOpenChange }: CandidateDraw
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6 mt-6">
-            {/* ATS vs AI Scoring Comparison */}
-            {candidate.atsScore && candidate.aiInterviewScore && (
-              <CandidateScoreComparison 
-                candidateName={candidate.name}
-                atsScore={candidate.atsScore}
-                aiScore={candidate.aiInterviewScore}
-              />
-            )}
-
             {/* Contact Information */}
             <Card className="p-4">
               <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
