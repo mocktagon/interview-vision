@@ -205,7 +205,7 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
                 <div className="text-xs font-medium text-foreground truncate mb-1">{skill}</div>
                 <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
+                    className="h-full bg-primary transition-all duration-500"
                     style={{ width: `${score}%` }}
                   />
                 </div>
