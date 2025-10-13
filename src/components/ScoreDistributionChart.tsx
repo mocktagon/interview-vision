@@ -77,41 +77,41 @@ export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributio
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="p-3">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-base">AI Interview vs ATS Scoring Distribution</CardTitle>
-            <p className="text-xs text-muted-foreground mt-1">
-              Kernel density comparison: AI analysis (blue) vs traditional ATS resume scoring (red)
+            <CardTitle className="text-sm">AI vs ATS Scoring</CardTitle>
+            <p className="text-[10px] text-muted-foreground mt-0.5">
+              AI (blue) vs ATS (red)
             </p>
             {aiQuery && (
-              <div className="mt-2 flex items-center gap-2 text-xs">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                <span className="text-primary font-medium">AI analyzing: {aiQuery}</span>
+              <div className="mt-1 flex items-center gap-1 text-[10px]">
+                <div className="h-1 w-1 rounded-full bg-primary animate-pulse" />
+                <span className="text-primary font-medium truncate">{aiQuery}</span>
               </div>
             )}
           </div>
-          <div className="flex gap-3">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-success/10 border border-success/20">
-              <Star className="h-4 w-4 text-success fill-success" />
+          <div className="flex gap-2">
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-success/10 border border-success/20">
+              <Star className="h-3 w-3 text-success fill-success" />
               <div className="text-right">
-                <div className="text-2xl font-bold text-success">{topStarsCount}</div>
-                <div className="text-xs text-success/80">Top Stars (90+)</div>
+                <div className="text-sm font-bold text-success">{topStarsCount}</div>
+                <div className="text-[8px] text-success/80">Top 90+</div>
               </div>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/20">
-              <TrendingUp className="h-4 w-4 text-primary" />
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-primary/10 border border-primary/20">
+              <TrendingUp className="h-3 w-3 text-primary" />
               <div className="text-right">
-                <div className="text-2xl font-bold text-primary">{avgScore.toFixed(1)}</div>
-                <div className="text-xs text-primary/80">Mean Score</div>
+                <div className="text-sm font-bold text-primary">{avgScore.toFixed(1)}</div>
+                <div className="text-[8px] text-primary/80">Mean</div>
               </div>
             </div>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-4">
-        <ResponsiveContainer width="100%" height={250}>
-          <AreaChart data={kdeData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
+      <CardContent className="p-2">
+        <ResponsiveContainer width="100%" height={180}>
+          <AreaChart data={kdeData} margin={{ top: 5, right: 5, left: -10, bottom: 5 }}>
             <defs>
               <linearGradient id="aiDensityGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.6}/>
@@ -130,22 +130,23 @@ export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributio
             <XAxis 
               dataKey="score"
               stroke="hsl(var(--muted-foreground))"
-              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-              label={{ value: 'Score', position: 'insideBottom', offset: -10, fill: "hsl(var(--muted-foreground))" }}
+              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 9 }}
+              label={{ value: 'Score', position: 'insideBottom', offset: -5, fill: "hsl(var(--muted-foreground))", fontSize: 9 }}
               domain={[0, 100]}
             />
             <YAxis 
               stroke="hsl(var(--muted-foreground))"
-              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-              label={{ value: 'Probability Density', angle: -90, position: 'insideLeft', fill: "hsl(var(--muted-foreground))" }}
+              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 9 }}
+              label={{ value: 'Density', angle: -90, position: 'insideLeft', fill: "hsl(var(--muted-foreground))", fontSize: 9 }}
             />
             <Tooltip
               contentStyle={{
                 backgroundColor: "hsl(var(--card))",
                 border: "1px solid hsl(var(--border))",
-                borderRadius: "8px",
+                borderRadius: "6px",
                 color: "hsl(var(--foreground))",
-                padding: "12px"
+                padding: "6px",
+                fontSize: "10px"
               }}
               formatter={(value: any, name: string) => {
                 if (name === "aiDensity") return [`${Number(value).toFixed(2)}`, "AI Interview Density"];
@@ -157,10 +158,10 @@ export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributio
             />
             
             {/* Reference lines for score zones */}
-            <ReferenceLine x={90} stroke="hsl(var(--success))" strokeDasharray="3 3" strokeOpacity={0.3} label={{ value: "90", position: "top", fontSize: 10 }} />
-            <ReferenceLine x={80} stroke="hsl(var(--primary))" strokeDasharray="3 3" strokeOpacity={0.3} />
-            <ReferenceLine x={70} stroke="hsl(var(--accent))" strokeDasharray="3 3" strokeOpacity={0.3} />
-            <ReferenceLine x={60} stroke="hsl(var(--warning))" strokeDasharray="3 3" strokeOpacity={0.3} />
+            <ReferenceLine x={90} stroke="hsl(var(--success))" strokeDasharray="2 2" strokeOpacity={0.3} />
+            <ReferenceLine x={80} stroke="hsl(var(--primary))" strokeDasharray="2 2" strokeOpacity={0.3} />
+            <ReferenceLine x={70} stroke="hsl(var(--accent))" strokeDasharray="2 2" strokeOpacity={0.3} />
+            <ReferenceLine x={60} stroke="hsl(var(--warning))" strokeDasharray="2 2" strokeOpacity={0.3} />
             
             
             {/* ATS Resume Scoring - clustered and less discriminative */}
@@ -168,8 +169,8 @@ export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributio
               type="monotone"
               dataKey="atsDensity"
               stroke="hsl(var(--destructive))"
-              strokeWidth={2.5}
-              strokeDasharray="5 5"
+              strokeWidth={1.5}
+              strokeDasharray="3 3"
               fill="url(#atsDensityGradient)"
               name="ATS Resume"
             />
@@ -179,8 +180,8 @@ export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributio
               type="monotone"
               dataKey="starredDensity"
               stroke="hsl(var(--warning))"
-              strokeWidth={2}
-              strokeDasharray="3 3"
+              strokeWidth={1.5}
+              strokeDasharray="2 2"
               fill="url(#starredGradient)"
               name="Top Performers"
             />
@@ -190,7 +191,7 @@ export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributio
               type="monotone"
               dataKey="aiDensity"
               stroke="hsl(var(--primary))"
-              strokeWidth={3}
+              strokeWidth={2}
               fill="url(#aiDensityGradient)"
               name="AI Interview"
             />
@@ -198,55 +199,54 @@ export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributio
         </ResponsiveContainer>
         
         {/* Key Insight */}
-        <div className="mt-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
-          <div className="flex items-start gap-2">
-            <div className="p-1.5 rounded-lg bg-primary/10 flex-shrink-0">
-              <Star className="h-4 w-4 text-primary" />
+        <div className="mt-2 p-2 rounded-lg bg-primary/5 border border-primary/20">
+          <div className="flex items-start gap-1.5">
+            <div className="p-1 rounded-lg bg-primary/10 flex-shrink-0">
+              <Star className="h-3 w-3 text-primary" />
             </div>
             <div>
-              <h4 className="font-semibold text-xs text-foreground mb-1">Key Insight</h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                <span className="text-destructive font-medium">ATS scores</span> cluster narrowly (75-95), 
-                failing to differentiate. <span className="text-primary font-medium">AI analysis</span> shows 
-                wider distribution with clear top performer separation.
+              <h4 className="font-semibold text-[10px] text-foreground mb-0.5">Key Insight</h4>
+              <p className="text-[9px] text-muted-foreground leading-tight">
+                <span className="text-destructive font-medium">ATS</span> clusters at 75-95. 
+                <span className="text-primary font-medium"> AI</span> shows wider distribution.
               </p>
             </div>
           </div>
         </div>
         
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <div className="text-center p-2 rounded-lg border border-success/30 bg-success/5">
-            <div className="text-[10px] text-muted-foreground mb-1">Top Stars</div>
-            <div className="text-sm font-bold text-success">90-100</div>
-            <div className="text-[10px] text-muted-foreground mt-0.5">
+        <div className="mt-2 grid grid-cols-2 gap-1.5">
+          <div className="text-center p-1.5 rounded-lg border border-success/30 bg-success/5">
+            <div className="text-[8px] text-muted-foreground mb-0.5">Top</div>
+            <div className="text-xs font-bold text-success">90+</div>
+            <div className="text-[8px] text-muted-foreground mt-0.5">
               {candidates.filter(c => (c.scores.overall || 0) >= 90).length}
             </div>
           </div>
-          <div className="text-center p-2 rounded-lg border border-primary/30 bg-primary/5">
-            <div className="text-[10px] text-muted-foreground mb-1">High</div>
-            <div className="text-sm font-bold text-primary">80-89</div>
-            <div className="text-[10px] text-muted-foreground mt-0.5">
+          <div className="text-center p-1.5 rounded-lg border border-primary/30 bg-primary/5">
+            <div className="text-[8px] text-muted-foreground mb-0.5">High</div>
+            <div className="text-xs font-bold text-primary">80-89</div>
+            <div className="text-[8px] text-muted-foreground mt-0.5">
               {candidates.filter(c => (c.scores.overall || 0) >= 80 && (c.scores.overall || 0) < 90).length}
             </div>
           </div>
-          <div className="text-center p-2 rounded-lg border border-accent/30 bg-accent/5">
-            <div className="text-[10px] text-muted-foreground mb-1">Good</div>
-            <div className="text-sm font-bold text-accent">70-79</div>
-            <div className="text-[10px] text-muted-foreground mt-0.5">
+          <div className="text-center p-1.5 rounded-lg border border-accent/30 bg-accent/5">
+            <div className="text-[8px] text-muted-foreground mb-0.5">Good</div>
+            <div className="text-xs font-bold text-accent">70-79</div>
+            <div className="text-[8px] text-muted-foreground mt-0.5">
               {candidates.filter(c => (c.scores.overall || 0) >= 70 && (c.scores.overall || 0) < 80).length}
             </div>
           </div>
-          <div className="text-center p-2 rounded-lg border border-warning/30 bg-warning/5">
-            <div className="text-[10px] text-muted-foreground mb-1">Average</div>
-            <div className="text-sm font-bold text-warning">60-69</div>
-            <div className="text-[10px] text-muted-foreground mt-0.5">
+          <div className="text-center p-1.5 rounded-lg border border-warning/30 bg-warning/5">
+            <div className="text-[8px] text-muted-foreground mb-0.5">Avg</div>
+            <div className="text-xs font-bold text-warning">60-69</div>
+            <div className="text-[8px] text-muted-foreground mt-0.5">
               {candidates.filter(c => (c.scores.overall || 0) >= 60 && (c.scores.overall || 0) < 70).length}
             </div>
           </div>
-          <div className="text-center p-2 rounded-lg border border-muted bg-muted/5">
-            <div className="text-[10px] text-muted-foreground mb-1">Below</div>
-            <div className="text-sm font-bold text-muted-foreground">0-59</div>
-            <div className="text-[10px] text-muted-foreground mt-0.5">
+          <div className="text-center p-1.5 rounded-lg border border-muted bg-muted/5">
+            <div className="text-[8px] text-muted-foreground mb-0.5">Low</div>
+            <div className="text-xs font-bold text-muted-foreground">&lt;60</div>
+            <div className="text-[8px] text-muted-foreground mt-0.5">
               {candidates.filter(c => (c.scores.overall || 0) < 60).length}
             </div>
           </div>
