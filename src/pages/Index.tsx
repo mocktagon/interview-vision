@@ -21,10 +21,13 @@ import {
   CheckCircle,
   Search,
   Filter,
-  LayoutGrid
+  LayoutGrid,
+  ArrowLeft
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const navigate = useNavigate();
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -63,11 +66,20 @@ const Index = () => {
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Candidate Intelligence</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                AI-powered insights for smarter hiring decisions
-              </p>
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => navigate("/")}
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Candidate Intelligence</h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  AI-powered insights for smarter hiring decisions
+                </p>
+              </div>
             </div>
             <Button size="lg">
               Export Report
@@ -77,41 +89,46 @@ const Index = () => {
       </header>
 
       <main className="container mx-auto px-6 py-8 space-y-8">
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <KPICard
-            title="Total Candidates"
-            value={filteredCandidates.length}
-            subtitle="Active in pipeline"
-            icon={Users}
-            variant="default"
-          />
-          <KPICard
-            title="Eligible for Fitment"
-            value={stats.eligible}
-            subtitle="Matched to roles"
-            icon={CheckCircle}
-            variant="success"
-          />
-          <KPICard
-            title="Top Performers"
-            value={stats.topPerformers}
-            subtitle="Top 10% of candidates"
-            icon={Star}
-            variant="accent"
-            trend={{ value: 12, isPositive: true }}
-          />
-          <KPICard
-            title="Average Score"
-            value={stats.avgScore}
-            subtitle="Overall assessment"
-            icon={TrendingUp}
-            variant="primary"
-          />
+        {/* Stats Section - 2/3 KPIs, 1/3 Chart */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* KPI Cards - Takes 2/3 */}
+          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <KPICard
+              title="Total Candidates"
+              value={filteredCandidates.length}
+              subtitle="Active in pipeline"
+              icon={Users}
+              variant="default"
+            />
+            <KPICard
+              title="Eligible for Fitment"
+              value={stats.eligible}
+              subtitle="Matched to roles"
+              icon={CheckCircle}
+              variant="success"
+            />
+            <KPICard
+              title="Top Performers"
+              value={stats.topPerformers}
+              subtitle="Top 10% of candidates"
+              icon={Star}
+              variant="accent"
+              trend={{ value: 12, isPositive: true }}
+            />
+            <KPICard
+              title="Average Score"
+              value={stats.avgScore}
+              subtitle="Overall assessment"
+              icon={TrendingUp}
+              variant="primary"
+            />
+          </div>
+          
+          {/* Funnel Chart - Takes 1/3 */}
+          <div className="lg:col-span-1">
+            <FunnelChart candidates={filteredCandidates} />
+          </div>
         </div>
-
-        {/* Funnel Chart */}
-        <FunnelChart candidates={filteredCandidates} />
 
         {/* Search and Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
