@@ -59,103 +59,31 @@ const Lists = () => {
       </header>
 
       <main className="container mx-auto px-6 py-8 space-y-8">
-        {/* AI Recommended List - Hero Section */}
-        <Card className="relative overflow-hidden border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-background to-accent/5 hover:border-primary/40 transition-all duration-300 cursor-pointer group" onClick={() => handleViewList("ai-recommended")}>
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          
-          <CardHeader className="relative pb-4">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3">
+        {/* AI Generate List - Prompt Section */}
+        <Card className="relative overflow-hidden border border-primary/20 bg-gradient-to-r from-primary/5 to-transparent hover:border-primary/30 transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4 flex-1">
                 <div className="p-3 rounded-xl bg-primary/10 text-primary">
-                  <Sparkles className="h-6 w-6" />
+                  <Sparkles className="h-5 w-5" />
                 </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <CardTitle className="text-2xl">AI Recommended List</CardTitle>
-                    <Badge variant="default" className="bg-primary/20 text-primary border-primary/30">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold text-foreground">Generate AI List</h3>
+                    <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
                       <Brain className="h-3 w-3 mr-1" />
-                      AI Generated
+                      AI Powered
                     </Badge>
                   </div>
-                  <CardDescription className="text-base">
-                    Curated talent pool based on interview performance and cultural fit analysis
-                  </CardDescription>
+                  <p className="text-sm text-muted-foreground">
+                    Create curated talent pools based on interview analysis and skills
+                  </p>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" className="text-primary group-hover:translate-x-1 transition-transform">
-                <ArrowRight className="h-5 w-5" />
+              <Button size="lg" className="gap-2">
+                <Sparkles className="h-4 w-4" />
+                Generate List
               </Button>
-            </div>
-          </CardHeader>
-
-          <CardContent className="relative space-y-6">
-            {/* Key Metrics */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-4 rounded-lg bg-card/50 border border-border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <Users className="h-4 w-4" />
-                  <p className="text-xs font-medium">Candidates</p>
-                </div>
-                <p className="text-2xl font-bold text-foreground">12</p>
-              </div>
-              <div className="p-4 rounded-lg bg-card/50 border border-border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <Award className="h-4 w-4" />
-                  <p className="text-xs font-medium">Avg Interview Score</p>
-                </div>
-                <p className="text-2xl font-bold text-primary">94%</p>
-              </div>
-              <div className="p-4 rounded-lg bg-card/50 border border-border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <MessageSquare className="h-4 w-4" />
-                  <p className="text-xs font-medium">Interviews Analyzed</p>
-                </div>
-                <p className="text-2xl font-bold text-foreground">48</p>
-              </div>
-              <div className="p-4 rounded-lg bg-card/50 border border-border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <Zap className="h-4 w-4" />
-                  <p className="text-xs font-medium">Cultural Fit</p>
-                </div>
-                <p className="text-2xl font-bold text-accent">89%</p>
-              </div>
-            </div>
-
-            {/* AI Insights */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-                <h4 className="font-semibold text-sm mb-2 flex items-center gap-2 text-primary">
-                  <Brain className="h-4 w-4" />
-                  Interview Insights
-                </h4>
-                <p className="text-sm text-muted-foreground">
-                  Candidates demonstrate exceptional problem-solving skills with 92% success rate in technical assessments. Strong communication patterns detected across all interview rounds.
-                </p>
-              </div>
-              <div className="p-4 rounded-lg bg-accent/5 border border-accent/20">
-                <h4 className="font-semibold text-sm mb-2 flex items-center gap-2 text-accent">
-                  <MessageSquare className="h-4 w-4" />
-                  Key Findings
-                </h4>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• 85% show leadership potential in behavioral interviews</li>
-                  <li>• Average 7+ years experience in relevant domains</li>
-                  <li>• High alignment with company values and culture</li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Top Skills from Interviews */}
-            <div>
-              <h4 className="font-semibold text-sm mb-3 text-foreground">Top Skills from Interview Analysis</h4>
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary" className="px-3 py-1">System Design</Badge>
-                <Badge variant="secondary" className="px-3 py-1">Problem Solving</Badge>
-                <Badge variant="secondary" className="px-3 py-1">Leadership</Badge>
-                <Badge variant="secondary" className="px-3 py-1">Communication</Badge>
-                <Badge variant="secondary" className="px-3 py-1">Team Collaboration</Badge>
-                <Badge variant="secondary" className="px-3 py-1">Technical Architecture</Badge>
-              </div>
             </div>
           </CardContent>
         </Card>
