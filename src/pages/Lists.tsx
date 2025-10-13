@@ -4,11 +4,11 @@ import { mockLists } from "@/data/mockLists";
 import { CandidateList } from "@/types/list";
 import { ListCard } from "@/components/ListCard";
 import { EmptyListCard } from "@/components/EmptyListCard";
-import { KPICard } from "@/components/KPICard";
+import { ScoreDistributionChart } from "@/components/ScoreDistributionChart";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FolderOpen, Users, Star, CheckCircle, Search, Plus, TrendingUp, Zap, Sparkles, ArrowRight, Brain, MessageSquare, Award, ChevronLeft, ChevronRight } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { FolderOpen, Users, Star, Search, Plus, TrendingUp, Zap, Sparkles, Brain, ChevronLeft, ChevronRight } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 const Lists = () => {
@@ -51,26 +51,16 @@ const Lists = () => {
                 Organize and manage your candidate pools
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <Button size="lg" onClick={handleCreateList}>
-                <Plus className="h-4 w-4 mr-2" />
-                New List
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setIsAnalyticsPanelOpen(!isAnalyticsPanelOpen)}
-                className="h-10 w-10"
-              >
-                {isAnalyticsPanelOpen ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-              </Button>
-            </div>
+            <Button size="lg" onClick={handleCreateList}>
+              <Plus className="h-4 w-4 mr-2" />
+              New List
+            </Button>
           </div>
         </div>
       </header>
 
       <main className="container mx-auto px-6 py-8 space-y-8" style={{ 
-        marginRight: isAnalyticsPanelOpen ? '320px' : '0',
+        marginRight: isAnalyticsPanelOpen ? 'calc(30% + 1rem)' : '0',
         transition: 'margin-right 0.3s ease'
       }}>
         {/* AI Generate List - Prompt Section */}
@@ -142,59 +132,67 @@ const Lists = () => {
       </main>
 
       {/* Analytics Panel */}
-      <div 
-        className="fixed top-0 right-0 h-screen bg-card border-l border-border overflow-y-auto transition-all duration-300 ease-in-out z-40"
-        style={{ 
-          width: isAnalyticsPanelOpen ? '320px' : '0',
-          opacity: isAnalyticsPanelOpen ? 1 : 0,
-          visibility: isAnalyticsPanelOpen ? 'visible' : 'hidden'
-        }}
-      >
-        <div className="p-4 space-y-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-semibold text-foreground">Analytics</h3>
+      <div className={`fixed top-0 right-0 h-screen bg-card border-l border-border transition-all duration-300 z-30 ${isAnalyticsPanelOpen ? 'w-[30%]' : 'w-0'}`}>
+        {/* Toggle Button - Top Right Corner */}
+        <button
+          onClick={() => setIsAnalyticsPanelOpen(!isAnalyticsPanelOpen)}
+          className="absolute top-4 -left-10 h-10 w-10 bg-card border border-border rounded-lg hover:bg-accent/10 hover:border-primary/30 transition-all duration-300 flex items-center justify-center shadow-md group"
+        >
+          {isAnalyticsPanelOpen ? (
+            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+          ) : (
+            <ChevronLeft className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+          )}
+        </button>
+        
+        {isAnalyticsPanelOpen && (
+          <div className="h-full flex flex-col overflow-hidden">
+            <div className="flex-1 flex flex-col p-4 overflow-hidden">
+              <div className="mb-4 text-center flex-shrink-0">
+                <h3 className="text-base font-semibold text-foreground">Analytics</h3>
+              </div>
+              
+              {/* Compact KPI Cards */}
+              <div className="grid grid-cols-2 gap-2 mb-4 flex-shrink-0">
+                <div className="p-2.5 rounded-lg bg-muted/30 text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <FolderOpen className="h-3.5 w-3.5 text-muted-foreground" />
+                    <p className="text-xs text-muted-foreground font-medium">Lists</p>
+                  </div>
+                  <p className="text-xl font-bold text-foreground">{totalLists}</p>
+                </div>
+                <div className="p-2.5 rounded-lg bg-primary/10 text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <Users className="h-3.5 w-3.5 text-primary" />
+                    <p className="text-xs text-primary font-medium">Total</p>
+                  </div>
+                  <p className="text-xl font-bold text-primary">{totalCandidates}</p>
+                </div>
+                <div className="p-2.5 rounded-lg bg-accent/10 text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <Zap className="h-3.5 w-3.5 text-accent" />
+                    <p className="text-xs text-accent font-medium">Diversity</p>
+                  </div>
+                  <p className="text-xl font-bold text-accent">{avgDiversity}%</p>
+                </div>
+                <div className="p-2.5 rounded-lg bg-success/10 text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <Star className="h-3.5 w-3.5 text-success" />
+                    <p className="text-xs text-success font-medium">Starred</p>
+                  </div>
+                  <p className="text-xl font-bold text-success">{allStarred}</p>
+                </div>
+              </div>
+              
+              <div className="flex-1 min-h-0 overflow-hidden">
+                <ScoreDistributionChart 
+                  candidates={lists.flatMap(list => list.candidates)} 
+                  aiQuery="All Lists Overview"
+                />
+              </div>
+            </div>
           </div>
-
-          {/* KPI Cards */}
-          <div className="space-y-3">
-            <KPICard
-              title="Total Lists"
-              value={totalLists}
-              subtitle="Active talent pools"
-              icon={FolderOpen}
-              variant="default"
-            />
-            <KPICard
-              title="Total Candidates"
-              value={totalCandidates}
-              subtitle="Across all lists"
-              icon={Users}
-              variant="primary"
-            />
-            <KPICard
-              title="Avg Diversity"
-              value={`${avgDiversity}%`}
-              subtitle="Inclusion score"
-              icon={Zap}
-              variant="accent"
-              trend={{ value: 8, isPositive: true }}
-            />
-            <KPICard
-              title="Top Performers"
-              value={allStarred}
-              subtitle="Starred talents"
-              icon={Star}
-              variant="success"
-            />
-            <KPICard
-              title="Avg List Size"
-              value={avgListSize}
-              subtitle="Candidates per list"
-              icon={TrendingUp}
-              variant="default"
-            />
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
