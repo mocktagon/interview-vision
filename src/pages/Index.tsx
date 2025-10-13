@@ -83,41 +83,20 @@ const Index = () => {
 
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden relative">
-      {/* Header - Minimizes on scroll */}
-      <header className={`border-b border-border bg-card/95 backdrop-blur-sm flex-shrink-0 relative z-10 transition-all duration-300 ${isScrolled ? 'py-2' : 'py-3'}`}>
-        <div className={`container mx-auto transition-all duration-300 ${isAnalyticsPanelOpen ? 'pr-[calc(30%+3rem)]' : 'pr-16'}`} style={{ paddingLeft: '1.5rem' }}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={() => navigate("/")}
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div>
-                <h1 className={`font-bold text-foreground transition-all duration-300 ${isScrolled ? 'text-base' : 'text-xl'}`}>Candidate Intelligence</h1>
-                {!isScrolled && (
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                  AI-powered insights for smarter hiring decisions
-                </p>
-                )}
-              </div>
-            </div>
-            <Button size={isScrolled ? "sm" : "default"} className={`transition-all duration-300 ${isScrolled ? 'h-8 text-xs' : 'h-9'}`}>
-              {isScrolled ? 'Export' : 'Export Report'}
-            </Button>
-          </div>
-        </div>
-      </header>
-
       <main className="flex-1 overflow-hidden relative">
         <div className={`container mx-auto h-full flex flex-col transition-all duration-300 ${isAnalyticsPanelOpen ? 'pr-[calc(30%+1.5rem)]' : 'pr-16'}`} style={{ paddingLeft: '1.5rem', paddingRight: isAnalyticsPanelOpen ? 'calc(30% + 1.5rem)' : '4rem' }}>
-          {/* AI Search Bar - Minimizes on scroll */}
-          <div className={`flex-shrink-0 transition-all duration-300 ${isScrolled ? 'py-2' : 'py-4'}`}>
+          {/* Greeting - Vanishes on scroll */}
+          {!isScrolled && (
+            <div className="py-3 flex-shrink-0 transition-all duration-300">
+              <h1 className="text-xl font-semibold text-foreground">Hi, Recruiter</h1>
+            </div>
+          )}
+          
+          {/* AI Search Bar - Sticky */}
+          <div className={`flex-shrink-0 transition-all duration-300 sticky top-0 bg-background/95 backdrop-blur-sm z-20 ${isScrolled ? 'py-3' : 'py-2'}`}>
             <div className="relative max-w-4xl mx-auto">
               {!isScrolled && <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 rounded-lg blur-xl" />}
-              <div className={`relative bg-card border-2 border-primary/30 rounded-lg shadow-lg transition-all duration-300 ${isScrolled ? 'p-2' : 'p-3'}`}>
+              <div className={`relative bg-card border-2 border-primary/30 rounded-lg shadow-lg transition-all duration-300 ${isScrolled ? 'p-2.5' : 'p-3'}`}>
                 <div className={`flex items-center transition-all duration-300 ${isScrolled ? 'gap-1.5' : 'gap-2'}`}>
                   {!isScrolled && (
                     <div className="p-1.5 rounded-lg bg-primary/10">
@@ -245,46 +224,47 @@ const Index = () => {
                 </button>
               </CollapsibleTrigger>
               
-              <CollapsibleContent className="animate-accordion-down h-full flex flex-col">
-                <div className="flex-1 overflow-y-auto p-4 pt-6">
-                  <div className="mb-4 text-center">
-                    <h3 className="text-sm font-semibold text-foreground mb-3">Smart Insights</h3>
+              <CollapsibleContent className="animate-accordion-down h-full flex flex-col overflow-hidden">
+                <div className="flex-1 flex flex-col p-3 overflow-hidden">
+                  <div className="mb-3 text-center flex-shrink-0">
+                    <h3 className="text-xs font-semibold text-foreground">Smart Insights</h3>
                   </div>
                   
-                  {/* KPI Cards in Analytics Panel */}
-                  <div className="grid grid-cols-2 gap-2 mb-4">
-                    <KPICard
-                      title="Total"
-                      value={filteredCandidates.length}
-                      subtitle="Candidates"
-                      icon={Users}
-                      variant="default"
-                    />
-                    <KPICard
-                      title="Eligible"
-                      value={stats.eligible}
-                      subtitle="Matched"
-                      icon={CheckCircle}
-                      variant="success"
-                    />
-                    <KPICard
-                      title="Top Stars"
-                      value={stats.topPerformers}
-                      subtitle="Top 10%"
-                      icon={Star}
-                      variant="accent"
-                      trend={{ value: 12, isPositive: true }}
-                    />
-                    <KPICard
-                      title="Avg Score"
-                      value={stats.avgScore}
-                      subtitle="Overall"
-                      icon={TrendingUp}
-                      variant="primary"
-                    />
+                  {/* Compact KPI Cards in Analytics Panel */}
+                  <div className="grid grid-cols-2 gap-1.5 mb-3 flex-shrink-0">
+                    <div className="p-2 rounded-lg bg-muted/30 text-center">
+                      <div className="flex items-center justify-center gap-1 mb-0.5">
+                        <Users className="h-3 w-3 text-muted-foreground" />
+                        <p className="text-[9px] text-muted-foreground font-medium">Total</p>
+                      </div>
+                      <p className="text-lg font-bold text-foreground">{filteredCandidates.length}</p>
+                    </div>
+                    <div className="p-2 rounded-lg bg-success/10 text-center">
+                      <div className="flex items-center justify-center gap-1 mb-0.5">
+                        <CheckCircle className="h-3 w-3 text-success" />
+                        <p className="text-[9px] text-success font-medium">Eligible</p>
+                      </div>
+                      <p className="text-lg font-bold text-success">{stats.eligible}</p>
+                    </div>
+                    <div className="p-2 rounded-lg bg-accent/10 text-center">
+                      <div className="flex items-center justify-center gap-1 mb-0.5">
+                        <Star className="h-3 w-3 text-accent" />
+                        <p className="text-[9px] text-accent font-medium">Top 10%</p>
+                      </div>
+                      <p className="text-lg font-bold text-accent">{stats.topPerformers}</p>
+                    </div>
+                    <div className="p-2 rounded-lg bg-primary/10 text-center">
+                      <div className="flex items-center justify-center gap-1 mb-0.5">
+                        <TrendingUp className="h-3 w-3 text-primary" />
+                        <p className="text-[9px] text-primary font-medium">Avg</p>
+                      </div>
+                      <p className="text-lg font-bold text-primary">{stats.avgScore}</p>
+                    </div>
                   </div>
                   
-                  <ScoreDistributionChart candidates={filteredCandidates} aiQuery={aiSearchQuery} />
+                  <div className="flex-1 min-h-0 overflow-hidden">
+                    <ScoreDistributionChart candidates={filteredCandidates} aiQuery={aiSearchQuery} />
+                  </div>
                 </div>
               </CollapsibleContent>
             </div>
