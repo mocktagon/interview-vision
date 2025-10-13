@@ -69,10 +69,10 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-screen bg-background flex flex-col overflow-hidden">
       {/* Header */}
       <header className="border-b border-border bg-card flex-shrink-0">
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button 
@@ -83,13 +83,13 @@ const Index = () => {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Candidate Intelligence</h1>
-                <p className="text-sm text-muted-foreground mt-1">
+                <h1 className="text-xl font-bold text-foreground">Candidate Intelligence</h1>
+                <p className="text-xs text-muted-foreground mt-0.5">
                   AI-powered insights for smarter hiring decisions
                 </p>
               </div>
             </div>
-            <Button size="lg">
+            <Button size="default" className="h-9">
               Export Report
             </Button>
           </div>
@@ -99,20 +99,20 @@ const Index = () => {
       <main className="flex-1 overflow-hidden">
         <div className="container mx-auto px-6 h-full flex flex-col">
           {/* AI Search Bar */}
-          <div className="py-6 flex-shrink-0">
+          <div className="py-4 flex-shrink-0">
             <div className="relative max-w-4xl mx-auto">
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 rounded-lg blur-xl" />
-              <div className="relative bg-card border-2 border-primary/30 rounded-lg p-4 shadow-lg">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+              <div className="relative bg-card border-2 border-primary/30 rounded-lg p-3 shadow-lg">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-primary/10">
+                    <Sparkles className="h-4 w-4 text-primary animate-pulse" />
                   </div>
                   <div className="flex-1">
                     <Input
-                      placeholder="Ask AI to analyze candidates... (e.g., 'Show top performers with leadership skills' or 'Highlight candidates scoring above 85')"
+                      placeholder="Ask AI to analyze candidates... (e.g., 'Show top performers' or 'Highlight scores above 85')"
                       value={aiSearchQuery}
                       onChange={(e) => setAiSearchQuery(e.target.value)}
-                      className="border-0 bg-transparent text-base focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60"
+                      className="border-0 bg-transparent text-sm focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60"
                     />
                   </div>
                   <Badge className="bg-primary/10 text-primary border-primary/30 gap-1.5">
@@ -121,9 +121,9 @@ const Index = () => {
                   </Badge>
                 </div>
                 {aiSearchQuery && (
-                  <div className="mt-3 pt-3 border-t border-border">
-                    <p className="text-xs text-muted-foreground flex items-center gap-2">
-                      <Sparkles className="h-3 w-3 text-primary" />
+                  <div className="mt-2 pt-2 border-t border-border">
+                    <p className="text-[10px] text-muted-foreground flex items-center gap-1.5">
+                      <Sparkles className="h-2.5 w-2.5 text-primary" />
                       AI analyzing: "{aiSearchQuery}"
                     </p>
                   </div>
@@ -132,11 +132,11 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="flex gap-6 items-start flex-1 min-h-0 pb-6">
+          <div className="flex gap-6 items-start flex-1 min-h-0 pb-4">
             {/* Left Side - Main Content (Scrollable Candidates) */}
             <div className={`transition-all duration-300 ${isAnalyticsPanelOpen ? 'w-[calc(70%-1.5rem)]' : 'w-[calc(100%-3rem)]'} flex flex-col min-h-0`}>
               {/* KPI Cards - Horizontal Row */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 flex-shrink-0">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4 flex-shrink-0">
               <KPICard
                 title="Total Candidates"
                 value={filteredCandidates.length}
@@ -169,7 +169,7 @@ const Index = () => {
               </div>
 
               {/* Search and Filters */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-6 flex-shrink-0">
+              <div className="flex flex-col sm:flex-row gap-3 mb-4 flex-shrink-0">
                 <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -198,12 +198,12 @@ const Index = () => {
             {/* Candidates Grid - Scrollable */}
             <div>
               <div className="mb-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    <LayoutGrid className="h-5 w-5 text-primary" />
-                    <h2 className="text-xl font-semibold">Candidate Profiles</h2>
+                  <div className="flex items-center gap-2 mb-1">
+                    <LayoutGrid className="h-4 w-4 text-primary" />
+                    <h2 className="text-base font-semibold">Candidate Profiles</h2>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Comprehensive candidate information with multi-stage assessment scores
+                  <p className="text-xs text-muted-foreground">
+                    Multi-stage assessment with AI-powered insights
                   </p>
                 </div>
                 
@@ -227,8 +227,8 @@ const Index = () => {
 
             {/* Right Side - Analytics Panel (Fixed & Collapsible) */}
             <div className={`transition-all duration-300 flex-shrink-0 ${isAnalyticsPanelOpen ? 'w-[30%]' : 'w-12'}`}>
-              <div className="h-full sticky top-0 py-6">
-                <Collapsible open={isAnalyticsPanelOpen} onOpenChange={setIsAnalyticsPanelOpen} className="h-full">
+              <div className="h-full flex flex-col">
+                <Collapsible open={isAnalyticsPanelOpen} onOpenChange={setIsAnalyticsPanelOpen} className="h-full flex flex-col">
                   <div className="relative h-full">
                     <CollapsibleTrigger asChild>
                       <Button
