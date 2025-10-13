@@ -9,7 +9,14 @@ export const mockLists: CandidateList[] = [
     createdDate: "2024-01-15",
     lastUpdated: "2024-03-10",
     candidates: mockCandidates.slice(0, 3),
-    color: "hsl(var(--primary))"
+    color: "hsl(var(--primary))",
+    aiInsights: {
+      summary: "High skill alignment with 85% technical proficiency match",
+      topSkill: "React & TypeScript",
+      diversityScore: 82,
+      hiringVelocity: "+15% faster than average",
+      recommendation: "Strong team fit, prioritize for immediate interviews"
+    }
   },
   {
     id: "2",
@@ -18,7 +25,14 @@ export const mockLists: CandidateList[] = [
     createdDate: "2024-02-01",
     lastUpdated: "2024-03-12",
     candidates: mockCandidates.slice(3, 6),
-    color: "hsl(var(--accent))"
+    color: "hsl(var(--accent))",
+    aiInsights: {
+      summary: "Exceptional leadership potential with proven track record",
+      topSkill: "Strategic Thinking",
+      diversityScore: 90,
+      hiringVelocity: "+8% above target",
+      recommendation: "Consider for C-level pipeline development"
+    }
   },
   {
     id: "3",
@@ -27,6 +41,13 @@ export const mockLists: CandidateList[] = [
     createdDate: "2024-03-01",
     lastUpdated: "2024-03-13",
     candidates: mockCandidates.slice(6, 10),
-    color: "hsl(var(--success))"
+    color: "hsl(var(--success))",
+    aiInsights: {
+      summary: "Diverse skill set with strong cultural alignment",
+      topSkill: "Full-Stack Development",
+      diversityScore: 88,
+      hiringVelocity: "On track for Q2 goals",
+      recommendation: "Schedule final rounds within 2 weeks"
+    }
   }
 ];

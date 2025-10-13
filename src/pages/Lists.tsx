@@ -7,7 +7,7 @@ import { EmptyListCard } from "@/components/EmptyListCard";
 import { KPICard } from "@/components/KPICard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FolderOpen, Users, Star, CheckCircle, Search, Plus } from "lucide-react";
+import { FolderOpen, Users, Star, CheckCircle, Search, Plus, TrendingUp, Zap } from "lucide-react";
 
 const Lists = () => {
   const navigate = useNavigate();
@@ -23,6 +23,9 @@ const Lists = () => {
   const totalLists = lists.length;
   const avgListSize = totalLists > 0 ? Math.round(totalCandidates / totalLists) : 0;
   const allStarred = lists.reduce((sum, list) => sum + list.candidates.filter(c => c.starred).length, 0);
+  const avgDiversity = totalLists > 0 
+    ? Math.round(lists.reduce((sum, list) => sum + (list.aiInsights?.diversityScore || 0), 0) / totalLists) 
+    : 0;
 
   const handleCreateList = () => {
     // TODO: Open create list dialog
@@ -55,7 +58,7 @@ const Lists = () => {
 
       <main className="container mx-auto px-6 py-8 space-y-8">
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           <KPICard
             title="Total Lists"
             value={totalLists}
@@ -71,18 +74,26 @@ const Lists = () => {
             variant="primary"
           />
           <KPICard
-            title="Avg List Size"
-            value={avgListSize}
-            subtitle="Candidates per list"
-            icon={CheckCircle}
+            title="Avg Diversity"
+            value={`${avgDiversity}%`}
+            subtitle="Inclusion score"
+            icon={Zap}
+            variant="accent"
+            trend={{ value: 8, isPositive: true }}
+          />
+          <KPICard
+            title="Top Performers"
+            value={allStarred}
+            subtitle="Starred talents"
+            icon={Star}
             variant="success"
           />
           <KPICard
-            title="Starred"
-            value={allStarred}
-            subtitle="Top performers"
-            icon={Star}
-            variant="accent"
+            title="Avg List Size"
+            value={avgListSize}
+            subtitle="Candidates per list"
+            icon={TrendingUp}
+            variant="default"
           />
         </div>
 

@@ -8,4 +8,11 @@ export interface CandidateList {
   lastUpdated: string;
   candidates: Candidate[];
   color?: string;
+  aiInsights?: {
+    summary: string;
+    topSkill: string;
+    diversityScore: number;
+    hiringVelocity: string;
+    recommendation: string;
+  };
 }
