@@ -87,28 +87,28 @@ const Index = () => {
         <div className={`container mx-auto h-full flex flex-col transition-all duration-300 ${isAnalyticsPanelOpen ? 'pr-[calc(30%+1.5rem)]' : 'pr-16'}`} style={{ paddingLeft: '1.5rem', paddingRight: isAnalyticsPanelOpen ? 'calc(30% + 1.5rem)' : '4rem' }}>
           {/* Greeting - Vanishes on scroll */}
           {!isScrolled && (
-            <div className="py-3 flex-shrink-0 transition-all duration-300">
-              <h1 className="text-xl font-semibold text-foreground">Hi, Recruiter</h1>
+            <div className="py-4 flex-shrink-0 transition-all duration-300">
+              <h1 className="text-2xl font-semibold text-foreground">Hi John</h1>
             </div>
           )}
           
           {/* AI Search Bar - Sticky */}
-          <div className={`flex-shrink-0 transition-all duration-300 sticky top-0 bg-background/95 backdrop-blur-sm z-20 ${isScrolled ? 'py-3' : 'py-2'}`}>
+          <div className={`flex-shrink-0 transition-all duration-300 sticky top-0 bg-background/95 backdrop-blur-sm z-20 ${isScrolled ? 'py-3 shadow-sm' : 'py-2'}`}>
             <div className="relative max-w-4xl mx-auto">
-              {!isScrolled && <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 rounded-lg blur-xl" />}
-              <div className={`relative bg-card border-2 border-primary/30 rounded-lg shadow-lg transition-all duration-300 ${isScrolled ? 'p-2.5' : 'p-3'}`}>
-                <div className={`flex items-center transition-all duration-300 ${isScrolled ? 'gap-1.5' : 'gap-2'}`}>
+              {!isScrolled && <div className="absolute inset-0 bg-primary/10 rounded-lg blur-sm" />}
+              <div className={`relative bg-card border border-border rounded-lg shadow-sm transition-all duration-300 ${isScrolled ? 'p-2.5' : 'p-3'}`}>
+                <div className={`flex items-center transition-all duration-300 ${isScrolled ? 'gap-2' : 'gap-3'}`}>
                   {!isScrolled && (
-                    <div className="p-1.5 rounded-lg bg-primary/10">
-                      <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <Sparkles className="h-4 w-4 text-primary" />
                     </div>
                   )}
                   <div className="flex-1">
                     <Input
-                      placeholder={isScrolled ? "Ask AI..." : "Ask AI to analyze candidates... (e.g., 'Show top performers' or 'Highlight scores above 85')"}
+                      placeholder={isScrolled ? "Ask AI..." : "Ask AI to analyze candidates..."}
                       value={aiSearchQuery}
                       onChange={(e) => setAiSearchQuery(e.target.value)}
-                      className={`border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60 transition-all duration-300 ${isScrolled ? 'text-xs' : 'text-sm'}`}
+                      className={`border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60 transition-all duration-300 ${isScrolled ? 'text-sm' : 'text-base'}`}
                     />
                   </div>
                   <Badge className="bg-primary/10 text-primary border-primary/30 gap-1.5">
@@ -160,13 +160,13 @@ const Index = () => {
 
               {/* Candidates Grid - Scrollable Content */}
               <div className="flex-1 pb-4">
-                <div className="mb-3 flex-shrink-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <LayoutGrid className="h-4 w-4 text-primary" />
-                    <h2 className="text-base font-semibold">Candidate Profiles</h2>
+                <div className="mb-4 flex-shrink-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <LayoutGrid className="h-5 w-5 text-primary" />
+                    <h2 className="text-lg font-semibold">Candidates</h2>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Multi-stage assessment with AI-powered insights
+                  <p className="text-sm text-muted-foreground">
+                    {filteredCandidates.length} candidates with multi-stage AI assessments
                   </p>
                 </div>
                 
@@ -191,84 +191,64 @@ const Index = () => {
         </div>
 
         {/* Right Side - Analytics Panel (Full Height Sidebar) */}
-        <div className={`fixed top-0 right-0 h-screen bg-card border-l border-border transition-all duration-300 z-20 shadow-xl ${isAnalyticsPanelOpen ? 'w-[30%]' : 'w-12'}`}>
-          <Collapsible open={isAnalyticsPanelOpen} onOpenChange={setIsAnalyticsPanelOpen} className="h-full">
-            <div className="relative h-full flex flex-col">
-              {/* Collapse/Expand Tab */}
-              <CollapsibleTrigger asChild>
-                <button
-                  className={`absolute top-1/2 -translate-y-1/2 h-40 bg-card border border-border hover:bg-accent/10 transition-all duration-300 flex items-center justify-center group shadow-lg ${
-                    isAnalyticsPanelOpen 
-                      ? '-left-10 w-10 rounded-l-xl' 
-                      : '-left-12 w-12 rounded-l-lg'
-                  }`}
-                >
-                  <div className="relative flex items-center justify-center w-full h-full">
-                    <span 
-                      className={`font-semibold text-muted-foreground group-hover:text-primary transition-colors whitespace-nowrap ${
-                        isAnalyticsPanelOpen ? 'text-xs' : 'text-sm'
-                      }`}
-                      style={{ 
-                        writingMode: 'vertical-rl',
-                        textOrientation: 'mixed',
-                        transform: 'rotate(180deg)'
-                      }}
-                    >
-                      {isAnalyticsPanelOpen ? (
-                        <>Smart Insights →</>
-                      ) : (
-                        <>← Smart Insights</>
-                      )}
-                    </span>
+        <div className={`fixed top-0 right-0 h-screen bg-card border-l border-border transition-all duration-300 z-30 ${isAnalyticsPanelOpen ? 'w-[30%]' : 'w-0'}`}>
+          {/* Toggle Button - Top Right Corner */}
+          <button
+            onClick={() => setIsAnalyticsPanelOpen(!isAnalyticsPanelOpen)}
+            className="absolute top-4 -left-10 h-10 w-10 bg-card border border-border rounded-lg hover:bg-accent/10 hover:border-primary/30 transition-all duration-300 flex items-center justify-center shadow-md group"
+          >
+            {isAnalyticsPanelOpen ? (
+              <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+            ) : (
+              <ChevronLeft className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+            )}
+          </button>
+          
+          {isAnalyticsPanelOpen && (
+            <div className="h-full flex flex-col overflow-hidden">
+              <div className="flex-1 flex flex-col p-4 overflow-hidden">
+                <div className="mb-4 text-center flex-shrink-0">
+                  <h3 className="text-base font-semibold text-foreground">Analytics</h3>
+                </div>
+                
+                {/* Compact KPI Cards */}
+                <div className="grid grid-cols-2 gap-2 mb-4 flex-shrink-0">
+                  <div className="p-2.5 rounded-lg bg-muted/30 text-center">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <Users className="h-3.5 w-3.5 text-muted-foreground" />
+                      <p className="text-xs text-muted-foreground font-medium">Total</p>
+                    </div>
+                    <p className="text-xl font-bold text-foreground">{filteredCandidates.length}</p>
                   </div>
-                </button>
-              </CollapsibleTrigger>
-              
-              <CollapsibleContent className="animate-accordion-down h-full flex flex-col overflow-hidden">
-                <div className="flex-1 flex flex-col p-3 overflow-hidden">
-                  <div className="mb-3 text-center flex-shrink-0">
-                    <h3 className="text-xs font-semibold text-foreground">Smart Insights</h3>
+                  <div className="p-2.5 rounded-lg bg-success/10 text-center">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <CheckCircle className="h-3.5 w-3.5 text-success" />
+                      <p className="text-xs text-success font-medium">Eligible</p>
+                    </div>
+                    <p className="text-xl font-bold text-success">{stats.eligible}</p>
                   </div>
-                  
-                  {/* Compact KPI Cards in Analytics Panel */}
-                  <div className="grid grid-cols-2 gap-1.5 mb-3 flex-shrink-0">
-                    <div className="p-2 rounded-lg bg-muted/30 text-center">
-                      <div className="flex items-center justify-center gap-1 mb-0.5">
-                        <Users className="h-3 w-3 text-muted-foreground" />
-                        <p className="text-[9px] text-muted-foreground font-medium">Total</p>
-                      </div>
-                      <p className="text-lg font-bold text-foreground">{filteredCandidates.length}</p>
+                  <div className="p-2.5 rounded-lg bg-accent/10 text-center">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <Star className="h-3.5 w-3.5 text-accent" />
+                      <p className="text-xs text-accent font-medium">Top 10%</p>
                     </div>
-                    <div className="p-2 rounded-lg bg-success/10 text-center">
-                      <div className="flex items-center justify-center gap-1 mb-0.5">
-                        <CheckCircle className="h-3 w-3 text-success" />
-                        <p className="text-[9px] text-success font-medium">Eligible</p>
-                      </div>
-                      <p className="text-lg font-bold text-success">{stats.eligible}</p>
-                    </div>
-                    <div className="p-2 rounded-lg bg-accent/10 text-center">
-                      <div className="flex items-center justify-center gap-1 mb-0.5">
-                        <Star className="h-3 w-3 text-accent" />
-                        <p className="text-[9px] text-accent font-medium">Top 10%</p>
-                      </div>
-                      <p className="text-lg font-bold text-accent">{stats.topPerformers}</p>
-                    </div>
-                    <div className="p-2 rounded-lg bg-primary/10 text-center">
-                      <div className="flex items-center justify-center gap-1 mb-0.5">
-                        <TrendingUp className="h-3 w-3 text-primary" />
-                        <p className="text-[9px] text-primary font-medium">Avg</p>
-                      </div>
-                      <p className="text-lg font-bold text-primary">{stats.avgScore}</p>
-                    </div>
+                    <p className="text-xl font-bold text-accent">{stats.topPerformers}</p>
                   </div>
-                  
-                  <div className="flex-1 min-h-0 overflow-hidden">
-                    <ScoreDistributionChart candidates={filteredCandidates} aiQuery={aiSearchQuery} />
+                  <div className="p-2.5 rounded-lg bg-primary/10 text-center">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <TrendingUp className="h-3.5 w-3.5 text-primary" />
+                      <p className="text-xs text-primary font-medium">Avg Score</p>
+                    </div>
+                    <p className="text-xl font-bold text-primary">{stats.avgScore}</p>
                   </div>
                 </div>
-              </CollapsibleContent>
+                
+                <div className="flex-1 min-h-0 overflow-hidden">
+                  <ScoreDistributionChart candidates={filteredCandidates} aiQuery={aiSearchQuery} />
+                </div>
+              </div>
             </div>
-          </Collapsible>
+          )}
         </div>
       </main>
 

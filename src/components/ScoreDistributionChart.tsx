@@ -114,16 +114,12 @@ export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributio
           <AreaChart data={kdeData} margin={{ top: 5, right: 5, left: -10, bottom: 5 }}>
             <defs>
               <linearGradient id="aiDensityGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.6}/>
+                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
                 <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.05}/>
               </linearGradient>
               <linearGradient id="atsDensityGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.4}/>
+                <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.3}/>
                 <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0.05}/>
-              </linearGradient>
-              <linearGradient id="starredGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--warning))" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="hsl(var(--warning))" stopOpacity={0}/>
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
@@ -175,18 +171,7 @@ export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributio
               name="ATS"
             />
             
-            {/* Starred candidates density */}
-            <Area
-              type="monotone"
-              dataKey="starredDensity"
-              stroke="hsl(var(--warning))"
-              strokeWidth={1.5}
-              strokeDasharray="2 2"
-              fill="url(#starredGradient)"
-              name="Top Performers"
-            />
-            
-            {/* FunnelHQ Analysis - more discriminative */}
+            {/* FunnelHQ Analysis */}
             <Area
               type="monotone"
               dataKey="aiDensity"
