@@ -232,17 +232,20 @@ const Index = () => {
           <Collapsible open={isAnalyticsPanelOpen} onOpenChange={setIsAnalyticsPanelOpen} className="h-full">
             <div className="relative h-full flex flex-col">
               <CollapsibleTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="absolute -left-6 top-20 z-10 h-8 w-8 rounded-full border-2 bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
+                <button
+                  className="absolute -left-12 top-1/2 -translate-y-1/2 h-32 w-12 bg-card border border-border rounded-l-lg hover:bg-primary/5 transition-all duration-300 flex items-center justify-center group shadow-md"
                 >
-                  {isAnalyticsPanelOpen ? (
-                    <ChevronRight className="h-4 w-4" />
-                  ) : (
-                    <ChevronLeft className="h-4 w-4" />
-                  )}
-                </Button>
+                  <span 
+                    className="text-xs font-semibold text-muted-foreground group-hover:text-primary transition-colors whitespace-nowrap"
+                    style={{ 
+                      writingMode: 'vertical-rl',
+                      textOrientation: 'mixed',
+                      transform: 'rotate(180deg)'
+                    }}
+                  >
+                    Smart Insights
+                  </span>
+                </button>
               </CollapsibleTrigger>
               
               <CollapsibleContent className="animate-accordion-down h-full flex flex-col">
