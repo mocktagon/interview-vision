@@ -24,10 +24,13 @@ import {
   LayoutGrid,
   ArrowLeft,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Sparkles,
+  Zap
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Badge } from "@/components/ui/badge";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -36,6 +39,7 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [stageFilter, setStageFilter] = useState<string>("all");
   const [isAnalyticsPanelOpen, setIsAnalyticsPanelOpen] = useState(true);
+  const [aiSearchQuery, setAiSearchQuery] = useState("");
 
   const filteredCandidates = useMemo(() => {
     return mockCandidates.filter(candidate => {
@@ -93,6 +97,40 @@ const Index = () => {
       </header>
 
       <main className="container mx-auto px-6 py-8">
+        {/* AI Search Bar */}
+        <div className="mb-6 relative">
+          <div className="relative max-w-4xl mx-auto">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 rounded-lg blur-xl" />
+            <div className="relative bg-card border-2 border-primary/30 rounded-lg p-4 shadow-lg">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    placeholder="Ask AI to analyze candidates... (e.g., 'Show top performers with leadership skills' or 'Highlight candidates scoring above 85')"
+                    value={aiSearchQuery}
+                    onChange={(e) => setAiSearchQuery(e.target.value)}
+                    className="border-0 bg-transparent text-base focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60"
+                  />
+                </div>
+                <Badge className="bg-primary/10 text-primary border-primary/30 gap-1.5">
+                  <Zap className="h-3 w-3" />
+                  AI Powered
+                </Badge>
+              </div>
+              {aiSearchQuery && (
+                <div className="mt-3 pt-3 border-t border-border">
+                  <p className="text-xs text-muted-foreground flex items-center gap-2">
+                    <Sparkles className="h-3 w-3 text-primary" />
+                    AI analyzing: "{aiSearchQuery}"
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
         <div className="flex gap-6 items-start relative">
           {/* Left Side - Main Content (Scrollable Candidates) */}
           <div className={`transition-all duration-300 ${isAnalyticsPanelOpen ? 'w-[calc(70%-1.5rem)]' : 'w-[calc(100%-3rem)]'} space-y-6`}>
@@ -207,7 +245,7 @@ const Index = () => {
                   
                   <CollapsibleContent className="animate-accordion-down">
                     <div className="max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 space-y-4">
-                      <ScoreDistributionChart candidates={filteredCandidates} />
+                      <ScoreDistributionChart candidates={filteredCandidates} aiQuery={aiSearchQuery} />
                     </div>
                   </CollapsibleContent>
                 </div>

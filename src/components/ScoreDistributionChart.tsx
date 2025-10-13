@@ -5,9 +5,10 @@ import { Star, TrendingUp } from "lucide-react";
 
 interface ScoreDistributionChartProps {
   candidates: Candidate[];
+  aiQuery?: string;
 }
 
-export const ScoreDistributionChart = ({ candidates }: ScoreDistributionChartProps) => {
+export const ScoreDistributionChart = ({ candidates, aiQuery }: ScoreDistributionChartProps) => {
   // Generate dummy ATS scores - clustered high with low variance (showing they're not discriminative)
   const atsScores = candidates.map(() => {
     // ATS scores tend to cluster between 75-95, showing poor discrimination
@@ -79,10 +80,16 @@ export const ScoreDistributionChart = ({ candidates }: ScoreDistributionChartPro
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>AI Interview vs ATS Scoring Distribution</CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">
+            <CardTitle className="text-base">AI Interview vs ATS Scoring Distribution</CardTitle>
+            <p className="text-xs text-muted-foreground mt-1">
               Kernel density comparison: AI analysis (blue) vs traditional ATS resume scoring (red)
             </p>
+            {aiQuery && (
+              <div className="mt-2 flex items-center gap-2 text-xs">
+                <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                <span className="text-primary font-medium">AI analyzing: {aiQuery}</span>
+              </div>
+            )}
           </div>
           <div className="flex gap-3">
             <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-success/10 border border-success/20">
