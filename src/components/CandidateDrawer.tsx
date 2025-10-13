@@ -30,7 +30,11 @@ import {
   AlertCircle,
   CheckCircle2,
   ThumbsUp,
-  Brain
+  Brain,
+  Award,
+  Quote,
+  Users2,
+  Zap
 } from "lucide-react";
 import { SkillsRadar } from "./SkillsRadar";
 
@@ -195,6 +199,115 @@ export function CandidateDrawer({ candidate, open, onOpenChange }: CandidateDraw
                 )}
               </div>
             </Card>
+
+            {/* Social & LinkedIn Insights */}
+            {candidate.socials?.linkedinInsights && (
+              <Card className="p-4 bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
+                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                  <Linkedin className="h-5 w-5 text-primary" />
+                  LinkedIn Insights
+                </h3>
+                
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="text-center p-2 bg-background/50 rounded-lg">
+                    <div className="text-xs text-muted-foreground mb-1">Activity Score</div>
+                    <div className="text-xl font-bold text-primary">
+                      {candidate.socials.linkedinInsights.activityScore}
+                    </div>
+                  </div>
+                  <div className="text-center p-2 bg-background/50 rounded-lg">
+                    <div className="text-xs text-muted-foreground mb-1">Followers</div>
+                    <div className="text-xl font-bold text-primary">
+                      {candidate.socials.linkedinInsights.followerCount?.toLocaleString()}
+                    </div>
+                  </div>
+                  <div className="text-center p-2 bg-background/50 rounded-lg">
+                    <div className="text-xs text-muted-foreground mb-1">Influence</div>
+                    <div className="text-sm font-bold text-accent">
+                      {candidate.socials.linkedinInsights.influenceLevel}
+                    </div>
+                  </div>
+                </div>
+
+                {candidate.socials.linkedinInsights.endorsements.length > 0 && (
+                  <div className="mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Award className="h-4 w-4 text-accent" />
+                      <h4 className="font-medium text-sm">Top Endorsements</h4>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {candidate.socials.linkedinInsights.endorsements.map((endorsement, idx) => (
+                        <Badge key={idx} variant="secondary" className="text-xs">
+                          {endorsement}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {candidate.socials.linkedinInsights.recommendations.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Quote className="h-4 w-4 text-primary" />
+                      <h4 className="font-medium text-sm">LinkedIn Recommendations</h4>
+                    </div>
+                    <div className="space-y-3">
+                      {candidate.socials.linkedinInsights.recommendations.map((rec, idx) => (
+                        <div key={idx} className="p-3 bg-background/70 rounded-lg border border-border/50">
+                          <div className="flex items-start gap-2 mb-2">
+                            <Users2 className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-sm">{rec.name}</p>
+                              <p className="text-xs text-muted-foreground">{rec.title}</p>
+                              <p className="text-xs text-muted-foreground italic">{rec.relationship}</p>
+                            </div>
+                          </div>
+                          <p className="text-sm text-foreground/80 italic pl-6 border-l-2 border-primary/30">
+                            "{rec.quote}"
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </Card>
+            )}
+
+            {candidate.socials?.githubInsights && (
+              <Card className="p-4 bg-gradient-to-r from-foreground/5 to-muted/10 border-border">
+                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                  <Github className="h-5 w-5" />
+                  GitHub Activity
+                </h3>
+                
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  <div className="text-center p-2 bg-background/50 rounded-lg">
+                    <div className="text-xs text-muted-foreground mb-1">Contributions</div>
+                    <div className="text-xl font-bold">{candidate.socials.githubInsights.contributions}</div>
+                  </div>
+                  <div className="text-center p-2 bg-background/50 rounded-lg">
+                    <div className="text-xs text-muted-foreground mb-1">Stars</div>
+                    <div className="text-xl font-bold">{candidate.socials.githubInsights.starredRepos}</div>
+                  </div>
+                  <div className="text-center p-2 bg-background/50 rounded-lg">
+                    <div className="text-xs text-muted-foreground mb-1">Influence</div>
+                    <div className="text-sm font-bold text-success">{candidate.socials.githubInsights.influence}</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap className="h-4 w-4 text-accent" />
+                  <h4 className="font-medium text-sm">Top Languages</h4>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {candidate.socials.githubInsights.topLanguages.map((lang, idx) => (
+                    <Badge key={idx} variant="outline" className="text-xs">
+                      {lang}
+                    </Badge>
+                  ))}
+                </div>
+              </Card>
+            )}
 
             {candidate.eligibleForRoles && candidate.eligibleForRoles.length > 0 && (
               <Card className="p-4">

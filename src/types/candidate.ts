@@ -27,6 +27,24 @@ export interface Candidate {
     linkedin?: string;
     github?: string;
     portfolio?: string;
+    linkedinInsights?: {
+      endorsements: string[];
+      recommendations: {
+        name: string;
+        title: string;
+        relationship: string;
+        quote: string;
+      }[];
+      activityScore: number;
+      followerCount?: number;
+      influenceLevel?: string;
+    };
+    githubInsights?: {
+      contributions: number;
+      topLanguages: string[];
+      starredRepos: number;
+      influence: string;
+    };
   };
   smartInsights?: {
     personality: string[];

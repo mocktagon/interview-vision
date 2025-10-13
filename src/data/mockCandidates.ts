@@ -31,7 +31,27 @@ export const mockCandidates: Candidate[] = [
     notes: "Exceptional candidate with strong technical skills and leadership potential",
     socials: {
       linkedin: "https://linkedin.com/in/sarahjohnson",
-      portfolio: "https://sarahjohnson.com"
+      portfolio: "https://sarahjohnson.com",
+      linkedinInsights: {
+        endorsements: ["Financial Reporting", "Leadership", "Audit Management", "Tax Strategy"],
+        recommendations: [
+          {
+            name: "Jennifer Martinez",
+            title: "CFO at TechCorp",
+            relationship: "Manager",
+            quote: "Sarah's attention to detail and strategic thinking made her invaluable to our finance team. She consistently delivered complex reports ahead of schedule."
+          },
+          {
+            name: "Robert Chen",
+            title: "Senior Director, Finance",
+            relationship: "Colleague",
+            quote: "Working with Sarah was a pleasure. Her expertise in GAAP compliance and ability to simplify complex financial concepts helped our entire team."
+          }
+        ],
+        activityScore: 92,
+        followerCount: 3400,
+        influenceLevel: "High"
+      }
     },
     smartInsights: {
       personality: ["Detail-oriented", "Strategic thinker", "Strong communicator", "Team player"],
