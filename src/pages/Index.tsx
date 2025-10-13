@@ -85,10 +85,33 @@ const Index = () => {
     <div className="h-screen bg-background flex flex-col overflow-hidden relative">
       <main className="flex-1 overflow-hidden relative">
         <div className={`container mx-auto h-full flex flex-col transition-all duration-300 ${isAnalyticsPanelOpen ? 'pr-[calc(30%+1.5rem)]' : 'pr-16'}`} style={{ paddingLeft: '1.5rem', paddingRight: isAnalyticsPanelOpen ? 'calc(30% + 1.5rem)' : '4rem' }}>
-          {/* Greeting - Vanishes on scroll */}
+          {/* Back Button & Greeting - Vanishes on scroll */}
           {!isScrolled && (
             <div className="py-4 flex-shrink-0 transition-all duration-300">
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/")}
+                className="mb-2 -ml-2"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Lists
+              </Button>
               <h1 className="text-2xl font-semibold text-foreground">Hi John</h1>
+            </div>
+          )}
+          
+          {/* Back Button - Sticky when scrolled */}
+          {isScrolled && (
+            <div className="flex-shrink-0 sticky top-0 bg-background/95 backdrop-blur-sm z-20 py-2">
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/")}
+                className="-ml-2"
+                size="sm"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
+              </Button>
             </div>
           )}
           
