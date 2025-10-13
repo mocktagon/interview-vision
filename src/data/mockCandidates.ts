@@ -70,7 +70,13 @@ export const mockCandidates: Candidate[] = [
         summary: "Excellent cultural fit. Shows enthusiasm for the role and company mission. Strong communication skills.",
         recommendation: "strong-yes"
       }
-    ]
+    ],
+    psychAssessment: {
+      animal: 'owl',
+      color: 'blue',
+      environment: 'city',
+      symbol: 'compass'
+    }
   },
   {
     id: "2",
@@ -132,7 +138,13 @@ export const mockCandidates: Candidate[] = [
         summary: "Completed financial modeling case study efficiently. Showed creativity in approach.",
         recommendation: "strong-yes"
       }
-    ]
+    ],
+    psychAssessment: {
+      animal: 'dolphin',
+      color: 'green',
+      environment: 'beach',
+      symbol: 'bridge'
+    }
   },
   {
     id: "3",

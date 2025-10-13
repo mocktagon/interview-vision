@@ -29,7 +29,8 @@ import {
   TrendingUp,
   AlertCircle,
   CheckCircle2,
-  ThumbsUp
+  ThumbsUp,
+  Brain
 } from "lucide-react";
 import { SkillsRadar } from "./SkillsRadar";
 
@@ -121,9 +122,10 @@ export function CandidateDrawer({ candidate, open, onOpenChange }: CandidateDraw
         </SheetHeader>
 
         <Tabs defaultValue="overview" className="mt-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="insights">AI Insights</TabsTrigger>
+            <TabsTrigger value="psych">Psych</TabsTrigger>
             <TabsTrigger value="interview">Interviews</TabsTrigger>
             <TabsTrigger value="skills">Skills</TabsTrigger>
           </TabsList>
@@ -308,6 +310,111 @@ export function CandidateDrawer({ candidate, open, onOpenChange }: CandidateDraw
                   </div>
                 </Card>
               </>
+            )}
+          </TabsContent>
+
+          <TabsContent value="psych" className="space-y-6 mt-6">
+            {candidate.psychAssessment ? (
+              <>
+                <Card className="p-4 bg-accent/5 border-accent/20">
+                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                    <Brain className="h-5 w-5 text-accent" />
+                    Personality Assessment
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Based on a 4-question psychological assessment that reveals work style and personality traits.
+                  </p>
+                </Card>
+
+                <Card className="p-4">
+                  <h4 className="font-semibold mb-3">Animal Choice</h4>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-3xl">
+                      {candidate.psychAssessment.animal === 'lion' && '🦁'}
+                      {candidate.psychAssessment.animal === 'owl' && '🦉'}
+                      {candidate.psychAssessment.animal === 'dolphin' && '🐬'}
+                      {candidate.psychAssessment.animal === 'fox' && '🦊'}
+                    </span>
+                    <div>
+                      <p className="font-medium text-sm capitalize">{candidate.psychAssessment.animal}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {candidate.psychAssessment.animal === 'lion' && 'Natural Leader - Bold, confident, takes charge'}
+                        {candidate.psychAssessment.animal === 'owl' && 'Analytical Thinker - Wise, detail-oriented, observant'}
+                        {candidate.psychAssessment.animal === 'dolphin' && 'Team Player - Social, collaborative, empathetic'}
+                        {candidate.psychAssessment.animal === 'fox' && 'Strategic Adapter - Clever, resourceful, agile'}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+
+                <Card className="p-4">
+                  <h4 className="font-semibold mb-3">Color Preference</h4>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className={`w-8 h-8 rounded-full ${
+                      candidate.psychAssessment.color === 'red' ? 'bg-red-500' :
+                      candidate.psychAssessment.color === 'blue' ? 'bg-blue-500' :
+                      candidate.psychAssessment.color === 'green' ? 'bg-green-500' :
+                      'bg-yellow-500'
+                    }`} />
+                    <div>
+                      <p className="font-medium text-sm capitalize">{candidate.psychAssessment.color}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {candidate.psychAssessment.color === 'red' && 'Action-Oriented - Energetic, passionate, results-driven'}
+                        {candidate.psychAssessment.color === 'blue' && 'Detail-Focused - Calm, analytical, systematic'}
+                        {candidate.psychAssessment.color === 'green' && 'Balanced Approach - Harmonious, stable, growth-minded'}
+                        {candidate.psychAssessment.color === 'yellow' && 'Innovative Spirit - Optimistic, creative, enthusiastic'}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+
+                <Card className="p-4">
+                  <h4 className="font-semibold mb-3">Environment Choice</h4>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-3xl">
+                      {candidate.psychAssessment.environment === 'mountain' && '⛰️'}
+                      {candidate.psychAssessment.environment === 'beach' && '🏖️'}
+                      {candidate.psychAssessment.environment === 'forest' && '🌲'}
+                      {candidate.psychAssessment.environment === 'city' && '🏙️'}
+                    </span>
+                    <div>
+                      <p className="font-medium text-sm capitalize">{candidate.psychAssessment.environment}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {candidate.psychAssessment.environment === 'mountain' && 'Goal-Driven - Ambitious, resilient, loves challenges'}
+                        {candidate.psychAssessment.environment === 'beach' && 'Flexible & Calm - Adaptable, relaxed, goes with flow'}
+                        {candidate.psychAssessment.environment === 'forest' && 'Growth-Minded - Patient, nurturing, values development'}
+                        {candidate.psychAssessment.environment === 'city' && 'Fast-Paced - Dynamic, energetic, thrives in action'}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+
+                <Card className="p-4">
+                  <h4 className="font-semibold mb-3">Symbol Choice</h4>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-3xl">
+                      {candidate.psychAssessment.symbol === 'compass' && '🧭'}
+                      {candidate.psychAssessment.symbol === 'bridge' && '🌉'}
+                      {candidate.psychAssessment.symbol === 'tree' && '🌳'}
+                      {candidate.psychAssessment.symbol === 'puzzle' && '🧩'}
+                    </span>
+                    <div>
+                      <p className="font-medium text-sm capitalize">{candidate.psychAssessment.symbol}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {candidate.psychAssessment.symbol === 'compass' && 'Direction Seeker - Strategic, focused, values clarity'}
+                        {candidate.psychAssessment.symbol === 'bridge' && 'Connector - Builds relationships, facilitates collaboration'}
+                        {candidate.psychAssessment.symbol === 'tree' && 'Deep Roots - Values tradition, stable, long-term thinker'}
+                        {candidate.psychAssessment.symbol === 'puzzle' && 'Problem Solver - Analytical, loves challenges, detail-oriented'}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              </>
+            ) : (
+              <Card className="p-8 text-center">
+                <Brain className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-50" />
+                <p className="text-muted-foreground">No psychological assessment completed</p>
+              </Card>
             )}
           </TabsContent>
 

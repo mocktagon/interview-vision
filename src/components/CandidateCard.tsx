@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
   Mail, 
   MapPin, 
@@ -11,7 +12,8 @@ import {
   Star,
   Eye,
   Calendar,
-  Briefcase
+  Briefcase,
+  Circle
 } from "lucide-react";
 
 interface CandidateCardProps {
@@ -35,6 +37,40 @@ const stageLabels: Record<string, string> = {
   final: 'Final Review',
   selected: 'Selected',
   rejected: 'Rejected'
+};
+
+const psychColors: Record<string, string> = {
+  red: 'text-red-500',
+  blue: 'text-blue-500',
+  green: 'text-green-500',
+  yellow: 'text-yellow-500'
+};
+
+const psychLabels = {
+  animal: {
+    lion: 'Lion - Natural Leader',
+    owl: 'Owl - Analytical Thinker',
+    dolphin: 'Dolphin - Team Player',
+    fox: 'Fox - Strategic Adapter'
+  },
+  color: {
+    red: 'Red - Action-Oriented',
+    blue: 'Blue - Detail-Focused',
+    green: 'Green - Balanced Approach',
+    yellow: 'Yellow - Innovative Spirit'
+  },
+  environment: {
+    mountain: 'Mountain - Goal-Driven',
+    beach: 'Beach - Flexible & Calm',
+    forest: 'Forest - Growth-Minded',
+    city: 'City - Fast-Paced'
+  },
+  symbol: {
+    compass: 'Compass - Direction Seeker',
+    bridge: 'Bridge - Connector',
+    tree: 'Tree - Deep Roots',
+    puzzle: 'Puzzle - Problem Solver'
+  }
 };
 
 export function CandidateCard({ candidate, onViewDetails }: CandidateCardProps) {
@@ -159,6 +195,76 @@ export function CandidateCard({ candidate, onViewDetails }: CandidateCardProps) 
               </Badge>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Psych Assessment */}
+      {candidate.psychAssessment && (
+        <div className="pt-3 border-t border-border">
+          <p className="text-xs font-medium text-muted-foreground mb-2">Personality Profile</p>
+          <TooltipProvider>
+            <div className="flex items-center gap-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-1 text-xs bg-secondary/50 px-2 py-1 rounded">
+                    <span className="text-base">🦁🦉🐬🦊</span>
+                    <span className="font-medium">
+                      {candidate.psychAssessment.animal === 'lion' && '🦁'}
+                      {candidate.psychAssessment.animal === 'owl' && '🦉'}
+                      {candidate.psychAssessment.animal === 'dolphin' && '🐬'}
+                      {candidate.psychAssessment.animal === 'fox' && '🦊'}
+                    </span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">{psychLabels.animal[candidate.psychAssessment.animal]}</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center justify-center w-7 h-7 rounded bg-secondary/50">
+                    <Circle className={`h-4 w-4 fill-current ${psychColors[candidate.psychAssessment.color]}`} />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">{psychLabels.color[candidate.psychAssessment.color]}</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-1 text-xs bg-secondary/50 px-2 py-1 rounded">
+                    <span className="text-base">
+                      {candidate.psychAssessment.environment === 'mountain' && '⛰️'}
+                      {candidate.psychAssessment.environment === 'beach' && '🏖️'}
+                      {candidate.psychAssessment.environment === 'forest' && '🌲'}
+                      {candidate.psychAssessment.environment === 'city' && '🏙️'}
+                    </span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">{psychLabels.environment[candidate.psychAssessment.environment]}</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-1 text-xs bg-secondary/50 px-2 py-1 rounded">
+                    <span className="text-base">
+                      {candidate.psychAssessment.symbol === 'compass' && '🧭'}
+                      {candidate.psychAssessment.symbol === 'bridge' && '🌉'}
+                      {candidate.psychAssessment.symbol === 'tree' && '🌳'}
+                      {candidate.psychAssessment.symbol === 'puzzle' && '🧩'}
+                    </span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">{psychLabels.symbol[candidate.psychAssessment.symbol]}</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          </TooltipProvider>
         </div>
       )}
 

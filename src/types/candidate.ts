@@ -47,6 +47,12 @@ export interface Candidate {
     summary: string;
     recommendation: 'strong-yes' | 'yes' | 'maybe' | 'no';
   }[];
+  psychAssessment?: {
+    animal: 'lion' | 'owl' | 'dolphin' | 'fox';
+    color: 'red' | 'blue' | 'green' | 'yellow';
+    environment: 'mountain' | 'beach' | 'forest' | 'city';
+    symbol: 'compass' | 'bridge' | 'tree' | 'puzzle';
+  };
 }
 
 export interface CandidateListStats {
