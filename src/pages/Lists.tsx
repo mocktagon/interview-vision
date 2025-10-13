@@ -7,7 +7,7 @@ import { EmptyListCard } from "@/components/EmptyListCard";
 import { KPICard } from "@/components/KPICard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FolderOpen, Users, Star, CheckCircle, Search, Plus, TrendingUp, Zap, Sparkles, ArrowRight, Brain, MessageSquare, Award } from "lucide-react";
+import { FolderOpen, Users, Star, CheckCircle, Search, Plus, TrendingUp, Zap, Sparkles, ArrowRight, Brain, MessageSquare, Award, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -15,6 +15,7 @@ const Lists = () => {
   const navigate = useNavigate();
   const [lists] = useState<CandidateList[]>(mockLists);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAnalyticsPanelOpen, setIsAnalyticsPanelOpen] = useState(true);
 
   const filteredLists = lists.filter(list =>
     list.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -50,15 +51,28 @@ const Lists = () => {
                 Organize and manage your candidate pools
               </p>
             </div>
-            <Button size="lg" onClick={handleCreateList}>
-              <Plus className="h-4 w-4 mr-2" />
-              New List
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button size="lg" onClick={handleCreateList}>
+                <Plus className="h-4 w-4 mr-2" />
+                New List
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setIsAnalyticsPanelOpen(!isAnalyticsPanelOpen)}
+                className="h-10 w-10"
+              >
+                {isAnalyticsPanelOpen ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-6 py-8 space-y-8">
+      <main className="container mx-auto px-6 py-8 space-y-8" style={{ 
+        marginRight: isAnalyticsPanelOpen ? '320px' : '0',
+        transition: 'margin-right 0.3s ease'
+      }}>
         {/* AI Generate List - Prompt Section */}
         <Card className="relative overflow-hidden border border-primary/20 bg-gradient-to-r from-primary/5 to-transparent hover:border-primary/30 transition-all duration-300">
           <CardContent className="p-6">
@@ -87,46 +101,6 @@ const Lists = () => {
             </div>
           </CardContent>
         </Card>
-
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-          <KPICard
-            title="Total Lists"
-            value={totalLists}
-            subtitle="Active talent pools"
-            icon={FolderOpen}
-            variant="default"
-          />
-          <KPICard
-            title="Total Candidates"
-            value={totalCandidates}
-            subtitle="Across all lists"
-            icon={Users}
-            variant="primary"
-          />
-          <KPICard
-            title="Avg Diversity"
-            value={`${avgDiversity}%`}
-            subtitle="Inclusion score"
-            icon={Zap}
-            variant="accent"
-            trend={{ value: 8, isPositive: true }}
-          />
-          <KPICard
-            title="Top Performers"
-            value={allStarred}
-            subtitle="Starred talents"
-            icon={Star}
-            variant="success"
-          />
-          <KPICard
-            title="Avg List Size"
-            value={avgListSize}
-            subtitle="Candidates per list"
-            icon={TrendingUp}
-            variant="default"
-          />
-        </div>
 
         {/* Search */}
         <div className="relative max-w-md">
@@ -166,6 +140,62 @@ const Lists = () => {
           )}
         </div>
       </main>
+
+      {/* Analytics Panel */}
+      <div 
+        className="fixed top-0 right-0 h-screen bg-card border-l border-border overflow-y-auto transition-all duration-300 ease-in-out z-40"
+        style={{ 
+          width: isAnalyticsPanelOpen ? '320px' : '0',
+          opacity: isAnalyticsPanelOpen ? 1 : 0,
+          visibility: isAnalyticsPanelOpen ? 'visible' : 'hidden'
+        }}
+      >
+        <div className="p-4 space-y-4">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-semibold text-foreground">Analytics</h3>
+          </div>
+
+          {/* KPI Cards */}
+          <div className="space-y-3">
+            <KPICard
+              title="Total Lists"
+              value={totalLists}
+              subtitle="Active talent pools"
+              icon={FolderOpen}
+              variant="default"
+            />
+            <KPICard
+              title="Total Candidates"
+              value={totalCandidates}
+              subtitle="Across all lists"
+              icon={Users}
+              variant="primary"
+            />
+            <KPICard
+              title="Avg Diversity"
+              value={`${avgDiversity}%`}
+              subtitle="Inclusion score"
+              icon={Zap}
+              variant="accent"
+              trend={{ value: 8, isPositive: true }}
+            />
+            <KPICard
+              title="Top Performers"
+              value={allStarred}
+              subtitle="Starred talents"
+              icon={Star}
+              variant="success"
+            />
+            <KPICard
+              title="Avg List Size"
+              value={avgListSize}
+              subtitle="Candidates per list"
+              icon={TrendingUp}
+              variant="default"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
