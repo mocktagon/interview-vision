@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   Mail, 
   MapPin, 
@@ -41,29 +42,45 @@ export function CandidateCard({ candidate, onViewDetails }: CandidateCardProps) 
     .sort(([, a], [, b]) => b - a)
     .slice(0, 3);
 
+  const initials = candidate.name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+
   return (
     <Card className="p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group" onClick={() => onViewDetails(candidate)}>
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-              {candidate.name}
-            </h3>
-            {candidate.topPerformer && (
-              <Star className="h-4 w-4 text-accent fill-accent" />
-            )}
-          </div>
-          <p className="text-sm font-medium text-primary mb-1">{candidate.role}</p>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <Briefcase className="h-3 w-3" />
-              {candidate.experience} yrs
-            </span>
-            <span className="flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              {candidate.location}
-            </span>
+        <div className="flex items-start gap-3 flex-1">
+          <Avatar className="h-12 w-12">
+            <AvatarImage 
+              src={candidate.profilePicture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(candidate.name)}`} 
+              alt={candidate.name} 
+            />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                {candidate.name}
+              </h3>
+              {candidate.topPerformer && (
+                <Star className="h-4 w-4 text-accent fill-accent" />
+              )}
+            </div>
+            <p className="text-sm font-medium text-primary mb-1">{candidate.role}</p>
+            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <Briefcase className="h-3 w-3" />
+                {candidate.experience} yrs
+              </span>
+              <span className="flex items-center gap-1">
+                <MapPin className="h-3 w-3" />
+                {candidate.location}
+              </span>
+            </div>
           </div>
         </div>
         <Badge className={stageColors[candidate.stage]}>

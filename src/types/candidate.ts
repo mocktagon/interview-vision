@@ -4,6 +4,7 @@ export interface Candidate {
   role: string;
   email: string;
   phone?: string;
+  profilePicture?: string;
   stage: 'screening' | 'prelims' | 'fitment' | 'final' | 'selected' | 'rejected';
   scores: {
     screening?: number;
