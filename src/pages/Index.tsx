@@ -5,6 +5,7 @@ import { KPICard } from "@/components/KPICard";
 import { FunnelChart } from "@/components/FunnelChart";
 import { CandidateCard } from "@/components/CandidateCard";
 import { CandidateDrawer } from "@/components/CandidateDrawer";
+import { ScoreDistributionChart } from "@/components/ScoreDistributionChart";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -89,6 +90,9 @@ const Index = () => {
       </header>
 
       <main className="container mx-auto px-6 py-8 space-y-8">
+        {/* Score Distribution */}
+        <ScoreDistributionChart candidates={filteredCandidates} />
+
         {/* Stats Section - 2/3 KPIs, 1/3 Chart */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* KPI Cards - Takes 2/3 */}
