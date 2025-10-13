@@ -165,22 +165,12 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
         </div>
       </div>
 
-      {/* Eligible Roles */}
-      {candidate.eligibleForRoles && candidate.eligibleForRoles.length > 0 && (
+      {/* Smart Insight */}
+      {candidate.smartInsights && candidate.smartInsights.strengths.length > 0 && (
         <div className="mb-4">
-          <p className="text-xs font-medium text-muted-foreground mb-2">Eligible For</p>
-          <div className="flex flex-wrap gap-1">
-            {candidate.eligibleForRoles.slice(0, 2).map((role) => (
-              <Badge key={role} variant="secondary" className="text-xs">
-                {role}
-              </Badge>
-            ))}
-            {candidate.eligibleForRoles.length > 2 && (
-              <Badge variant="secondary" className="text-xs">
-                +{candidate.eligibleForRoles.length - 2} more
-              </Badge>
-            )}
-          </div>
+          <p className="text-sm text-muted-foreground italic">
+            "{candidate.smartInsights.strengths[0]}"
+          </p>
         </div>
       )}
 
