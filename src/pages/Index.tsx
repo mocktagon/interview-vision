@@ -3,7 +3,7 @@ import { mockCandidates } from "@/data/mockCandidates";
 import { Candidate } from "@/types/candidate";
 import { KPICard } from "@/components/KPICard";
 import { FunnelChart } from "@/components/FunnelChart";
-import { CandidateTable } from "@/components/CandidateTable";
+import { CandidateCard } from "@/components/CandidateCard";
 import { CandidateDrawer } from "@/components/CandidateDrawer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,8 @@ import {
   Star, 
   CheckCircle,
   Search,
-  Filter
+  Filter,
+  LayoutGrid
 } from "lucide-react";
 
 const Index = () => {
@@ -139,18 +140,33 @@ const Index = () => {
           </Select>
         </div>
 
-        {/* Candidates Table */}
+        {/* Candidates Grid */}
         <div>
-          <div className="mb-4">
-            <h2 className="text-xl font-semibold">Candidate Profiles</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Click any candidate to view detailed insights and AI-generated analysis
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <LayoutGrid className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold">Candidate Profiles</h2>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Comprehensive candidate information with multi-stage assessment scores
             </p>
           </div>
-          <CandidateTable 
-            candidates={filteredCandidates}
-            onViewCandidate={handleViewCandidate}
-          />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCandidates.map((candidate) => (
+              <CandidateCard
+                key={candidate.id}
+                candidate={candidate}
+                onViewDetails={handleViewCandidate}
+              />
+            ))}
+          </div>
+          
+          {filteredCandidates.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No candidates match your filters</p>
+            </div>
+          )}
         </div>
       </main>
 
