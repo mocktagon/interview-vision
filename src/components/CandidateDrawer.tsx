@@ -6,9 +6,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Mail, 
   Phone, 
@@ -17,7 +20,16 @@ import {
   Clock, 
   Star,
   Download,
-  Share2
+  Share2,
+  Linkedin,
+  Globe,
+  Github,
+  Lightbulb,
+  MessageSquare,
+  TrendingUp,
+  AlertCircle,
+  CheckCircle2,
+  ThumbsUp
 } from "lucide-react";
 import { SkillsRadar } from "./SkillsRadar";
 
@@ -36,15 +48,36 @@ const stageLabels: Record<string, string> = {
   rejected: 'Rejected'
 };
 
+const recommendationStyles: Record<string, { label: string; color: string }> = {
+  'strong-yes': { label: 'Strong Yes', color: 'bg-success/10 text-success border-success/20' },
+  'yes': { label: 'Yes', color: 'bg-chart-2/10 text-chart-2 border-chart-2/20' },
+  'maybe': { label: 'Maybe', color: 'bg-chart-3/10 text-chart-3 border-chart-3/20' },
+  'no': { label: 'No', color: 'bg-destructive/10 text-destructive border-destructive/20' }
+};
+
 export function CandidateDrawer({ candidate, open, onOpenChange }: CandidateDrawerProps) {
   if (!candidate) return null;
 
+  const initials = candidate.name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
+      <SheetContent className="w-full sm:max-w-3xl overflow-y-auto">
         <SheetHeader>
-          <div className="flex items-start justify-between">
-            <div>
+          <div className="flex items-start gap-4">
+            <Avatar className="h-16 w-16">
+              <AvatarImage 
+                src={candidate.profilePicture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(candidate.name)}`} 
+                alt={candidate.name} 
+              />
+              <AvatarFallback>{initials}</AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
               <SheetTitle className="text-2xl flex items-center gap-2">
                 {candidate.name}
                 {candidate.topPerformer && (
@@ -52,121 +85,118 @@ export function CandidateDrawer({ candidate, open, onOpenChange }: CandidateDraw
                 )}
               </SheetTitle>
               <SheetDescription className="text-base mt-1">
-                {candidate.role}
+                {candidate.role} • {candidate.experience} years experience
               </SheetDescription>
+              {candidate.socials && (
+                <div className="flex gap-2 mt-2">
+                  {candidate.socials.linkedin && (
+                    <a href={candidate.socials.linkedin} target="_blank" rel="noopener noreferrer" 
+                       className="text-muted-foreground hover:text-primary transition-colors">
+                      <Linkedin className="h-4 w-4" />
+                    </a>
+                  )}
+                  {candidate.socials.github && (
+                    <a href={candidate.socials.github} target="_blank" rel="noopener noreferrer"
+                       className="text-muted-foreground hover:text-primary transition-colors">
+                      <Github className="h-4 w-4" />
+                    </a>
+                  )}
+                  {candidate.socials.portfolio && (
+                    <a href={candidate.socials.portfolio} target="_blank" rel="noopener noreferrer"
+                       className="text-muted-foreground hover:text-primary transition-colors">
+                      <Globe className="h-4 w-4" />
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold text-primary">
                 {candidate.scores.overall || '-'}
               </div>
-              <div className="text-sm text-muted-foreground">Overall Score</div>
+              <div className="text-sm text-muted-foreground">Overall</div>
+              <Badge className="mt-2">{stageLabels[candidate.stage]}</Badge>
             </div>
           </div>
         </SheetHeader>
 
-        <div className="mt-6 space-y-6">
-          {/* Contact Information */}
-          <div className="space-y-3">
-            <h3 className="font-semibold text-lg">Contact Information</h3>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <a href={`mailto:${candidate.email}`} className="text-primary hover:underline">
-                  {candidate.email}
-                </a>
-              </div>
-              {candidate.phone && (
+        <Tabs defaultValue="overview" className="mt-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="insights">AI Insights</TabsTrigger>
+            <TabsTrigger value="interview">Interviews</TabsTrigger>
+            <TabsTrigger value="skills">Skills</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6 mt-6">
+            {/* Contact Information */}
+            <Card className="p-4">
+              <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                <Mail className="h-5 w-5 text-primary" />
+                Contact Information
+              </h3>
+              <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span>{candidate.phone}</span>
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <a href={`mailto:${candidate.email}`} className="text-primary hover:underline">
+                    {candidate.email}
+                  </a>
                 </div>
-              )}
-              <div className="flex items-center gap-2 text-sm">
-                <MapPin className="h-4 w-4 text-muted-foreground" />
-                <span>{candidate.location}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <span>Available in: {candidate.availability}</span>
-              </div>
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Scores Breakdown */}
-          <div className="space-y-3">
-            <h3 className="font-semibold text-lg">Assessment Scores</h3>
-            <div className="grid grid-cols-2 gap-3">
-              {candidate.scores.screening && (
-                <div className="p-4 rounded-lg bg-chart-1/10 border border-chart-1/20">
-                  <div className="text-sm text-muted-foreground mb-1">Screening</div>
-                  <div className="text-2xl font-bold text-chart-1">
-                    {candidate.scores.screening}
+                {candidate.phone && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span>{candidate.phone}</span>
                   </div>
+                )}
+                <div className="flex items-center gap-2 text-sm">
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                  <span>{candidate.location}</span>
                 </div>
-              )}
-              {candidate.scores.prelims && (
-                <div className="p-4 rounded-lg bg-chart-2/10 border border-chart-2/20">
-                  <div className="text-sm text-muted-foreground mb-1">Preliminary</div>
-                  <div className="text-2xl font-bold text-chart-2">
-                    {candidate.scores.prelims}
+                <div className="flex items-center gap-2 text-sm">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span>Available: {candidate.availability}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <span>Applied: {new Date(candidate.appliedDate).toLocaleDateString()}</span>
+                </div>
+              </div>
+            </Card>
+
+            {/* Assessment Scores */}
+            <Card className="p-4">
+              <h3 className="font-semibold text-lg mb-3">Assessment Scores</h3>
+              <div className="grid grid-cols-3 gap-3">
+                {candidate.scores.screening && (
+                  <div className="p-4 rounded-lg bg-chart-1/10 border border-chart-1/20 text-center">
+                    <div className="text-sm text-muted-foreground mb-1">Screening</div>
+                    <div className="text-2xl font-bold text-chart-1">
+                      {candidate.scores.screening}
+                    </div>
                   </div>
-                </div>
-              )}
-              {candidate.scores.fitment && (
-                <div className="p-4 rounded-lg bg-chart-3/10 border border-chart-3/20">
-                  <div className="text-sm text-muted-foreground mb-1">Fitment</div>
-                  <div className="text-2xl font-bold text-chart-3">
-                    {candidate.scores.fitment}
+                )}
+                {candidate.scores.prelims && (
+                  <div className="p-4 rounded-lg bg-chart-2/10 border border-chart-2/20 text-center">
+                    <div className="text-sm text-muted-foreground mb-1">Preliminary</div>
+                    <div className="text-2xl font-bold text-chart-2">
+                      {candidate.scores.prelims}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Skills Radar */}
-          <div className="space-y-3">
-            <h3 className="font-semibold text-lg">Skills Profile</h3>
-            <SkillsRadar skills={candidate.skills} />
-          </div>
-
-          <Separator />
-
-          {/* Experience & Status */}
-          <div className="space-y-3">
-            <h3 className="font-semibold text-lg">Additional Details</h3>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Experience</span>
-                <span className="font-medium">{candidate.experience} years</span>
+                )}
+                {candidate.scores.fitment && (
+                  <div className="p-4 rounded-lg bg-chart-3/10 border border-chart-3/20 text-center">
+                    <div className="text-sm text-muted-foreground mb-1">Fitment</div>
+                    <div className="text-2xl font-bold text-chart-3">
+                      {candidate.scores.fitment}
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Current Stage</span>
-                <Badge>{stageLabels[candidate.stage]}</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Applied</span>
-                <span className="font-medium">
-                  {new Date(candidate.appliedDate).toLocaleDateString()}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Last Updated</span>
-                <span className="font-medium">
-                  {new Date(candidate.lastUpdated).toLocaleDateString()}
-                </span>
-              </div>
-            </div>
-          </div>
+            </Card>
 
-          {candidate.eligibleForRoles && candidate.eligibleForRoles.length > 0 && (
-            <>
-              <Separator />
-              <div className="space-y-3">
-                <h3 className="font-semibold text-lg">Eligible For</h3>
+            {candidate.eligibleForRoles && candidate.eligibleForRoles.length > 0 && (
+              <Card className="p-4">
+                <h3 className="font-semibold text-lg mb-3">Eligible For</h3>
                 <div className="flex flex-wrap gap-2">
                   {candidate.eligibleForRoles.map((role) => (
                     <Badge key={role} variant="secondary">
@@ -174,31 +204,179 @@ export function CandidateDrawer({ candidate, open, onOpenChange }: CandidateDraw
                     </Badge>
                   ))}
                 </div>
-              </div>
-            </>
-          )}
+              </Card>
+            )}
 
-          {candidate.notes && (
-            <>
-              <Separator />
-              <div className="space-y-3">
-                <h3 className="font-semibold text-lg">AI-Sourced Insights</h3>
+            {candidate.notes && (
+              <Card className="p-4 bg-primary/5 border-primary/10">
+                <h3 className="font-semibold text-lg mb-2">Quick Notes</h3>
                 <p className="text-sm text-muted-foreground">{candidate.notes}</p>
-              </div>
-            </>
-          )}
+              </Card>
+            )}
+          </TabsContent>
 
-          {/* Actions */}
-          <div className="flex gap-2 pt-4">
-            <Button className="flex-1">
-              <Download className="h-4 w-4 mr-2" />
-              Download Profile
-            </Button>
-            <Button variant="outline" className="flex-1">
-              <Share2 className="h-4 w-4 mr-2" />
-              Share with Client
-            </Button>
-          </div>
+          <TabsContent value="insights" className="space-y-6 mt-6">
+            {candidate.smartInsights && (
+              <>
+                <Card className="p-4">
+                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                    <Lightbulb className="h-5 w-5 text-accent" />
+                    Personality Traits
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {candidate.smartInsights.personality.map((trait, idx) => (
+                      <Badge key={idx} variant="secondary" className="text-sm">
+                        {trait}
+                      </Badge>
+                    ))}
+                  </div>
+                </Card>
+
+                <Card className="p-4">
+                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-success" />
+                    Key Strengths
+                  </h3>
+                  <ul className="space-y-2">
+                    {candidate.smartInsights.strengths.map((strength, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+                        <span>{strength}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+
+                <Card className="p-4">
+                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5 text-chart-3" />
+                    Areas for Development
+                  </h3>
+                  <ul className="space-y-2">
+                    {candidate.smartInsights.potentialChallenges.map((challenge, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-sm">
+                        <AlertCircle className="h-4 w-4 text-chart-3 mt-0.5 flex-shrink-0" />
+                        <span>{challenge}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+
+                <Card className="p-4 bg-accent/5 border-accent/20">
+                  <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                    <ThumbsUp className="h-5 w-5 text-accent" />
+                    Cultural Fit Assessment
+                  </h3>
+                  <p className="text-sm">{candidate.smartInsights.culturalFit}</p>
+                </Card>
+              </>
+            )}
+
+            {candidate.interviewInsights && (
+              <>
+                <Separator />
+                <Card className="p-4">
+                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                    <MessageSquare className="h-5 w-5 text-primary" />
+                    Interview Analysis
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-medium text-sm text-muted-foreground mb-1">Communication Style</h4>
+                      <p className="text-sm">{candidate.interviewInsights.communicationStyle}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sm text-muted-foreground mb-1">Problem Solving</h4>
+                      <p className="text-sm">{candidate.interviewInsights.problemSolvingApproach}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sm text-muted-foreground mb-1">Leadership Potential</h4>
+                      <p className="text-sm">{candidate.interviewInsights.leadershipPotential}</p>
+                    </div>
+                    {candidate.interviewInsights.keyQuotes.length > 0 && (
+                      <div>
+                        <h4 className="font-medium text-sm text-muted-foreground mb-2">Notable Quotes</h4>
+                        <div className="space-y-2">
+                          {candidate.interviewInsights.keyQuotes.map((quote, idx) => (
+                            <div key={idx} className="pl-4 border-l-2 border-primary/30 italic text-sm text-muted-foreground">
+                              "{quote}"
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              </>
+            )}
+          </TabsContent>
+
+          <TabsContent value="interview" className="space-y-4 mt-6">
+            {candidate.interviewReports && candidate.interviewReports.length > 0 ? (
+              candidate.interviewReports.map((report, idx) => (
+                <Card key={idx} className="p-4 animate-fade-in">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h4 className="font-semibold text-base">{report.round} Round</h4>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {new Date(report.date).toLocaleDateString()} • {report.interviewer}
+                      </p>
+                    </div>
+                    <Badge className={recommendationStyles[report.recommendation].color}>
+                      {recommendationStyles[report.recommendation].label}
+                    </Badge>
+                  </div>
+                  <p className="text-sm">{report.summary}</p>
+                </Card>
+              ))
+            ) : (
+              <Card className="p-8 text-center">
+                <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-50" />
+                <p className="text-muted-foreground">No interview reports available yet</p>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="skills" className="space-y-6 mt-6">
+            <Card className="p-4">
+              <h3 className="font-semibold text-lg mb-4">Skills Profile</h3>
+              <SkillsRadar skills={candidate.skills} />
+            </Card>
+            
+            <Card className="p-4">
+              <h3 className="font-semibold text-lg mb-3">Skill Breakdown</h3>
+              <div className="space-y-3">
+                {Object.entries(candidate.skills)
+                  .sort(([, a], [, b]) => b - a)
+                  .map(([skill, score]) => (
+                    <div key={skill}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium">{skill}</span>
+                        <span className="text-sm text-muted-foreground">{score}%</span>
+                      </div>
+                      <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-primary transition-all duration-300" 
+                          style={{ width: `${score}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        {/* Actions */}
+        <div className="flex gap-2 pt-6 sticky bottom-0 bg-background pb-4 border-t">
+          <Button className="flex-1">
+            <Download className="h-4 w-4 mr-2" />
+            Download Profile
+          </Button>
+          <Button variant="outline" className="flex-1">
+            <Share2 className="h-4 w-4 mr-2" />
+            Share with Client
+          </Button>
         </div>
       </SheetContent>
     </Sheet>

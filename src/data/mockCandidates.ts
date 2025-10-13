@@ -28,7 +28,49 @@ export const mockCandidates: Candidate[] = [
     eligibleForRoles: ["Senior Accountant", "Accounting Manager"],
     appliedDate: "2024-09-15",
     lastUpdated: "2024-10-10",
-    notes: "Exceptional candidate with strong technical skills and leadership potential"
+    notes: "Exceptional candidate with strong technical skills and leadership potential",
+    socials: {
+      linkedin: "https://linkedin.com/in/sarahjohnson",
+      portfolio: "https://sarahjohnson.com"
+    },
+    smartInsights: {
+      personality: ["Detail-oriented", "Strategic thinker", "Strong communicator", "Team player"],
+      strengths: ["Excels in complex financial reporting", "Natural leadership qualities", "Adapts quickly to new systems"],
+      potentialChallenges: ["May need support with work-life balance", "Perfectionist tendencies"],
+      culturalFit: "Excellent fit for collaborative, fast-paced environments with clear growth paths"
+    },
+    interviewInsights: {
+      communicationStyle: "Clear and articulate, excellent at explaining complex financial concepts",
+      problemSolvingApproach: "Methodical and data-driven, considers multiple perspectives before deciding",
+      leadershipPotential: "High - demonstrates mentorship abilities and strategic thinking",
+      keyQuotes: [
+        "I believe in building systems that prevent errors rather than just fixing them",
+        "Collaboration with cross-functional teams has been key to my success"
+      ]
+    },
+    interviewReports: [
+      {
+        round: "Screening",
+        date: "2024-09-15",
+        interviewer: "Alex Martinez",
+        summary: "Strong technical knowledge and clear career progression. Demonstrated expertise in financial reporting and compliance.",
+        recommendation: "strong-yes"
+      },
+      {
+        round: "Technical",
+        date: "2024-09-22",
+        interviewer: "Lisa Wong",
+        summary: "Impressive problem-solving during case study. Quick to identify discrepancies and proposed elegant solutions.",
+        recommendation: "strong-yes"
+      },
+      {
+        round: "Final",
+        date: "2024-10-05",
+        interviewer: "David Kim",
+        summary: "Excellent cultural fit. Shows enthusiasm for the role and company mission. Strong communication skills.",
+        recommendation: "strong-yes"
+      }
+    ]
   },
   {
     id: "2",
@@ -55,7 +97,42 @@ export const mockCandidates: Candidate[] = [
     topPerformer: true,
     eligibleForRoles: ["Financial Analyst", "Senior Analyst"],
     appliedDate: "2024-09-20",
-    lastUpdated: "2024-10-08"
+    lastUpdated: "2024-10-08",
+    socials: {
+      linkedin: "https://linkedin.com/in/michaelchen",
+      github: "https://github.com/mchen"
+    },
+    smartInsights: {
+      personality: ["Analytical", "Innovative", "Data-driven", "Collaborative"],
+      strengths: ["Advanced Excel and modeling skills", "Quick learner", "Strong attention to detail"],
+      potentialChallenges: ["Limited experience in certain financial systems", "Growing into leadership"],
+      culturalFit: "Great for data-focused, tech-forward teams with mentorship opportunities"
+    },
+    interviewInsights: {
+      communicationStyle: "Technical and precise, with strong data visualization skills",
+      problemSolvingApproach: "Highly analytical, leverages technology and automation",
+      leadershipPotential: "Medium-High - shows initiative but needs more mentorship experience",
+      keyQuotes: [
+        "I'm passionate about using data to drive business decisions",
+        "Automation has helped me increase efficiency by 40% in my current role"
+      ]
+    },
+    interviewReports: [
+      {
+        round: "Screening",
+        date: "2024-09-20",
+        interviewer: "Sarah Thompson",
+        summary: "Impressive technical skills and strong analytical mindset. Excel proficiency is exceptional.",
+        recommendation: "yes"
+      },
+      {
+        round: "Technical",
+        date: "2024-09-28",
+        interviewer: "Robert Lee",
+        summary: "Completed financial modeling case study efficiently. Showed creativity in approach.",
+        recommendation: "strong-yes"
+      }
+    ]
   },
   {
     id: "3",

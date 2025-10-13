@@ -23,6 +23,30 @@ export interface Candidate {
   appliedDate: string;
   lastUpdated: string;
   notes?: string;
+  socials?: {
+    linkedin?: string;
+    github?: string;
+    portfolio?: string;
+  };
+  smartInsights?: {
+    personality: string[];
+    strengths: string[];
+    potentialChallenges: string[];
+    culturalFit: string;
+  };
+  interviewInsights?: {
+    communicationStyle: string;
+    problemSolvingApproach: string;
+    leadershipPotential: string;
+    keyQuotes: string[];
+  };
+  interviewReports?: {
+    round: string;
+    date: string;
+    interviewer: string;
+    summary: string;
+    recommendation: 'strong-yes' | 'yes' | 'maybe' | 'no';
+  }[];
 }
 
 export interface CandidateListStats {
