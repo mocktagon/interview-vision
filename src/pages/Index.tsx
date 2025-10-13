@@ -72,7 +72,7 @@ const Index = () => {
     <div className="h-screen bg-background flex flex-col overflow-hidden relative">
       {/* Header */}
       <header className="border-b border-border bg-card flex-shrink-0 relative z-10">
-        <div className="container mx-auto px-6 py-3">
+        <div className={`container mx-auto py-3 transition-all duration-300 ${isAnalyticsPanelOpen ? 'pr-[calc(30%+3rem)]' : 'pr-16'}`} style={{ paddingLeft: '1.5rem' }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button 
@@ -228,28 +228,45 @@ const Index = () => {
         </div>
 
         {/* Right Side - Analytics Panel (Full Height Sidebar) */}
-        <div className={`fixed top-0 right-0 h-screen bg-card border-l border-border transition-all duration-300 z-20 ${isAnalyticsPanelOpen ? 'w-[30%]' : 'w-12'}`}>
+        <div className={`fixed top-0 right-0 h-screen bg-card border-l border-border transition-all duration-300 z-20 shadow-xl ${isAnalyticsPanelOpen ? 'w-[30%]' : 'w-12'}`}>
           <Collapsible open={isAnalyticsPanelOpen} onOpenChange={setIsAnalyticsPanelOpen} className="h-full">
             <div className="relative h-full flex flex-col">
+              {/* Collapse/Expand Tab */}
               <CollapsibleTrigger asChild>
                 <button
-                  className="absolute -left-12 top-1/2 -translate-y-1/2 h-32 w-12 bg-card border border-border rounded-l-lg hover:bg-primary/5 transition-all duration-300 flex items-center justify-center group shadow-md"
+                  className={`absolute top-1/2 -translate-y-1/2 h-40 bg-card border border-border hover:bg-accent/10 transition-all duration-300 flex items-center justify-center group shadow-lg ${
+                    isAnalyticsPanelOpen 
+                      ? '-left-10 w-10 rounded-l-xl' 
+                      : '-left-12 w-12 rounded-l-lg'
+                  }`}
                 >
-                  <span 
-                    className="text-xs font-semibold text-muted-foreground group-hover:text-primary transition-colors whitespace-nowrap"
-                    style={{ 
-                      writingMode: 'vertical-rl',
-                      textOrientation: 'mixed',
-                      transform: 'rotate(180deg)'
-                    }}
-                  >
-                    Smart Insights
-                  </span>
+                  <div className="relative flex items-center justify-center w-full h-full">
+                    <span 
+                      className={`font-semibold text-muted-foreground group-hover:text-primary transition-colors whitespace-nowrap ${
+                        isAnalyticsPanelOpen ? 'text-xs' : 'text-sm'
+                      }`}
+                      style={{ 
+                        writingMode: 'vertical-rl',
+                        textOrientation: 'mixed',
+                        transform: 'rotate(180deg)'
+                      }}
+                    >
+                      {isAnalyticsPanelOpen ? (
+                        <>Smart Insights →</>
+                      ) : (
+                        <>← Smart Insights</>
+                      )}
+                    </span>
+                  </div>
                 </button>
               </CollapsibleTrigger>
               
               <CollapsibleContent className="animate-accordion-down h-full flex flex-col">
-                <div className="flex-1 overflow-y-auto p-4">
+                <div className="flex-1 overflow-y-auto p-4 pt-6">
+                  <div className="mb-3 text-center">
+                    <h3 className="text-sm font-semibold text-foreground">Smart Insights</h3>
+                    <p className="text-xs text-muted-foreground">AI-powered candidate analysis</p>
+                  </div>
                   <ScoreDistributionChart candidates={filteredCandidates} aiQuery={aiSearchQuery} />
                 </div>
               </CollapsibleContent>
