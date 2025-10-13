@@ -119,22 +119,17 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-end gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleStar?.(candidate.id);
-            }}
-          >
-            <Star className={`h-3 w-3 ${candidate.starred ? 'fill-accent text-accent' : 'text-muted-foreground'}`} />
-          </Button>
-          <Badge className={`${stageColors[candidate.stage]} text-[9px] px-1.5 py-0`}>
-            {stageLabels[candidate.stage]}
-          </Badge>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleStar?.(candidate.id);
+          }}
+        >
+          <Star className={`h-3 w-3 ${candidate.starred ? 'fill-accent text-accent' : 'text-muted-foreground'}`} />
+        </Button>
       </div>
 
       {/* Performance Badge */}
@@ -230,19 +225,34 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
         </div>
       )}
 
-      {/* Contact & Availability - Removed to save space */}
+      {/* CTAs */}
       <div className="pt-2 border-t border-border mt-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full text-[10px] h-7 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
-          onClick={(e) => {
-            e.stopPropagation();
-            onViewDetails(candidate);
-          }}
-        >
-          View Details
-        </Button>
+        <div className="flex items-center gap-1.5">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 text-[10px] h-7"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToList?.(candidate.id, 'existing');
+            }}
+          >
+            <List className="h-2.5 w-2.5 mr-1" />
+            Add to List
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 text-[10px] h-7"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToList?.(candidate.id, 'new');
+            }}
+          >
+            <Plus className="h-2.5 w-2.5 mr-1" />
+            New List
+          </Button>
+        </div>
       </div>
     </Card>
   );
