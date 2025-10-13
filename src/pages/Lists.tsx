@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 
 const Lists = () => {
   const navigate = useNavigate();
-  const [lists] = useState<CandidateList[]>(mockLists);
+  const [lists, setLists] = useState<CandidateList[]>(mockLists);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAnalyticsPanelOpen, setIsAnalyticsPanelOpen] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -53,6 +53,10 @@ const Lists = () => {
 
   const handleViewList = (listId: string) => {
     navigate(`/list/${listId}`);
+  };
+
+  const handleDeleteList = (listId: string) => {
+    setLists(prevLists => prevLists.filter(list => list.id !== listId));
   };
 
   return (
@@ -138,6 +142,7 @@ const Lists = () => {
                   key={list.id}
                   list={list}
                   onClick={() => handleViewList(list.id)}
+                  onDelete={handleDeleteList}
                 />
               ))}
               <EmptyListCard onClick={handleCreateList} />

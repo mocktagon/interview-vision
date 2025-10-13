@@ -2,23 +2,72 @@ import { CandidateList } from "@/types/list";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Users, TrendingUp, MoreVertical, Sparkles, Award, Zap } from "lucide-react";
+import { Users, TrendingUp, MoreVertical, Sparkles, Award, Zap, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useParticleBurst } from "@/hooks/useParticleBurst";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 
 interface ListCardProps {
   list: CandidateList;
   onClick: () => void;
+  onDelete?: (listId: string) => void;
 }
 
-export function ListCard({ list, onClick }: ListCardProps) {
+export function ListCard({ list, onClick, onDelete }: ListCardProps) {
   const avgScore = list.candidates.length > 0
     ? (list.candidates.reduce((sum, c) => sum + (c.scores.overall || 0), 0) / list.candidates.length).toFixed(0)
     : 0;
 
   const topPerformers = list.candidates.filter(c => c.starred).length;
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { createParticleBurst } = useParticleBurst();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (cardRef.current && onDelete) {
+      setIsDeleting(true);
+      
+      // Create particle burst effect
+      createParticleBurst(cardRef.current, {
+        count: 80,
+        colors: ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--destructive))', '#8b5cf6', '#ec4899'],
+        duration: 800
+      });
+      
+      // Fade out the card while particles animate
+      cardRef.current.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+      cardRef.current.style.opacity = '0';
+      cardRef.current.style.transform = 'scale(0.8)';
+      
+      // Call delete after animation
+      setTimeout(() => {
+        onDelete(list.id);
+        toast.success("List deleted successfully");
+      }, 600);
+    }
+  };
 
   return (
-    <Card className="p-6 transition-all duration-300 hover:shadow-xl cursor-pointer group relative overflow-hidden border-2" onClick={onClick}>
+    <Card 
+      ref={cardRef}
+      className="p-6 transition-all duration-300 hover:shadow-xl cursor-pointer group relative overflow-hidden border-2" 
+      onClick={onClick}
+      style={{ opacity: isDeleting ? 0 : 1 }}
+    >
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       
@@ -39,9 +88,22 @@ export function ListCard({ list, onClick }: ListCardProps) {
               {list.description || "No description"}
             </p>
           </div>
-          <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
-            <MoreVertical className="h-4 w-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+              <DropdownMenuItem 
+                onClick={handleDelete}
+                className="text-destructive focus:text-destructive cursor-pointer"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete List
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* AI Insights Badge */}
