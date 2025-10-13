@@ -6,19 +6,20 @@ import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
-  Mail, 
   MapPin, 
   Clock, 
   Star,
-  Eye,
   Calendar,
   Briefcase,
-  Circle
+  Plus,
+  List
 } from "lucide-react";
 
 interface CandidateCardProps {
   candidate: Candidate;
   onViewDetails: (candidate: Candidate) => void;
+  onToggleStar?: (candidateId: string) => void;
+  onAddToList?: (candidateId: string, listType: 'existing' | 'new') => void;
 }
 
 const stageColors: Record<string, string> = {
@@ -39,41 +40,18 @@ const stageLabels: Record<string, string> = {
   rejected: 'Rejected'
 };
 
-const psychColors: Record<string, string> = {
-  red: 'text-red-500',
-  blue: 'text-blue-500',
-  green: 'text-green-500',
-  yellow: 'text-yellow-500'
+const psychIcons = {
+  lion: '🦁',
+  owl: '🦉',
+  dolphin: '🐬',
+  fox: '🦊',
+  mountain: '⛰️',
+  beach: '🏖️',
+  forest: '🌲',
+  city: '🏙️'
 };
 
-const psychLabels = {
-  animal: {
-    lion: 'Lion - Natural Leader',
-    owl: 'Owl - Analytical Thinker',
-    dolphin: 'Dolphin - Team Player',
-    fox: 'Fox - Strategic Adapter'
-  },
-  color: {
-    red: 'Red - Action-Oriented',
-    blue: 'Blue - Detail-Focused',
-    green: 'Green - Balanced Approach',
-    yellow: 'Yellow - Innovative Spirit'
-  },
-  environment: {
-    mountain: 'Mountain - Goal-Driven',
-    beach: 'Beach - Flexible & Calm',
-    forest: 'Forest - Growth-Minded',
-    city: 'City - Fast-Paced'
-  },
-  symbol: {
-    compass: 'Compass - Direction Seeker',
-    bridge: 'Bridge - Connector',
-    tree: 'Tree - Deep Roots',
-    puzzle: 'Puzzle - Problem Solver'
-  }
-};
-
-export function CandidateCard({ candidate, onViewDetails }: CandidateCardProps) {
+export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToList }: CandidateCardProps) {
   const topSkills = Object.entries(candidate.skills)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 3);
@@ -98,14 +76,9 @@ export function CandidateCard({ candidate, onViewDetails }: CandidateCardProps) 
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-                {candidate.name}
-              </h3>
-              {candidate.topPerformer && (
-                <Star className="h-4 w-4 text-accent fill-accent" />
-              )}
-            </div>
+            <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+              {candidate.name}
+            </h3>
             <p className="text-sm font-medium text-primary mb-1">{candidate.role}</p>
             <div className="flex items-center gap-4 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
@@ -119,9 +92,22 @@ export function CandidateCard({ candidate, onViewDetails }: CandidateCardProps) 
             </div>
           </div>
         </div>
-        <Badge className={stageColors[candidate.stage]}>
-          {stageLabels[candidate.stage]}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleStar?.(candidate.id);
+            }}
+          >
+            <Star className={`h-4 w-4 ${candidate.starred ? 'fill-accent text-accent' : 'text-muted-foreground'}`} />
+          </Button>
+          <Badge className={stageColors[candidate.stage]}>
+            {stageLabels[candidate.stage]}
+          </Badge>
+        </div>
       </div>
 
       {/* Assessment Scores */}
@@ -201,96 +187,54 @@ export function CandidateCard({ candidate, onViewDetails }: CandidateCardProps) 
       {/* Psych Assessment */}
       {candidate.psychAssessment && (
         <div className="pt-3 border-t border-border">
-          <p className="text-xs font-medium text-muted-foreground mb-2">Personality Profile</p>
-          <TooltipProvider>
-            <div className="flex items-center gap-2">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center gap-1 text-xs bg-secondary/50 px-2 py-1 rounded">
-                    <span className="text-base">🦁🦉🐬🦊</span>
-                    <span className="font-medium">
-                      {candidate.psychAssessment.animal === 'lion' && '🦁'}
-                      {candidate.psychAssessment.animal === 'owl' && '🦉'}
-                      {candidate.psychAssessment.animal === 'dolphin' && '🐬'}
-                      {candidate.psychAssessment.animal === 'fox' && '🦊'}
-                    </span>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="text-xs">{psychLabels.animal[candidate.psychAssessment.animal]}</p>
-                </TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center justify-center w-7 h-7 rounded bg-secondary/50">
-                    <Circle className={`h-4 w-4 fill-current ${psychColors[candidate.psychAssessment.color]}`} />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="text-xs">{psychLabels.color[candidate.psychAssessment.color]}</p>
-                </TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center gap-1 text-xs bg-secondary/50 px-2 py-1 rounded">
-                    <span className="text-base">
-                      {candidate.psychAssessment.environment === 'mountain' && '⛰️'}
-                      {candidate.psychAssessment.environment === 'beach' && '🏖️'}
-                      {candidate.psychAssessment.environment === 'forest' && '🌲'}
-                      {candidate.psychAssessment.environment === 'city' && '🏙️'}
-                    </span>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="text-xs">{psychLabels.environment[candidate.psychAssessment.environment]}</p>
-                </TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center gap-1 text-xs bg-secondary/50 px-2 py-1 rounded">
-                    <span className="text-base">
-                      {candidate.psychAssessment.symbol === 'compass' && '🧭'}
-                      {candidate.psychAssessment.symbol === 'bridge' && '🌉'}
-                      {candidate.psychAssessment.symbol === 'tree' && '🌳'}
-                      {candidate.psychAssessment.symbol === 'puzzle' && '🧩'}
-                    </span>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="text-xs">{psychLabels.symbol[candidate.psychAssessment.symbol]}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          </TooltipProvider>
+          <p className="text-xs font-medium text-muted-foreground mb-2">Profile</p>
+          <div className="flex items-center gap-1.5">
+            <span className="text-lg">{psychIcons[candidate.psychAssessment.animal]}</span>
+            <span className="text-lg">{psychIcons[candidate.psychAssessment.environment]}</span>
+          </div>
         </div>
       )}
 
       {/* Contact & Availability */}
-      <div className="flex items-center justify-between pt-4 border-t border-border">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+      <div className="pt-3 border-t border-border space-y-3">
+        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
-            Available: {candidate.availability}
+            {candidate.availability}
           </div>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            Applied: {new Date(candidate.appliedDate).toLocaleDateString()}
+            {new Date(candidate.appliedDate).toLocaleDateString()}
           </div>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            onViewDetails(candidate);
-          }}
-        >
-          <Eye className="h-3 w-3 mr-1" />
-          Full Profile
-        </Button>
+
+        {/* CTAs */}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToList?.(candidate.id, 'existing');
+            }}
+          >
+            <List className="h-3 w-3" />
+            Add to List
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToList?.(candidate.id, 'new');
+            }}
+          >
+            <Plus className="h-3 w-3" />
+            New List
+          </Button>
+        </div>
       </div>
     </Card>
   );

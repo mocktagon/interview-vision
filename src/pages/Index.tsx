@@ -44,7 +44,7 @@ const Index = () => {
   }, [searchQuery, stageFilter]);
 
   const stats = useMemo(() => {
-    const topPerformers = filteredCandidates.filter(c => c.topPerformer).length;
+    const topPerformers = filteredCandidates.filter(c => c.starred).length;
     const eligible = filteredCandidates.filter(c => c.eligibleForRoles && c.eligibleForRoles.length > 0).length;
     const avgScore = filteredCandidates.reduce((sum, c) => sum + (c.scores.overall || 0), 0) / filteredCandidates.length;
     const selected = filteredCandidates.filter(c => c.stage === 'selected').length;

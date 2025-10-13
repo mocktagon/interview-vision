@@ -81,7 +81,7 @@ export function CandidateDrawer({ candidate, open, onOpenChange }: CandidateDraw
             <div className="flex-1">
               <SheetTitle className="text-2xl flex items-center gap-2">
                 {candidate.name}
-                {candidate.topPerformer && (
+                {candidate.starred && (
                   <Star className="h-5 w-5 text-accent fill-accent" />
                 )}
               </SheetTitle>

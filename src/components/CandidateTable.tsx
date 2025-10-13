@@ -120,7 +120,7 @@ export function CandidateTable({ candidates, onViewCandidate }: CandidateTablePr
                     <div>
                       <div className="font-medium flex items-center gap-2">
                         {candidate.name}
-                        {candidate.topPerformer && (
+                        {candidate.starred && (
                           <Star className="h-4 w-4 text-accent fill-accent" />
                         )}
                       </div>

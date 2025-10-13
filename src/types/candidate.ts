@@ -18,7 +18,7 @@ export interface Candidate {
   experience: number; // years
   location: string;
   availability: string;
-  topPerformer?: boolean;
+  starred?: boolean;
   eligibleForRoles?: string[];
   appliedDate: string;
   lastUpdated: string;
