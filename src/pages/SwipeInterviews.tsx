@@ -1,19 +1,16 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useSpring, animated, config } from "@react-spring/web";
-import { useGesture } from "@use-gesture/react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useSpring, animated } from "@react-spring/web";
+import { useDrag } from "@use-gesture/react";
 import { mockInterviews, Interview } from "@/data/mockInterviews";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
 import { 
-  ThumbsUp, 
-  ThumbsDown, 
   PartyPopper,
   CheckCircle2,
-  Clock,
   AlertCircle,
   XCircle,
   User,
@@ -23,93 +20,120 @@ import {
   TrendingUp,
   Users,
   Linkedin,
-  Github,
-  Globe
+  Sparkles,
+  CheckCircle,
+  ArrowLeft,
+  Undo2
 } from "lucide-react";
 import { SkillsRadar } from "@/components/SkillsRadar";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "@/hooks/use-toast";
 
 const SwipeInterviews = () => {
   const { listId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  
+  // Get OTP from URL
+  const urlOtp = searchParams.get('otp') || '';
+  
+  // OTP verification state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [otpInput, setOtpInput] = useState('');
+  const [otpError, setOtpError] = useState(false);
+  
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [approvedCount, setApprovedCount] = useState(0);
-  const [rejectedCount, setRejectedCount] = useState(0);
+  const [history, setHistory] = useState<{ index: number; decision: 'yes' | 'no' }[]>([]);
+  const [swipeFeedback, setSwipeFeedback] = useState<'yes' | 'no' | null>(null);
   const [showCelebration, setShowCelebration] = useState(false);
+
+  // If no OTP in URL, redirect
+  useEffect(() => {
+    if (!urlOtp) {
+      navigate('/interviews');
+    }
+  }, [urlOtp, navigate]);
 
   const interviews = mockInterviews.filter(i => i.status === "completed");
   const currentInterview = interviews[currentIndex];
-  const isLastInterview = currentIndex === interviews.length - 1;
 
-  const [{ x, rotate, scale }, api] = useSpring(() => ({
+  // Verify OTP
+  const verifyOtp = () => {
+    if (otpInput === urlOtp) {
+      setIsAuthenticated(true);
+      setOtpError(false);
+    } else {
+      setOtpError(true);
+      setTimeout(() => setOtpError(false), 500);
+    }
+  };
+
+  const [{ x, rotate, opacity }, api] = useSpring(() => ({
     x: 0,
     rotate: 0,
-    scale: 1,
-    config: config.default,
+    opacity: 1,
   }));
 
-  const bind = useGesture(
-    {
-      onDrag: ({ down, movement: [mx], direction: [xDir], velocity: [vx] }) => {
-        const trigger = vx > 0.2;
-        const dir = xDir < 0 ? -1 : 1;
+  const bind = useDrag(
+    ({ down, movement: [mx], velocity: [vx], direction: [dx] }) => {
+      const trigger = vx > 0.2 || Math.abs(mx) > 100;
 
-        if (!down && trigger) {
-          if (dir === 1) {
-            handleApprove();
-          } else {
-            handleReject();
-          }
-        } else {
-          api.start({
-            x: down ? mx : 0,
-            rotate: down ? mx / 10 : 0,
-            scale: down ? 1.05 : 1,
-            immediate: down,
-          });
-        }
-      },
+      if (!down && trigger) {
+        const decision = dx > 0 ? 'yes' : 'no';
+        handleSwipe(decision);
+      }
+
+      api.start({
+        x: down ? mx : 0,
+        rotate: down ? mx / 20 : 0,
+        opacity: down ? 1 - Math.abs(mx) / 200 : 1,
+        immediate: down,
+      });
     },
-    {
-      drag: { filterTaps: true },
-    }
+    { axis: 'x' }
   );
 
-  const handleApprove = () => {
+  const handleSwipe = (decision: 'yes' | 'no') => {
+    if (currentIndex >= interviews.length) return;
+    
+    setHistory(prev => [...prev, { index: currentIndex, decision }]);
+    
+    const direction = decision === 'yes' ? 1 : -1;
+    
+    // Show feedback animation
+    setSwipeFeedback(decision);
+    
     api.start({
-      x: 1000,
-      rotate: 45,
-      scale: 0.8,
-      config: { ...config.default, duration: 300 },
-      onRest: () => {
-        setApprovedCount(prev => prev + 1);
-        moveToNext();
-      },
+      x: direction * 500,
+      rotate: direction * 30,
+      opacity: 0,
+      config: { tension: 200, friction: 20 },
     });
-  };
 
-  const handleReject = () => {
-    api.start({
-      x: -1000,
-      rotate: -45,
-      scale: 0.8,
-      config: { ...config.default, duration: 300 },
-      onRest: () => {
-        setRejectedCount(prev => prev + 1);
-        moveToNext();
-      },
-    });
-  };
-
-  const moveToNext = () => {
+    // Move to next interview after feedback animation
     setTimeout(() => {
-      if (isLastInterview) {
-        setShowCelebration(true);
-      } else {
+      setSwipeFeedback(null);
+      if (currentIndex < interviews.length - 1) {
         setCurrentIndex(prev => prev + 1);
-        api.start({ x: 0, rotate: 0, scale: 1, immediate: true });
+        api.set({ x: 0, rotate: 0, opacity: 1 });
+      } else {
+        setShowCelebration(true);
       }
-    }, 100);
+    }, 400);
+  };
+
+  const handleUndo = () => {
+    if (history.length === 0) return;
+    
+    const lastAction = history[history.length - 1];
+    setHistory(prev => prev.slice(0, -1));
+    setCurrentIndex(lastAction.index);
+    api.set({ x: 0, rotate: 0, opacity: 1 });
+    
+    toast({
+      title: "Undone!",
+      description: "Previous decision reversed.",
+    });
   };
 
   const getInitials = (name: string) => {
@@ -138,34 +162,85 @@ const SwipeInterviews = () => {
       currentInterview.insights.adaptability) / 6
   ) : 0;
 
+  // OTP verification screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+        <Card className="p-8 max-w-md w-full bg-[#1a1a1a] border-[#2a2a2a]">
+          <div className="text-center mb-6">
+            <div className="inline-flex p-3 rounded-full bg-white/10 mb-4">
+              <Sparkles className="h-8 w-8 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-2">Access Code Required</h2>
+            <p className="text-sm text-gray-400">Enter the 6-digit code shown on your desktop</p>
+          </div>
+          
+          <div className="space-y-4">
+            <Input
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              value={otpInput}
+              onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
+              onKeyDown={(e) => e.key === 'Enter' && verifyOtp()}
+              placeholder="000000"
+              className={`text-center text-2xl font-mono tracking-widest h-14 bg-[#0a0a0a] border-[#2a2a2a] text-white ${
+                otpError ? 'border-red-500 animate-shake' : ''
+              }`}
+            />
+            
+            {otpError && (
+              <p className="text-sm text-red-400 text-center">Invalid code. Please try again.</p>
+            )}
+            
+            <Button 
+              onClick={verifyOtp} 
+              className="w-full h-12 text-base"
+              disabled={otpInput.length !== 6}
+            >
+              Continue
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // Celebration screen
   if (showCelebration) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-accent/10 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full text-center">
-          <CardContent className="pt-12 pb-8 px-8">
-            <PartyPopper className="h-20 w-20 mx-auto mb-6 text-primary animate-bounce" />
-            <h2 className="text-3xl font-bold mb-4">All Done! 🎉</h2>
-            <p className="text-muted-foreground mb-8">
-              You've reviewed all interviews
-            </p>
-            
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="p-4 rounded-lg bg-success/10">
-                <ThumbsUp className="h-6 w-6 text-success mx-auto mb-2" />
-                <div className="text-2xl font-bold text-success">{approvedCount}</div>
-                <div className="text-sm text-muted-foreground">Approved</div>
-              </div>
-              <div className="p-4 rounded-lg bg-destructive/10">
-                <ThumbsDown className="h-6 w-6 text-destructive mx-auto mb-2" />
-                <div className="text-2xl font-bold text-destructive">{rejectedCount}</div>
-                <div className="text-sm text-muted-foreground">Rejected</div>
-              </div>
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Animated background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-transparent to-blue-500/10 animate-pulse" />
+        
+        <Card className="p-12 max-w-lg w-full bg-[#1a1a1a] border-[#2a2a2a] text-center relative z-10">
+          <div className="inline-flex p-6 rounded-full bg-gradient-to-br from-green-500/20 to-blue-500/20 mb-6 animate-bounce">
+            <PartyPopper className="h-16 w-16 text-green-400" />
+          </div>
+          
+          <h2 className="text-4xl font-bold text-white mb-4">All Done! 🎉</h2>
+          <p className="text-lg text-gray-300 mb-8">
+            You've reviewed all {interviews.length} interviews. Great job!
+          </p>
+          
+          <div className="space-y-3">
+            <div className="flex justify-between items-center p-4 rounded-lg bg-[#0a0a0a] border border-green-500/20">
+              <span className="text-gray-400">Selected</span>
+              <span className="text-2xl font-bold text-green-400">
+                {history.filter(h => h.decision === 'yes').length}
+              </span>
             </div>
-            
-            <p className="text-sm text-gray-400 mt-8">
-              Your selections have been saved. You can close this window now.
-            </p>
-          </CardContent>
+            <div className="flex justify-between items-center p-4 rounded-lg bg-[#0a0a0a] border border-red-500/20">
+              <span className="text-gray-400">Passed</span>
+              <span className="text-2xl font-bold text-red-400">
+                {history.filter(h => h.decision === 'no').length}
+              </span>
+            </div>
+          </div>
+          
+          <p className="text-sm text-gray-400 mt-8">
+            Your selections have been saved. You can close this window now.
+          </p>
         </Card>
       </div>
     );
@@ -174,45 +249,104 @@ const SwipeInterviews = () => {
   if (!currentInterview) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">No interviews to review</p>
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-foreground mb-2">No interviews to review</h2>
+          <Button onClick={() => navigate('/interviews')}>Return to Interviews</Button>
+        </div>
       </div>
     );
   }
 
   const recommendationConfig = getRecommendationConfig(currentInterview.recommendation);
   const RecommendationIcon = recommendationConfig.icon;
+  const progressPercentage = ((currentIndex + 1) / interviews.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4 overflow-hidden">
-      {/* Progress Bar */}
-      <div className="max-w-2xl mx-auto mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium">
-            Interview {currentIndex + 1} of {interviews.length}
-          </span>
-          <span className="text-sm text-muted-foreground">
-            {Math.round(((currentIndex + 1) / interviews.length) * 100)}%
-          </span>
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Header */}
+      <div className="p-4 pb-3 border-b border-border bg-card">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/interviews')} className="hover:bg-secondary">
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Back
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleUndo}
+              disabled={history.length === 0}
+              className="hover:bg-secondary"
+            >
+              <Undo2 className="h-4 w-4 mr-1" />
+              Undo
+            </Button>
+          </div>
+          <Badge variant="outline" className="bg-secondary border-border font-medium text-foreground">
+            {currentIndex + 1} / {interviews.length}
+          </Badge>
         </div>
-        <Progress value={((currentIndex + 1) / interviews.length) * 100} />
+        
+        {/* Progress Bar */}
+        <div className="w-full h-1 bg-secondary rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-foreground transition-all duration-300"
+            style={{ width: `${progressPercentage}%` }}
+          />
+        </div>
       </div>
 
-      {/* Swipe Card */}
-      <div className="max-w-2xl mx-auto relative h-[calc(100vh-120px)]">
+      {/* Role Info */}
+      <div className="px-4 py-3 border-b border-border bg-card space-y-2">
+        <div className="flex items-center gap-2 text-sm">
+          <Briefcase className="h-4 w-4 text-muted-foreground" />
+          <span className="text-muted-foreground">Evaluating:</span>
+          <span className="font-semibold text-foreground">{currentInterview.role}</span>
+        </div>
+      </div>
+
+      {/* Card Stack Area */}
+      <div className="flex-1 flex items-center justify-center p-6 relative bg-secondary/30">
+        {/* Swipe Feedback Animation */}
+        {swipeFeedback && (
+          <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none animate-fade-in">
+            {swipeFeedback === 'yes' ? (
+              <div className="animate-scale-in">
+                <CheckCircle className="h-32 w-32 text-success drop-shadow-2xl" strokeWidth={2.5} />
+              </div>
+            ) : (
+              <div className="animate-scale-in">
+                <XCircle className="h-32 w-32 text-destructive drop-shadow-2xl" strokeWidth={2.5} />
+              </div>
+            )}
+          </div>
+        )}
+        
         <animated.div
           {...bind()}
-          style={{
-            x,
-            rotate,
-            scale,
-            touchAction: "none",
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-          }}
+          style={{ x, rotate, opacity, touchAction: 'none' }}
+          className="w-full max-w-md"
         >
-          <Card className="h-full overflow-y-auto !bg-card shadow-2xl">
-            <CardHeader className="!bg-gradient-to-r from-primary/10 via-background to-accent/10 border-b pb-6">
+          <Card className="max-h-[calc(100vh-250px)] overflow-y-auto shadow-lg border border-border cursor-grab active:cursor-grabbing relative bg-card">
+            {/* Swipe Indicators */}
+            <animated.div 
+              style={{ opacity: x.to(x => Math.max(0, x / 100)) }}
+              className="absolute top-8 right-8 z-10"
+            >
+              <div className="bg-success/90 text-success-foreground px-5 py-2.5 rounded-xl font-bold text-base transform rotate-12 border-2 border-success backdrop-blur-sm">
+                GOOD FIT
+              </div>
+            </animated.div>
+            <animated.div 
+              style={{ opacity: x.to(x => Math.max(0, -x / 100)) }}
+              className="absolute top-8 left-8 z-10"
+            >
+              <div className="bg-destructive/90 text-destructive-foreground px-5 py-2.5 rounded-xl font-bold text-base transform -rotate-12 border-2 border-destructive backdrop-blur-sm">
+                NOPE
+              </div>
+            </animated.div>
+
+            <CardHeader className="bg-gradient-to-r from-primary/10 via-background to-accent/10 border-b pb-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4 flex-1">
                   <Avatar className="h-16 w-16 border-2 border-primary/20">
@@ -354,53 +488,23 @@ const SwipeInterviews = () => {
         </animated.div>
 
         {/* Action Buttons */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-6 z-10">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-4">
           <Button
             size="lg"
             variant="destructive"
-            className="h-16 w-16 rounded-full shadow-xl"
-            onClick={handleReject}
+            className="h-16 w-16 rounded-full shadow-xl hover:scale-110 transition-transform"
+            onClick={() => handleSwipe('no')}
           >
-            <ThumbsDown className="h-6 w-6" />
+            <XCircle className="h-7 w-7" />
           </Button>
           <Button
             size="lg"
-            className="h-16 w-16 rounded-full shadow-xl bg-success hover:bg-success/90"
-            onClick={handleApprove}
+            className="h-16 w-16 rounded-full shadow-xl bg-success hover:bg-success/90 hover:scale-110 transition-transform"
+            onClick={() => handleSwipe('yes')}
           >
-            <ThumbsUp className="h-6 w-6" />
+            <CheckCircle className="h-7 w-7" />
           </Button>
         </div>
-
-        {/* Swipe Indicators */}
-        <animated.div
-          style={{
-            opacity: x.to((xVal) => Math.abs(xVal as number) / 100),
-            position: "absolute",
-            top: "50%",
-            left: "20px",
-            transform: "translateY(-50%)",
-          }}
-          className="pointer-events-none"
-        >
-          <div className="bg-destructive/90 text-white px-6 py-3 rounded-full font-bold text-xl shadow-xl rotate-[-20deg]">
-            REJECT
-          </div>
-        </animated.div>
-        <animated.div
-          style={{
-            opacity: x.to((xVal) => Math.abs(xVal as number) / 100),
-            position: "absolute",
-            top: "50%",
-            right: "20px",
-            transform: "translateY(-50%)",
-          }}
-          className="pointer-events-none"
-        >
-          <div className="bg-success/90 text-white px-6 py-3 rounded-full font-bold text-xl shadow-xl rotate-[20deg]">
-            APPROVE
-          </div>
-        </animated.div>
       </div>
     </div>
   );
