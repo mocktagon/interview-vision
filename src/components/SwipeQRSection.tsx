@@ -60,7 +60,7 @@ export const SwipeQRSection = ({
   };
 
   return (
-    <Card className="p-6 bg-[#0a0a0a] border-[#1a1a1a] relative overflow-hidden shadow-xl isolate">
+    <Card className="p-6 !bg-[#0a0a0a] !border-[#1a1a1a] text-white relative overflow-hidden shadow-xl isolate">
       {/* Background gradient effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] via-transparent to-transparent opacity-50 pointer-events-none" />
       
