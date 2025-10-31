@@ -325,13 +325,53 @@ const Index = () => {
 
                 {/* Active Filters Summary */}
                 {(minScore > 0 || minExperience > 0 || swipeStatus !== "all" || starredOnly || stageFilter !== "all") && (
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="font-medium">Active filters:</span>
-                    {stageFilter !== "all" && <Badge variant="secondary" className="text-xs">Stage: {stageFilter}</Badge>}
-                    {minScore > 0 && <Badge variant="secondary" className="text-xs">Score ≥ {minScore}</Badge>}
-                    {minExperience > 0 && <Badge variant="secondary" className="text-xs">{minExperience}+ years</Badge>}
-                    {swipeStatus !== "all" && <Badge variant="secondary" className="text-xs">{swipeStatus === "good-fit" ? "Good Fits" : swipeStatus === "nope" ? "Rejected" : "Not Reviewed"}</Badge>}
-                    {starredOnly && <Badge variant="secondary" className="text-xs">Starred</Badge>}
+                  <div className="flex items-center gap-2 text-xs flex-wrap">
+                    <span className="font-medium text-muted-foreground">Active filters:</span>
+                    {stageFilter !== "all" && (
+                      <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
+                        Stage: {stageFilter}
+                        <X 
+                          className="h-3 w-3 hover:text-destructive transition-colors" 
+                          onClick={() => setStageFilter("all")}
+                        />
+                      </Badge>
+                    )}
+                    {minScore > 0 && (
+                      <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
+                        Score ≥ {minScore}
+                        <X 
+                          className="h-3 w-3 hover:text-destructive transition-colors" 
+                          onClick={() => setMinScore(0)}
+                        />
+                      </Badge>
+                    )}
+                    {minExperience > 0 && (
+                      <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
+                        {minExperience}+ years
+                        <X 
+                          className="h-3 w-3 hover:text-destructive transition-colors" 
+                          onClick={() => setMinExperience(0)}
+                        />
+                      </Badge>
+                    )}
+                    {swipeStatus !== "all" && (
+                      <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
+                        {swipeStatus === "good-fit" ? "Good Fits" : swipeStatus === "nope" ? "Rejected" : "Not Reviewed"}
+                        <X 
+                          className="h-3 w-3 hover:text-destructive transition-colors" 
+                          onClick={() => setSwipeStatus("all")}
+                        />
+                      </Badge>
+                    )}
+                    {starredOnly && (
+                      <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
+                        Starred
+                        <X 
+                          className="h-3 w-3 hover:text-destructive transition-colors" 
+                          onClick={() => setStarredOnly(false)}
+                        />
+                      </Badge>
+                    )}
                   </div>
                 )}
               </div>

@@ -17,6 +17,7 @@ export const SwipeQRSection = ({
   showGoodFitsOnly 
 }: SwipeQRSectionProps) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [qrKey, setQrKey] = useState(0);
   
   // Build URL with query params
   const params = new URLSearchParams();
@@ -27,10 +28,11 @@ export const SwipeQRSection = ({
   const queryString = params.toString();
   const swipeUrl = `${window.location.origin}/swipe/${listId}${queryString ? `?${queryString}` : ''}`;
 
-  // Trigger refresh animation when filters change
+  // Trigger refresh animation when filters change - immediate response
   useEffect(() => {
     setIsRefreshing(true);
-    const timer = setTimeout(() => setIsRefreshing(false), 400);
+    setQrKey(prev => prev + 1); // Force QR code re-render
+    const timer = setTimeout(() => setIsRefreshing(false), 600);
     return () => clearTimeout(timer);
   }, [searchQuery, selectedStage, showGoodFitsOnly]);
 
@@ -91,22 +93,27 @@ export const SwipeQRSection = ({
               <div className="absolute -top-1.5 -right-1.5 bg-white text-black text-[10px] font-bold px-2.5 py-1 rounded-full z-10">
                 01
               </div>
-              <div className="p-3 bg-white rounded-xl shadow-xl relative">
+              <div className="p-3 bg-white rounded-xl shadow-xl relative transition-all duration-300">
                 {isRefreshing && (
-                  <div className="absolute inset-0 bg-white/90 rounded-xl flex items-center justify-center z-10">
+                  <div className="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-xl flex flex-col items-center justify-center z-10 gap-2">
                     <Loader2 className="h-8 w-8 text-black animate-spin" />
+                    <span className="text-[10px] font-bold text-black uppercase tracking-wider">Updating</span>
                   </div>
                 )}
                 <QRCodeSVG
+                  key={qrKey}
                   value={swipeUrl}
                   size={100}
                   level="H"
                   includeMargin={false}
                   fgColor="#000000"
                   bgColor="#ffffff"
+                  className="transition-opacity duration-300"
                 />
               </div>
-              <p className="text-[10px] text-center text-gray-500 mt-1.5 font-medium">Scan to review</p>
+              <p className="text-[10px] text-center text-gray-500 mt-1.5 font-medium">
+                {isRefreshing ? "Updating filters..." : "Scan to review"}
+              </p>
             </div>
           </div>
         </div>
