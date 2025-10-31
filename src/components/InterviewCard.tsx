@@ -23,23 +23,15 @@ interface InterviewCardProps {
 export function InterviewCard({ interview, onClick, onAddToList, swipeStatus, onSwipeStatusChange }: InterviewCardProps) {
   const isCompleted = interview.status === "completed";
   
-  const radarData = [
-    { skill: "Communication", value: interview.insights.communication },
-    { skill: "Technical", value: interview.insights.technicalSkills },
-    { skill: "Problem Solving", value: interview.insights.problemSolving },
-    { skill: "Cultural Fit", value: interview.insights.culturalFit },
-    { skill: "Leadership", value: interview.insights.leadership },
-    { skill: "Adaptability", value: interview.insights.adaptability },
-  ];
+  const radarData = Object.entries(interview.insights).map(([skill, value]) => ({
+    skill,
+    value
+  }));
 
   const overallScore = isCompleted 
     ? Math.round(
-        (interview.insights.communication +
-          interview.insights.technicalSkills +
-          interview.insights.problemSolving +
-          interview.insights.culturalFit +
-          interview.insights.leadership +
-          interview.insights.adaptability) / 6
+        Object.values(interview.insights).reduce((sum, val) => sum + val, 0) / 
+        Object.values(interview.insights).length
       )
     : 0;
 
@@ -143,12 +135,12 @@ export function InterviewCard({ interview, onClick, onAddToList, swipeStatus, on
         {/* Mini Radar Chart */}
         {isCompleted && (
           <div className="mb-4 -mx-2">
-            <ResponsiveContainer width="100%" height={180}>
+            <ResponsiveContainer width="100%" height={200}>
               <RadarChart data={radarData}>
                 <PolarGrid stroke="hsl(var(--border))" />
                 <PolarAngleAxis 
                   dataKey="skill" 
-                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 9 }}
                 />
                 <Radar
                   name="Score"
@@ -156,6 +148,7 @@ export function InterviewCard({ interview, onClick, onAddToList, swipeStatus, on
                   stroke="hsl(var(--primary))"
                   fill="hsl(var(--primary))"
                   fillOpacity={0.3}
+                  strokeWidth={2}
                 />
               </RadarChart>
             </ResponsiveContainer>

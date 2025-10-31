@@ -14,18 +14,18 @@ interface SkillsRadarProps {
 
 export function SkillsRadar({ skills }: SkillsRadarProps) {
   const data = Object.entries(skills).map(([skill, value]) => ({
-    skill: skill.length > 15 ? skill.substring(0, 15) + '...' : skill,
+    skill: skill.length > 20 ? skill.substring(0, 18) + '...' : skill,
     value: value,
     fullSkill: skill
   }));
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width="100%" height={350}>
       <RadarChart data={data}>
         <PolarGrid stroke="hsl(var(--border))" />
         <PolarAngleAxis 
           dataKey="skill" 
-          tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+          tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
         />
         <PolarRadiusAxis 
           angle={90} 
@@ -38,6 +38,7 @@ export function SkillsRadar({ skills }: SkillsRadarProps) {
           stroke="hsl(var(--primary))"
           fill="hsl(var(--primary))"
           fillOpacity={0.3}
+          strokeWidth={2}
         />
         <Tooltip 
           contentStyle={{
@@ -47,7 +48,7 @@ export function SkillsRadar({ skills }: SkillsRadarProps) {
             color: 'hsl(var(--popover-foreground))'
           }}
           formatter={(value: number, name: string, props: any) => [
-            `${value}%`,
+            `${value}`,
             props.payload.fullSkill
           ]}
         />

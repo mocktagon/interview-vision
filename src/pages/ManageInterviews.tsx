@@ -78,9 +78,6 @@ const ManageInterviews = () => {
           </Badge>
         </div>
 
-        {/* Swipe QR Section */}
-        <InterviewSwipeQRSection listId="all" />
-
         {/* Filters Section */}
         <div className="space-y-4">
           {/* Search */}
@@ -193,6 +190,15 @@ const ManageInterviews = () => {
             )}
           </div>
         </div>
+
+        {/* Swipe QR Section - Below Filters with Dynamic Refresh */}
+        <InterviewSwipeQRSection 
+          listId="all"
+          searchQuery={searchQuery}
+          statusFilter={statusFilter}
+          recommendationFilter={recommendationFilter}
+          roleFilter={roleFilter}
+        />
 
         {/* Interviews Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

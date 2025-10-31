@@ -8,12 +8,7 @@ export interface Interview {
   avatar?: string;
   status: "pending" | "completed" | "scheduled";
   insights: {
-    communication: number;
-    technicalSkills: number;
-    problemSolving: number;
-    culturalFit: number;
-    leadership: number;
-    adaptability: number;
+    [key: string]: number;
   };
   tags: string[];
   summary: string;
@@ -24,78 +19,86 @@ export const mockInterviews: Interview[] = [
   {
     id: "1",
     candidateName: "Sarah Chen",
-    role: "Senior Frontend Engineer",
+    role: "Senior Accountant",
     date: "2024-03-15",
     interviewer: "Michael Roberts",
     round: "Technical Round 2",
     status: "completed",
     insights: {
-      communication: 92,
-      technicalSkills: 88,
-      problemSolving: 85,
-      culturalFit: 90,
-      leadership: 78,
-      adaptability: 87
+      "Foundational Bookkeeping": 92,
+      "Data Accuracy and Attention to Detail": 88,
+      "Account Reconciliation": 85,
+      "Accounts Payable (AP) Management": 90,
+      "Accounts Receivable (AR) Management": 87,
+      "Financial Reporting Fundamentals": 91,
+      "Understanding of GAAP": 84,
+      "Accounting Software Proficiency": 89
     },
-    tags: ["React Expert", "Strong Communicator", "Team Player", "Architectural Thinking"],
-    summary: "Excellent technical skills with strong system design knowledge. Great cultural fit and communication.",
+    tags: ["GAAP Expert", "Detail-Oriented", "QuickBooks Pro", "Financial Reporting"],
+    summary: "Excellent technical accounting skills with strong attention to detail. Great understanding of GAAP principles.",
     recommendation: "strong_hire"
   },
   {
     id: "2",
     candidateName: "Marcus Johnson",
-    role: "Product Manager",
+    role: "Financial Controller",
     date: "2024-03-14",
     interviewer: "Emily Zhang",
     round: "Leadership Round",
     status: "completed",
     insights: {
-      communication: 95,
-      technicalSkills: 75,
-      problemSolving: 88,
-      culturalFit: 92,
-      leadership: 94,
-      adaptability: 89
+      "Foundational Bookkeeping": 88,
+      "Data Accuracy and Attention to Detail": 95,
+      "Account Reconciliation": 92,
+      "Accounts Payable (AP) Management": 90,
+      "Accounts Receivable (AR) Management": 89,
+      "Financial Reporting Fundamentals": 94,
+      "Understanding of GAAP": 93,
+      "Accounting Software Proficiency": 91
     },
-    tags: ["Strategic Thinker", "User-Centric", "Data-Driven", "Strong Leadership"],
-    summary: "Outstanding leadership qualities with proven track record. Excellent stakeholder management.",
+    tags: ["Strategic Thinker", "Compliance Expert", "Team Leadership", "Process Improvement"],
+    summary: "Outstanding leadership qualities with proven track record in financial management. Excellent regulatory compliance.",
     recommendation: "strong_hire"
   },
   {
     id: "3",
     candidateName: "Priya Sharma",
-    role: "UX Designer",
+    role: "Staff Accountant",
     date: "2024-03-13",
     interviewer: "David Kim",
-    round: "Portfolio Review",
+    round: "Technical Assessment",
     status: "completed",
     insights: {
-      communication: 87,
-      technicalSkills: 82,
-      problemSolving: 85,
-      culturalFit: 88,
-      leadership: 72,
-      adaptability: 90
+      "Foundational Bookkeeping": 87,
+      "Data Accuracy and Attention to Detail": 82,
+      "Account Reconciliation": 85,
+      "Accounts Payable (AP) Management": 88,
+      "Accounts Receivable (AR) Management": 84,
+      "Financial Reporting Fundamentals": 80,
+      "Understanding of GAAP": 79,
+      "Accounting Software Proficiency": 90
     },
-    tags: ["Creative", "User Research", "Figma Expert", "Design Systems"],
-    summary: "Strong portfolio with excellent user research skills. Good understanding of design systems.",
+    tags: ["Fast Learner", "Tech-Savvy", "Month-End Close", "Excel Expert"],
+    summary: "Strong technical skills with excellent software proficiency. Good foundation in accounting principles.",
     recommendation: "hire"
   },
   {
     id: "4",
     candidateName: "Alex Rivera",
-    role: "DevOps Engineer",
+    role: "Junior Accountant",
     date: "2024-03-16",
     interviewer: "Sarah Williams",
-    round: "Technical Deep Dive",
+    round: "Initial Screening",
     status: "scheduled",
     insights: {
-      communication: 0,
-      technicalSkills: 0,
-      problemSolving: 0,
-      culturalFit: 0,
-      leadership: 0,
-      adaptability: 0
+      "Foundational Bookkeeping": 0,
+      "Data Accuracy and Attention to Detail": 0,
+      "Account Reconciliation": 0,
+      "Accounts Payable (AP) Management": 0,
+      "Accounts Receivable (AR) Management": 0,
+      "Financial Reporting Fundamentals": 0,
+      "Understanding of GAAP": 0,
+      "Accounting Software Proficiency": 0
     },
     tags: [],
     summary: "",
@@ -104,41 +107,45 @@ export const mockInterviews: Interview[] = [
   {
     id: "5",
     candidateName: "Jessica Wu",
-    role: "Data Scientist",
+    role: "Tax Accountant",
     date: "2024-03-12",
     interviewer: "Robert Chen",
-    round: "Technical Assessment",
+    round: "Technical Deep Dive",
     status: "completed",
     insights: {
-      communication: 83,
-      technicalSkills: 91,
-      problemSolving: 89,
-      culturalFit: 85,
-      leadership: 80,
-      adaptability: 88
+      "Foundational Bookkeeping": 86,
+      "Data Accuracy and Attention to Detail": 91,
+      "Account Reconciliation": 89,
+      "Accounts Payable (AP) Management": 85,
+      "Accounts Receivable (AR) Management": 83,
+      "Financial Reporting Fundamentals": 88,
+      "Understanding of GAAP": 92,
+      "Accounting Software Proficiency": 87
     },
-    tags: ["ML Expert", "Python", "Statistical Analysis", "Research-Oriented"],
-    summary: "Exceptional technical skills in ML and data analysis. Strong research background with practical applications.",
+    tags: ["Tax Expertise", "Research-Oriented", "Compliance Focus", "Analytical"],
+    summary: "Exceptional technical skills in tax accounting. Strong research background with practical compliance knowledge.",
     recommendation: "hire"
   },
   {
     id: "6",
     candidateName: "Tom Anderson",
-    role: "Backend Engineer",
+    role: "Accounts Payable Specialist",
     date: "2024-03-11",
     interviewer: "Lisa Park",
-    round: "System Design",
+    round: "Process Review",
     status: "completed",
     insights: {
-      communication: 78,
-      technicalSkills: 86,
-      problemSolving: 84,
-      culturalFit: 82,
-      leadership: 75,
-      adaptability: 81
+      "Foundational Bookkeeping": 80,
+      "Data Accuracy and Attention to Detail": 86,
+      "Account Reconciliation": 84,
+      "Accounts Payable (AP) Management": 94,
+      "Accounts Receivable (AR) Management": 78,
+      "Financial Reporting Fundamentals": 82,
+      "Understanding of GAAP": 81,
+      "Accounting Software Proficiency": 88
     },
-    tags: ["Scalability Focus", "Microservices", "Database Expert", "Performance"],
-    summary: "Solid backend skills with good understanding of distributed systems. Could improve communication.",
+    tags: ["AP Specialist", "Vendor Relations", "Process Efficiency", "SAP Expert"],
+    summary: "Strong AP management skills with excellent vendor relationship management. Focus on process optimization.",
     recommendation: "hire"
   }
 ];

@@ -6,19 +6,47 @@ import { useState, useEffect, useMemo } from "react";
 
 interface InterviewSwipeQRSectionProps {
   listId?: string;
+  searchQuery?: string;
+  statusFilter?: string;
+  recommendationFilter?: string;
+  roleFilter?: string;
 }
 
-export function InterviewSwipeQRSection({ listId = "all" }: InterviewSwipeQRSectionProps) {
+export function InterviewSwipeQRSection({ 
+  listId = "all",
+  searchQuery = "",
+  statusFilter = "all",
+  recommendationFilter = "all",
+  roleFilter = "all"
+}: InterviewSwipeQRSectionProps) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [qrKey, setQrKey] = useState(0);
   const [copied, setCopied] = useState(false);
   
-  // Generate OTP (6 digits)
+  // Generate OTP (6 digits) - regenerates when ANY filter changes
   const otp = useMemo(() => {
     return Math.floor(100000 + Math.random() * 900000).toString();
-  }, []);
+  }, [searchQuery, statusFilter, recommendationFilter, roleFilter]);
   
-  const swipeUrl = `${window.location.origin}/swipe-interviews/${listId}?otp=${otp}`;
+  // Build URL with query params and OTP
+  const params = new URLSearchParams();
+  if (searchQuery) params.set('search', searchQuery);
+  if (statusFilter && statusFilter !== 'all') params.set('status', statusFilter);
+  if (recommendationFilter && recommendationFilter !== 'all') params.set('recommendation', recommendationFilter);
+  if (roleFilter && roleFilter !== 'all') params.set('role', roleFilter);
+  params.set('otp', otp);
+  
+  const queryString = params.toString();
+  const swipeUrl = `${window.location.origin}/swipe-interviews/${listId}${queryString ? `?${queryString}` : ''}`;
+
+  // Trigger refresh animation when ANY filter changes
+  useEffect(() => {
+    setIsRefreshing(true);
+    setCopied(false);
+    setQrKey(prev => prev + 1); // Force QR code re-render immediately
+    const timer = setTimeout(() => setIsRefreshing(false), 350);
+    return () => clearTimeout(timer);
+  }, [searchQuery, statusFilter, recommendationFilter, roleFilter]);
 
   const copyOtp = () => {
     navigator.clipboard.writeText(otp);

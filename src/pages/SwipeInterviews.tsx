@@ -154,12 +154,8 @@ const SwipeInterviews = () => {
   };
 
   const overallScore = currentInterview ? Math.round(
-    (currentInterview.insights.communication +
-      currentInterview.insights.technicalSkills +
-      currentInterview.insights.problemSolving +
-      currentInterview.insights.culturalFit +
-      currentInterview.insights.leadership +
-      currentInterview.insights.adaptability) / 6
+    Object.values(currentInterview.insights).reduce((sum, val) => sum + val, 0) / 
+    Object.values(currentInterview.insights).length
   ) : 0;
 
   // OTP verification screen
