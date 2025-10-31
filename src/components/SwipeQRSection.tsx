@@ -28,11 +28,11 @@ export const SwipeQRSection = ({
   const queryString = params.toString();
   const swipeUrl = `${window.location.origin}/swipe/${listId}${queryString ? `?${queryString}` : ''}`;
 
-  // Trigger refresh animation when filters change - immediate response
+  // Trigger refresh animation when filters change - instant response
   useEffect(() => {
     setIsRefreshing(true);
-    setQrKey(prev => prev + 1); // Force QR code re-render
-    const timer = setTimeout(() => setIsRefreshing(false), 600);
+    setQrKey(prev => prev + 1); // Force QR code re-render immediately
+    const timer = setTimeout(() => setIsRefreshing(false), 350); // Faster animation
     return () => clearTimeout(timer);
   }, [searchQuery, selectedStage, showGoodFitsOnly]);
 
@@ -93,23 +93,24 @@ export const SwipeQRSection = ({
               <div className="absolute -top-1.5 -right-1.5 bg-white text-black text-[10px] font-bold px-2.5 py-1 rounded-full z-10">
                 01
               </div>
-              <div className="p-3 bg-white rounded-xl shadow-xl relative transition-all duration-300">
+              <div className="p-3 bg-white rounded-xl shadow-xl relative transition-all duration-200">
                 {isRefreshing && (
-                  <div className="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-xl flex flex-col items-center justify-center z-10 gap-2">
-                    <Loader2 className="h-8 w-8 text-black animate-spin" />
-                    <span className="text-[10px] font-bold text-black uppercase tracking-wider">Updating</span>
+                  <div className="absolute inset-0 bg-white/98 backdrop-blur-sm rounded-xl flex flex-col items-center justify-center z-10 gap-1.5 animate-fade-in">
+                    <Loader2 className="h-7 w-7 text-black animate-spin" />
+                    <span className="text-[9px] font-bold text-black uppercase tracking-wider">Updating</span>
                   </div>
                 )}
-                <QRCodeSVG
-                  key={qrKey}
-                  value={swipeUrl}
-                  size={100}
-                  level="H"
-                  includeMargin={false}
-                  fgColor="#000000"
-                  bgColor="#ffffff"
-                  className="transition-opacity duration-300"
-                />
+                <div className={`transition-all duration-200 ${isRefreshing ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}>
+                  <QRCodeSVG
+                    key={qrKey}
+                    value={swipeUrl}
+                    size={100}
+                    level="H"
+                    includeMargin={false}
+                    fgColor="#000000"
+                    bgColor="#ffffff"
+                  />
+                </div>
               </div>
               <p className="text-[10px] text-center text-gray-500 mt-1.5 font-medium">
                 {isRefreshing ? "Updating filters..." : "Scan to review"}
