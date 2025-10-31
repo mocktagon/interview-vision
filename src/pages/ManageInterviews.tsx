@@ -6,7 +6,7 @@ import { InterviewSwipeQRSection } from "@/components/InterviewSwipeQRSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Search, Filter, CheckCircle2, Clock, AlertCircle, XCircle, RefreshCw } from "lucide-react";
+import { ArrowLeft, Search, Filter, CheckCircle2, Clock, AlertCircle, XCircle, RefreshCw, X, TrendingUp } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -21,6 +21,7 @@ const ManageInterviews = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [recommendationFilter, setRecommendationFilter] = useState<string>("all");
   const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [minScore, setMinScore] = useState<number>(0);
   const [swipeDecisions, setSwipeDecisions] = useState<Record<string, 'good-fit' | 'nope' | 'maybe'>>({});
 
   // Load swipe decisions from localStorage
@@ -50,7 +51,17 @@ const ManageInterviews = () => {
     const matchesRole =
       roleFilter === "all" || interview.role === roleFilter;
 
-    return matchesSearch && matchesStatus && matchesRecommendation && matchesRole;
+    // Calculate overall score for completed interviews
+    const overallScore = interview.status === "completed"
+      ? Math.round(
+          Object.values(interview.insights).reduce((sum, val) => sum + val, 0) / 
+          Object.values(interview.insights).length
+        )
+      : 0;
+    
+    const matchesScore = overallScore >= minScore;
+
+    return matchesSearch && matchesStatus && matchesRecommendation && matchesRole && matchesScore;
   });
 
   const uniqueRoles = Array.from(new Set(mockInterviews.map((i) => i.role)));
@@ -86,20 +97,9 @@ const ManageInterviews = () => {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={loadSwipeDecisions}
-              className="gap-2"
-            >
-              <RefreshCw className="h-4 w-4" />
-              Refresh
-            </Button>
-            <Badge variant="outline" className="text-lg px-4 py-2">
-              {filteredInterviews.length} Interviews
-            </Badge>
-          </div>
+          <Badge variant="outline" className="text-lg px-4 py-2">
+            {filteredInterviews.length} Interviews
+          </Badge>
         </div>
 
         {/* Filters Section */}
@@ -115,22 +115,16 @@ const ManageInterviews = () => {
             />
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium text-muted-foreground">Filters:</span>
-            </div>
-
+          {/* Filter Controls */}
+          <div className="flex flex-wrap gap-2 items-center">
             {/* Status Filter */}
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[180px]">
+                <Clock className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">
-                  All Status ({getStatusCount("all")})
-                </SelectItem>
+                <SelectItem value="all">All Status ({getStatusCount("all")})</SelectItem>
                 <SelectItem value="completed">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-success" />
@@ -149,12 +143,11 @@ const ManageInterviews = () => {
             {/* Recommendation Filter */}
             <Select value={recommendationFilter} onValueChange={setRecommendationFilter}>
               <SelectTrigger className="w-[200px]">
+                <Filter className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Recommendation" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">
-                  All Recommendations ({getRecommendationCount("all")})
-                </SelectItem>
+                <SelectItem value="all">All Recommendations ({getRecommendationCount("all")})</SelectItem>
                 <SelectItem value="strong_hire">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-success" />
@@ -197,22 +190,93 @@ const ManageInterviews = () => {
               </SelectContent>
             </Select>
 
+            {/* Score Filter */}
+            <Select value={minScore.toString()} onValueChange={(v) => setMinScore(Number(v))}>
+              <SelectTrigger className="w-[180px]">
+                <TrendingUp className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Min Score" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0">Any Score</SelectItem>
+                <SelectItem value="90">90+ (Excellent)</SelectItem>
+                <SelectItem value="80">80+ (Very Good)</SelectItem>
+                <SelectItem value="70">70+ (Good)</SelectItem>
+                <SelectItem value="60">60+ (Average)</SelectItem>
+              </SelectContent>
+            </Select>
+
             {/* Clear Filters */}
-            {(statusFilter !== "all" || recommendationFilter !== "all" || roleFilter !== "all" || searchQuery) && (
+            {(statusFilter !== "all" || recommendationFilter !== "all" || roleFilter !== "all" || searchQuery || minScore > 0) && (
               <Button
                 variant="ghost"
-                size="sm"
                 onClick={() => {
                   setStatusFilter("all");
                   setRecommendationFilter("all");
                   setRoleFilter("all");
                   setSearchQuery("");
+                  setMinScore(0);
                 }}
+                className="gap-2 text-muted-foreground hover:text-foreground"
               >
+                <X className="h-4 w-4" />
                 Clear Filters
               </Button>
             )}
+
+            {/* Refresh Button */}
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={loadSwipeDecisions}
+              title="Refresh review statuses from mobile"
+              className="ml-auto"
+            >
+              <RefreshCw className="h-4 w-4" />
+            </Button>
           </div>
+
+          {/* Active Filters Summary */}
+          {(statusFilter !== "all" || recommendationFilter !== "all" || roleFilter !== "all" || minScore > 0) && (
+            <div className="flex items-center gap-2 text-xs flex-wrap">
+              <span className="font-medium text-muted-foreground">Active filters:</span>
+              {statusFilter !== "all" && (
+                <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
+                  Status: {statusFilter}
+                  <X 
+                    className="h-3 w-3 hover:text-destructive transition-colors" 
+                    onClick={() => setStatusFilter("all")}
+                  />
+                </Badge>
+              )}
+              {recommendationFilter !== "all" && (
+                <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
+                  Rec: {recommendationFilter.replace('_', ' ')}
+                  <X 
+                    className="h-3 w-3 hover:text-destructive transition-colors" 
+                    onClick={() => setRecommendationFilter("all")}
+                  />
+                </Badge>
+              )}
+              {roleFilter !== "all" && (
+                <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
+                  Role: {roleFilter}
+                  <X 
+                    className="h-3 w-3 hover:text-destructive transition-colors" 
+                    onClick={() => setRoleFilter("all")}
+                  />
+                </Badge>
+              )}
+              {minScore > 0 && (
+                <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
+                  Score ≥ {minScore}
+                  <X 
+                    className="h-3 w-3 hover:text-destructive transition-colors" 
+                    onClick={() => setMinScore(0)}
+                  />
+                </Badge>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Swipe QR Section - Below Filters with Dynamic Refresh */}
