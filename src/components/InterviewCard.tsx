@@ -1,8 +1,9 @@
 import { Interview } from "@/data/mockInterviews";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Calendar, User, CheckCircle2, Clock, XCircle, AlertCircle } from "lucide-react";
+import { Calendar, User, CheckCircle2, Clock, XCircle, AlertCircle, List, Plus, CheckCircle } from "lucide-react";
 import {
   Radar,
   RadarChart,
@@ -14,9 +15,12 @@ import {
 interface InterviewCardProps {
   interview: Interview;
   onClick?: () => void;
+  onAddToList?: (interviewId: string, listType: 'existing' | 'new') => void;
+  swipeStatus?: 'good-fit' | 'nope' | 'maybe' | null;
+  onSwipeStatusChange?: (interviewId: string, status: 'good-fit' | 'nope' | 'maybe') => void;
 }
 
-export function InterviewCard({ interview, onClick }: InterviewCardProps) {
+export function InterviewCard({ interview, onClick, onAddToList, swipeStatus, onSwipeStatusChange }: InterviewCardProps) {
   const isCompleted = interview.status === "completed";
   
   const radarData = [
@@ -191,7 +195,7 @@ export function InterviewCard({ interview, onClick }: InterviewCardProps) {
         )}
 
         {/* Footer Info */}
-        <div className="flex items-center justify-between pt-3 border-t border-border/50">
+        <div className="flex items-center justify-between pt-3 border-t border-border/50 mb-3">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <User className="h-3.5 w-3.5" />
             <span>{interview.interviewer}</span>
@@ -200,6 +204,62 @@ export function InterviewCard({ interview, onClick }: InterviewCardProps) {
             <Calendar className="h-3.5 w-3.5" />
             <span>{new Date(interview.date).toLocaleDateString()}</span>
           </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 text-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToList?.(interview.id, 'existing');
+            }}
+          >
+            <List className="h-4 w-4 mr-2" />
+            Add to List
+          </Button>
+          
+          {swipeStatus ? (
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-9 w-9 ${swipeStatus === 'good-fit' ? 'bg-success/10 hover:bg-success/20' : 'hover:bg-muted'}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSwipeStatusChange?.(interview.id, 'good-fit');
+                }}
+              >
+                <CheckCircle className={`h-4 w-4 ${swipeStatus === 'good-fit' ? 'text-success' : 'text-muted-foreground'}`} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-9 w-9 ${swipeStatus === 'nope' ? 'bg-destructive/10 hover:bg-destructive/20' : 'hover:bg-muted'}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSwipeStatusChange?.(interview.id, 'nope');
+                }}
+              >
+                <XCircle className={`h-4 w-4 ${swipeStatus === 'nope' ? 'text-destructive' : 'text-muted-foreground'}`} />
+              </Button>
+            </div>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 text-sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddToList?.(interview.id, 'new');
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              New List
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -201,6 +201,14 @@ const ManageInterviews = () => {
               key={interview.id}
               interview={interview}
               onClick={() => console.log("View interview:", interview.id)}
+              onAddToList={(interviewId, listType) => {
+                console.log("Add to list:", interviewId, listType);
+                // TODO: Implement list functionality
+              }}
+              onSwipeStatusChange={(interviewId, status) => {
+                console.log("Swipe status change:", interviewId, status);
+                // TODO: Implement status tracking
+              }}
             />
           ))}
         </div>
