@@ -13,7 +13,10 @@ import {
   Briefcase,
   Plus,
   List,
-  Award
+  Award,
+  CheckCircle,
+  XCircle,
+  AlertCircle
 } from "lucide-react";
 
 interface CandidateCardProps {
@@ -242,65 +245,57 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
 
       {/* Actions - Spacious & Clear */}
       <div className="flex gap-2">
-        {swipeStatus ? (
-          <div className="flex-1 flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className={`flex-1 text-xs h-9 transition-all ${
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex-1 text-xs h-9 hover:bg-primary/5 hover:text-primary hover:border-primary/30 transition-all"
+          onClick={(e) => {
+            e.stopPropagation();
+            onAddToList?.(candidate.id, 'existing');
+          }}
+        >
+          <List className="h-3.5 w-3.5 mr-1.5" />
+          Add to List
+        </Button>
+        
+        {swipeStatus && (
+          <div className="flex items-center gap-2">
+            <Badge
+              className={`text-xs font-medium px-3 py-1 ${
                 swipeStatus === 'good-fit' 
-                  ? 'bg-success/10 text-success border-success/30 hover:bg-success/20' 
+                  ? 'bg-success/10 text-success border-success/30' 
                   : swipeStatus === 'maybe'
-                  ? 'bg-orange-500/10 text-orange-600 border-orange-500/30 hover:bg-orange-500/20'
-                  : 'bg-destructive/10 text-destructive border-destructive/30 hover:bg-destructive/20'
+                  ? 'bg-orange-500/10 text-orange-600 border-orange-500/30'
+                  : 'bg-destructive/10 text-destructive border-destructive/30'
               }`}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
             >
-              {swipeStatus === 'good-fit' ? '✓ Good Fit' : swipeStatus === 'maybe' ? '◐ Maybe' : '✕ Nope'}
-            </Button>
-            <select
-              className="h-9 px-2 text-xs border border-border rounded-md bg-background hover:bg-secondary transition-colors"
-              value={swipeStatus}
-              onChange={(e) => {
-                e.stopPropagation();
-                onSwipeStatusChange?.(candidate.id, e.target.value as 'good-fit' | 'nope' | 'maybe');
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <option value="good-fit">Good Fit</option>
-              <option value="maybe">Maybe</option>
-              <option value="nope">Nope</option>
-            </select>
+              {swipeStatus === 'good-fit' ? 'Good Fit' : swipeStatus === 'maybe' ? 'Maybe' : 'Nope'}
+            </Badge>
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 hover:bg-success/10"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSwipeStatusChange?.(candidate.id, 'good-fit');
+                }}
+              >
+                <CheckCircle className={`h-4 w-4 ${swipeStatus === 'good-fit' ? 'text-success fill-success/20' : 'text-muted-foreground'}`} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 hover:bg-destructive/10"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSwipeStatusChange?.(candidate.id, 'nope');
+                }}
+              >
+                <XCircle className={`h-4 w-4 ${swipeStatus === 'nope' ? 'text-destructive fill-destructive/20' : 'text-muted-foreground'}`} />
+              </Button>
+            </div>
           </div>
-        ) : (
-          <>
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-1 text-xs h-9 hover:bg-primary/5 hover:text-primary hover:border-primary/30 transition-all"
-              onClick={(e) => {
-                e.stopPropagation();
-                onAddToList?.(candidate.id, 'existing');
-              }}
-            >
-              <List className="h-3.5 w-3.5 mr-1.5" />
-              Add to List
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-1 text-xs h-9 hover:bg-accent/5 hover:text-accent hover:border-accent/30 transition-all"
-              onClick={(e) => {
-                e.stopPropagation();
-                onAddToList?.(candidate.id, 'new');
-              }}
-            >
-              <Plus className="h-3.5 w-3.5 mr-1.5" />
-              New List
-            </Button>
-          </>
         )}
       </div>
     </Card>
