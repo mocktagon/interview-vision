@@ -21,6 +21,8 @@ interface CandidateCardProps {
   onViewDetails: (candidate: Candidate) => void;
   onToggleStar?: (candidateId: string) => void;
   onAddToList?: (candidateId: string, listType: 'existing' | 'new') => void;
+  swipeStatus?: 'good-fit' | 'nope' | 'maybe' | null;
+  onSwipeStatusChange?: (candidateId: string, status: 'good-fit' | 'nope' | 'maybe') => void;
 }
 
 const getPerformanceLevel = (score: number) => {
@@ -75,7 +77,7 @@ const psychIcons = {
   city: '🏙️'
 };
 
-export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToList }: CandidateCardProps) {
+export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToList, swipeStatus, onSwipeStatusChange }: CandidateCardProps) {
   const topSkills = Object.entries(candidate.skills)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 3);
@@ -240,30 +242,66 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
 
       {/* Actions - Spacious & Clear */}
       <div className="flex gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex-1 text-xs h-9 hover:bg-primary/5 hover:text-primary hover:border-primary/30 transition-all"
-          onClick={(e) => {
-            e.stopPropagation();
-            onAddToList?.(candidate.id, 'existing');
-          }}
-        >
-          <List className="h-3.5 w-3.5 mr-1.5" />
-          Add to List
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex-1 text-xs h-9 hover:bg-accent/5 hover:text-accent hover:border-accent/30 transition-all"
-          onClick={(e) => {
-            e.stopPropagation();
-            onAddToList?.(candidate.id, 'new');
-          }}
-        >
-          <Plus className="h-3.5 w-3.5 mr-1.5" />
-          New List
-        </Button>
+        {swipeStatus ? (
+          <div className="flex-1 flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className={`flex-1 text-xs h-9 transition-all ${
+                swipeStatus === 'good-fit' 
+                  ? 'bg-success/10 text-success border-success/30 hover:bg-success/20' 
+                  : swipeStatus === 'maybe'
+                  ? 'bg-orange-500/10 text-orange-600 border-orange-500/30 hover:bg-orange-500/20'
+                  : 'bg-destructive/10 text-destructive border-destructive/30 hover:bg-destructive/20'
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              {swipeStatus === 'good-fit' ? '✓ Good Fit' : swipeStatus === 'maybe' ? '◐ Maybe' : '✕ Nope'}
+            </Button>
+            <select
+              className="h-9 px-2 text-xs border border-border rounded-md bg-background hover:bg-secondary transition-colors"
+              value={swipeStatus}
+              onChange={(e) => {
+                e.stopPropagation();
+                onSwipeStatusChange?.(candidate.id, e.target.value as 'good-fit' | 'nope' | 'maybe');
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <option value="good-fit">Good Fit</option>
+              <option value="maybe">Maybe</option>
+              <option value="nope">Nope</option>
+            </select>
+          </div>
+        ) : (
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 text-xs h-9 hover:bg-primary/5 hover:text-primary hover:border-primary/30 transition-all"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddToList?.(candidate.id, 'existing');
+              }}
+            >
+              <List className="h-3.5 w-3.5 mr-1.5" />
+              Add to List
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 text-xs h-9 hover:bg-accent/5 hover:text-accent hover:border-accent/30 transition-all"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddToList?.(candidate.id, 'new');
+              }}
+            >
+              <Plus className="h-3.5 w-3.5 mr-1.5" />
+              New List
+            </Button>
+          </>
+        )}
       </div>
     </Card>
   );

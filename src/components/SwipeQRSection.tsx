@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { QRCodeSVG } from "qrcode.react";
-import { Smartphone, Zap, Heart, Undo2 } from "lucide-react";
-import { Badge } from "./ui/badge";
+import { Smartphone, Zap, Heart } from "lucide-react";
 
 interface SwipeQRSectionProps {
   listId: string;
@@ -48,10 +47,6 @@ export const SwipeQRSection = ({ listId }: SwipeQRSectionProps) => {
                 <Heart className="h-3.5 w-3.5 text-success" />
                 <span className="text-muted-foreground">Swipe Interface</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Undo2 className="h-3.5 w-3.5 text-foreground" />
-                <span className="text-muted-foreground">Full Undo</span>
-              </div>
             </div>
             
             <div className="flex-shrink-0">
@@ -68,6 +63,12 @@ export const SwipeQRSection = ({ listId }: SwipeQRSectionProps) => {
               <p className="text-[10px] text-center text-muted-foreground mt-1.5 font-medium">Scan to review</p>
             </div>
           </div>
+        </div>
+        
+        <div className="mt-4 pt-4 border-t border-border">
+          <p className="text-xs text-muted-foreground">
+            💡 <span className="font-semibold">Pro tip:</span> Review candidates during commute, lunch breaks, or wherever you are
+          </p>
         </div>
       </div>
     </Card>

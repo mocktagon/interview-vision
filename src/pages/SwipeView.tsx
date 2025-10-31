@@ -50,6 +50,11 @@ const SwipeView = () => {
     
     setHistory(prev => [...prev, { index: currentIndex, decision }]);
     
+    // Save decision to localStorage
+    const decisions = JSON.parse(localStorage.getItem('swipeDecisions') || '{}');
+    decisions[currentCandidate.id] = decision === 'yes' ? 'good-fit' : 'nope';
+    localStorage.setItem('swipeDecisions', JSON.stringify(decisions));
+    
     const direction = decision === 'yes' ? 1 : -1;
     
     api.start({
@@ -78,6 +83,12 @@ const SwipeView = () => {
     if (history.length === 0) return;
     
     const lastAction = history[history.length - 1];
+    
+    // Remove decision from localStorage
+    const decisions = JSON.parse(localStorage.getItem('swipeDecisions') || '{}');
+    delete decisions[cards[lastAction.index].id];
+    localStorage.setItem('swipeDecisions', JSON.stringify(decisions));
+    
     setHistory(prev => prev.slice(0, -1));
     setCurrentIndex(lastAction.index);
     api.set({ x: 0, rotate: 0, opacity: 1 });

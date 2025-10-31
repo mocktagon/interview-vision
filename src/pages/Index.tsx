@@ -44,6 +44,20 @@ const Index = () => {
   const [isAnalyticsPanelOpen, setIsAnalyticsPanelOpen] = useState(true);
   const [aiSearchQuery, setAiSearchQuery] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
+  const [swipeDecisions, setSwipeDecisions] = useState<Record<string, 'good-fit' | 'nope' | 'maybe'>>({});
+
+  // Load swipe decisions from localStorage
+  useEffect(() => {
+    const decisions = JSON.parse(localStorage.getItem('swipeDecisions') || '{}');
+    setSwipeDecisions(decisions);
+  }, []);
+
+  const handleSwipeStatusChange = (candidateId: string, status: 'good-fit' | 'nope' | 'maybe') => {
+    const decisions = JSON.parse(localStorage.getItem('swipeDecisions') || '{}');
+    decisions[candidateId] = status;
+    localStorage.setItem('swipeDecisions', JSON.stringify(decisions));
+    setSwipeDecisions(decisions);
+  };
 
   useEffect(() => {
     const handleScroll = (e: Event) => {
@@ -207,6 +221,8 @@ const Index = () => {
                       key={candidate.id}
                       candidate={candidate}
                       onViewDetails={handleViewCandidate}
+                      swipeStatus={swipeDecisions[candidate.id] || null}
+                      onSwipeStatusChange={handleSwipeStatusChange}
                     />
                   ))}
                 </div>
