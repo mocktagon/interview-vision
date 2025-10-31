@@ -275,12 +275,9 @@ const SwipeView = () => {
             </div>
           </div>
           
-          <Button 
-            onClick={() => navigate(`/list/${listId}`)} 
-            className="w-full mt-8 h-12 text-base"
-          >
-            Back to List
-          </Button>
+          <p className="text-sm text-gray-400 mt-8">
+            Your selections have been saved. You can close this window now.
+          </p>
         </Card>
       </div>
     );
