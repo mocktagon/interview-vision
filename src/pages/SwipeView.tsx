@@ -46,6 +46,8 @@ const SwipeView = () => {
   );
 
   const handleSwipe = (decision: 'yes' | 'no') => {
+    if (currentIndex >= cards.length) return;
+    
     setHistory(prev => [...prev, { index: currentIndex, decision }]);
     
     const direction = decision === 'yes' ? 1 : -1;
@@ -55,19 +57,21 @@ const SwipeView = () => {
       rotate: direction * 30,
       opacity: 0,
       config: { tension: 200, friction: 20 },
-      onRest: () => {
-        if (currentIndex < cards.length - 1) {
-          setCurrentIndex(prev => prev + 1);
-          api.set({ x: 0, rotate: 0, opacity: 1 });
-        } else {
-          toast({
-            title: "All candidates reviewed!",
-            description: `You've reviewed all ${cards.length} candidates.`,
-          });
-          setTimeout(() => navigate(`/list/${listId}`), 1500);
-        }
-      },
     });
+
+    // Immediately move to next card after a short delay
+    setTimeout(() => {
+      if (currentIndex < cards.length - 1) {
+        setCurrentIndex(prev => prev + 1);
+        api.set({ x: 0, rotate: 0, opacity: 1 });
+      } else {
+        toast({
+          title: "All candidates reviewed!",
+          description: `You've reviewed all ${cards.length} candidates.`,
+        });
+        setTimeout(() => navigate(`/list/${listId}`), 1500);
+      }
+    }, 250);
   };
 
   const handleUndo = () => {
