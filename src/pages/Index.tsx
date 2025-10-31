@@ -29,7 +29,8 @@ import {
   ChevronRight,
   Sparkles,
   Zap,
-  RefreshCw
+  RefreshCw,
+  X
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -47,6 +48,10 @@ const Index = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [swipeDecisions, setSwipeDecisions] = useState<Record<string, 'good-fit' | 'nope' | 'maybe'>>({});
   const [showGoodFitsOnly, setShowGoodFitsOnly] = useState(false);
+  const [minScore, setMinScore] = useState<number>(0);
+  const [minExperience, setMinExperience] = useState<number>(0);
+  const [swipeStatus, setSwipeStatus] = useState<string>("all");
+  const [starredOnly, setStarredOnly] = useState(false);
 
   // Load swipe decisions from localStorage
   useEffect(() => {
@@ -80,18 +85,38 @@ const Index = () => {
 
   const filteredCandidates = useMemo(() => {
     return mockCandidates.filter(candidate => {
+      // Search filter - matches name, role, or email
       const matchesSearch = 
         candidate.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         candidate.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
         candidate.email.toLowerCase().includes(searchQuery.toLowerCase());
       
+      // Stage filter - filter by recruitment stage
       const matchesStage = stageFilter === "all" || candidate.stage === stageFilter;
       
+      // Score filter - minimum overall score threshold
+      const matchesScore = candidate.scores.overall >= minScore;
+      
+      // Experience filter - minimum years of experience
+      const matchesExperience = candidate.experience >= minExperience;
+      
+      // Swipe status filter - filter by review decision
+      const matchesSwipeStatus = 
+        swipeStatus === "all" ||
+        (swipeStatus === "good-fit" && swipeDecisions[candidate.id] === 'good-fit') ||
+        (swipeStatus === "nope" && swipeDecisions[candidate.id] === 'nope') ||
+        (swipeStatus === "not-reviewed" && !swipeDecisions[candidate.id]);
+      
+      // Starred filter - show only starred candidates
+      const matchesStarred = !starredOnly || candidate.starred;
+      
+      // Legacy good fits filter (kept for QR functionality)
       const matchesGoodFit = !showGoodFitsOnly || swipeDecisions[candidate.id] === 'good-fit';
       
-      return matchesSearch && matchesStage && matchesGoodFit;
+      return matchesSearch && matchesStage && matchesScore && matchesExperience && 
+             matchesSwipeStatus && matchesStarred && matchesGoodFit;
     });
-  }, [searchQuery, stageFilter, showGoodFitsOnly, swipeDecisions]);
+  }, [searchQuery, stageFilter, showGoodFitsOnly, swipeDecisions, minScore, minExperience, swipeStatus, starredOnly]);
 
   const stats = useMemo(() => {
     const topPerformers = filteredCandidates.filter(c => c.starred).length;
@@ -181,46 +206,134 @@ const Index = () => {
             {/* Main Content (Scrollable Candidates) */}
             <div className="h-full flex flex-col">
               {/* Search and Filters */}
-              <div className="flex flex-col sm:flex-row gap-3 mb-4 flex-shrink-0 sticky top-0 bg-background/95 backdrop-blur-sm py-3 z-10">
-                <div className="relative flex-1">
+              <div className="flex flex-col gap-3 mb-4 flex-shrink-0 sticky top-0 bg-background/95 backdrop-blur-sm py-3 z-10">
+                {/* Search Bar */}
+                <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search candidates by name, role, or email..."
+                    placeholder="Search by name, role, or email..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10"
                   />
                 </div>
-                <Select value={stageFilter} onValueChange={setStageFilter}>
-                  <SelectTrigger className="w-full sm:w-[200px]">
-                    <Filter className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="Filter by stage" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Stages</SelectItem>
-                    <SelectItem value="screening">Screening</SelectItem>
-                    <SelectItem value="prelims">Preliminary</SelectItem>
-                    <SelectItem value="fitment">Fitment</SelectItem>
-                    <SelectItem value="final">Final Review</SelectItem>
-                    <SelectItem value="selected">Selected</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button
-                  variant={showGoodFitsOnly ? "default" : "outline"}
-                  onClick={() => setShowGoodFitsOnly(!showGoodFitsOnly)}
-                  className="w-full sm:w-auto"
-                >
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Good Fits Only
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleRefreshStatuses}
-                  title="Refresh swipe statuses"
-                >
-                  <RefreshCw className="h-4 w-4" />
-                </Button>
+
+                {/* Filter Controls */}
+                <div className="flex flex-wrap gap-2 items-center">
+                  {/* Stage Filter */}
+                  <Select value={stageFilter} onValueChange={setStageFilter}>
+                    <SelectTrigger className="w-[180px]">
+                      <Filter className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Recruitment Stage" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border z-50">
+                      <SelectItem value="all">All Stages</SelectItem>
+                      <SelectItem value="screening">Screening</SelectItem>
+                      <SelectItem value="prelims">Preliminary</SelectItem>
+                      <SelectItem value="fitment">Fitment</SelectItem>
+                      <SelectItem value="final">Final Review</SelectItem>
+                      <SelectItem value="selected">Selected</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {/* Score Filter */}
+                  <Select value={minScore.toString()} onValueChange={(v) => setMinScore(Number(v))}>
+                    <SelectTrigger className="w-[180px]">
+                      <TrendingUp className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Min Score" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border z-50">
+                      <SelectItem value="0">Any Score</SelectItem>
+                      <SelectItem value="80">80+ (Top Performers)</SelectItem>
+                      <SelectItem value="70">70+ (High Potential)</SelectItem>
+                      <SelectItem value="60">60+ (Good Candidates)</SelectItem>
+                      <SelectItem value="50">50+ (Above Average)</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {/* Experience Filter */}
+                  <Select value={minExperience.toString()} onValueChange={(v) => setMinExperience(Number(v))}>
+                    <SelectTrigger className="w-[180px]">
+                      <Users className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Experience" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border z-50">
+                      <SelectItem value="0">Any Experience</SelectItem>
+                      <SelectItem value="1">1+ years</SelectItem>
+                      <SelectItem value="3">3+ years (Mid-level)</SelectItem>
+                      <SelectItem value="5">5+ years (Senior)</SelectItem>
+                      <SelectItem value="8">8+ years (Expert)</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {/* Swipe Status Filter */}
+                  <Select value={swipeStatus} onValueChange={setSwipeStatus}>
+                    <SelectTrigger className="w-[180px]">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Review Status" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border z-50">
+                      <SelectItem value="all">All Reviews</SelectItem>
+                      <SelectItem value="good-fit">✓ Good Fits</SelectItem>
+                      <SelectItem value="nope">✗ Rejected</SelectItem>
+                      <SelectItem value="not-reviewed">○ Not Reviewed</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {/* Starred Toggle */}
+                  <Button
+                    variant={starredOnly ? "default" : "outline"}
+                    onClick={() => setStarredOnly(!starredOnly)}
+                    className="gap-2"
+                  >
+                    <Star className={`h-4 w-4 ${starredOnly ? 'fill-current' : ''}`} />
+                    Starred Only
+                  </Button>
+
+                  {/* Clear Filters */}
+                  {(searchQuery || stageFilter !== "all" || minScore > 0 || minExperience > 0 || 
+                    swipeStatus !== "all" || starredOnly || showGoodFitsOnly) && (
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setStageFilter("all");
+                        setMinScore(0);
+                        setMinExperience(0);
+                        setSwipeStatus("all");
+                        setStarredOnly(false);
+                        setShowGoodFitsOnly(false);
+                      }}
+                      className="gap-2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                      Clear Filters
+                    </Button>
+                  )}
+
+                  {/* Refresh Button */}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleRefreshStatuses}
+                    title="Refresh review statuses from mobile"
+                    className="ml-auto"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {/* Active Filters Summary */}
+                {(minScore > 0 || minExperience > 0 || swipeStatus !== "all" || starredOnly || stageFilter !== "all") && (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span className="font-medium">Active filters:</span>
+                    {stageFilter !== "all" && <Badge variant="secondary" className="text-xs">Stage: {stageFilter}</Badge>}
+                    {minScore > 0 && <Badge variant="secondary" className="text-xs">Score ≥ {minScore}</Badge>}
+                    {minExperience > 0 && <Badge variant="secondary" className="text-xs">{minExperience}+ years</Badge>}
+                    {swipeStatus !== "all" && <Badge variant="secondary" className="text-xs">{swipeStatus === "good-fit" ? "Good Fits" : swipeStatus === "nope" ? "Rejected" : "Not Reviewed"}</Badge>}
+                    {starredOnly && <Badge variant="secondary" className="text-xs">Starred</Badge>}
+                  </div>
+                )}
               </div>
 
               {/* Candidates Grid - Scrollable Content */}
@@ -241,7 +354,7 @@ const Index = () => {
                     <h2 className="text-lg font-semibold">Candidates</h2>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    {filteredCandidates.length} candidates with multi-stage AI assessments
+                    Showing {filteredCandidates.length} of {mockCandidates.length} candidates
                   </p>
                 </div>
                 
