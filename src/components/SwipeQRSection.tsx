@@ -9,22 +9,30 @@ interface SwipeQRSectionProps {
   searchQuery?: string;
   selectedStage?: string;
   showGoodFitsOnly?: boolean;
+  minScore?: number;
+  minExperience?: number;
+  swipeStatus?: string;
+  starredOnly?: boolean;
 }
 
 export const SwipeQRSection = ({ 
   listId, 
   searchQuery, 
   selectedStage, 
-  showGoodFitsOnly 
+  showGoodFitsOnly,
+  minScore = 0,
+  minExperience = 0,
+  swipeStatus = 'all',
+  starredOnly = false
 }: SwipeQRSectionProps) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [qrKey, setQrKey] = useState(0);
   const [copied, setCopied] = useState(false);
   
-  // Generate OTP (6 digits) - regenerates when filters change
+  // Generate OTP (6 digits) - regenerates when ANY filter changes
   const otp = useMemo(() => {
     return Math.floor(100000 + Math.random() * 900000).toString();
-  }, [searchQuery, selectedStage, showGoodFitsOnly]);
+  }, [searchQuery, selectedStage, showGoodFitsOnly, minScore, minExperience, swipeStatus, starredOnly]);
   
   // Build URL with query params and OTP
   const params = new URLSearchParams();
@@ -36,14 +44,14 @@ export const SwipeQRSection = ({
   const queryString = params.toString();
   const swipeUrl = `${window.location.origin}/swipe/${listId}${queryString ? `?${queryString}` : ''}`;
 
-  // Trigger refresh animation when filters change - instant response
+  // Trigger refresh animation when ANY filter changes - instant response
   useEffect(() => {
     setIsRefreshing(true);
     setCopied(false);
     setQrKey(prev => prev + 1); // Force QR code re-render immediately
     const timer = setTimeout(() => setIsRefreshing(false), 350); // Faster animation
     return () => clearTimeout(timer);
-  }, [searchQuery, selectedStage, showGoodFitsOnly]);
+  }, [searchQuery, selectedStage, showGoodFitsOnly, minScore, minExperience, swipeStatus, starredOnly]);
 
   const copyOtp = () => {
     navigator.clipboard.writeText(otp);
@@ -128,34 +136,28 @@ export const SwipeQRSection = ({
                 </div>
               </div>
               <p className="text-[10px] text-center text-gray-500 mt-1.5 font-medium">
-                {isRefreshing ? "Updating filters..." : "Scan to review"}
+                {isRefreshing ? "Updating..." : "Scan to review"}
               </p>
               
-              {/* OTP Display */}
-              <div className="mt-3 pt-3 border-t border-gray-700">
-                <p className="text-[9px] text-gray-400 text-center mb-1.5 uppercase tracking-wider font-semibold">
-                  Access Code
-                </p>
-                <div className="flex items-center justify-center gap-2">
-                  <div className="bg-white px-4 py-2 rounded-lg font-mono text-xl font-bold text-black tracking-widest">
+              {/* OTP Display - Compact */}
+              <div className="mt-2 pt-2 border-t border-gray-700/50">
+                <div className="flex items-center justify-center gap-1.5">
+                  <div className="bg-white px-2.5 py-1 rounded-md font-mono text-sm font-bold text-black tracking-wider">
                     {otp}
                   </div>
                   <Button
                     size="sm"
                     variant="ghost"
                     onClick={copyOtp}
-                    className="h-8 w-8 p-0 hover:bg-white/10"
+                    className="h-6 w-6 p-0 hover:bg-white/10"
                   >
                     {copied ? (
-                      <Check className="h-3.5 w-3.5 text-green-400" />
+                      <Check className="h-3 w-3 text-green-400" />
                     ) : (
-                      <Copy className="h-3.5 w-3.5 text-gray-400" />
+                      <Copy className="h-3 w-3 text-gray-400" />
                     )}
                   </Button>
                 </div>
-                <p className="text-[9px] text-gray-500 text-center mt-1.5">
-                  Enter this code after scanning
-                </p>
               </div>
             </div>
           </div>

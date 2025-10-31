@@ -385,6 +385,10 @@ const Index = () => {
              searchQuery={searchQuery}
              selectedStage={stageFilter}
              showGoodFitsOnly={showGoodFitsOnly}
+             minScore={minScore}
+             minExperience={minExperience}
+             swipeStatus={swipeStatus}
+             starredOnly={starredOnly}
            />
                  </div>
 
