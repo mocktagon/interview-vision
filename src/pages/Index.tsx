@@ -1,10 +1,12 @@
 import { useState, useMemo, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { mockCandidates } from "@/data/mockCandidates";
 import { Candidate } from "@/types/candidate";
 import { KPICard } from "@/components/KPICard";
 import { CandidateCard } from "@/components/CandidateCard";
 import { CandidateDrawer } from "@/components/CandidateDrawer";
 import { ScoreDistributionChart } from "@/components/ScoreDistributionChart";
+import { SwipeQRSection } from "@/components/SwipeQRSection";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +35,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Badge } from "@/components/ui/badge";
 
 const Index = () => {
+  const { listId } = useParams();
   const navigate = useNavigate();
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -183,6 +186,11 @@ const Index = () => {
 
               {/* Candidates Grid - Scrollable Content */}
               <div className="flex-1 pb-4">
+                {/* Mobile Review QR Section */}
+                <div className="mb-6">
+                  <SwipeQRSection listId={listId || '1'} />
+                </div>
+
                 <div className="mb-4 flex-shrink-0">
                   <div className="flex items-center gap-2 mb-2">
                     <LayoutGrid className="h-5 w-5 text-primary" />
