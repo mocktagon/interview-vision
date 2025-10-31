@@ -28,7 +28,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  Zap
+  Zap,
+  RefreshCw
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -45,6 +46,7 @@ const Index = () => {
   const [aiSearchQuery, setAiSearchQuery] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
   const [swipeDecisions, setSwipeDecisions] = useState<Record<string, 'good-fit' | 'nope' | 'maybe'>>({});
+  const [showGoodFitsOnly, setShowGoodFitsOnly] = useState(false);
 
   // Load swipe decisions from localStorage
   useEffect(() => {
@@ -56,6 +58,11 @@ const Index = () => {
     const decisions = JSON.parse(localStorage.getItem('swipeDecisions') || '{}');
     decisions[candidateId] = status;
     localStorage.setItem('swipeDecisions', JSON.stringify(decisions));
+    setSwipeDecisions(decisions);
+  };
+
+  const handleRefreshStatuses = () => {
+    const decisions = JSON.parse(localStorage.getItem('swipeDecisions') || '{}');
     setSwipeDecisions(decisions);
   };
 
@@ -80,9 +87,11 @@ const Index = () => {
       
       const matchesStage = stageFilter === "all" || candidate.stage === stageFilter;
       
-      return matchesSearch && matchesStage;
+      const matchesGoodFit = !showGoodFitsOnly || swipeDecisions[candidate.id] === 'good-fit';
+      
+      return matchesSearch && matchesStage && matchesGoodFit;
     });
-  }, [searchQuery, stageFilter]);
+  }, [searchQuery, stageFilter, showGoodFitsOnly, swipeDecisions]);
 
   const stats = useMemo(() => {
     const topPerformers = filteredCandidates.filter(c => c.starred).length;
@@ -196,6 +205,22 @@ const Index = () => {
                     <SelectItem value="selected">Selected</SelectItem>
                   </SelectContent>
                 </Select>
+                <Button
+                  variant={showGoodFitsOnly ? "default" : "outline"}
+                  onClick={() => setShowGoodFitsOnly(!showGoodFitsOnly)}
+                  className="w-full sm:w-auto"
+                >
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Good Fits Only
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleRefreshStatuses}
+                  title="Refresh swipe statuses"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
               </div>
 
               {/* Candidates Grid - Scrollable Content */}
