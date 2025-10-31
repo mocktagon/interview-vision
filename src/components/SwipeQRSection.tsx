@@ -1,7 +1,8 @@
 import { Card } from "@/components/ui/card";
 import { QRCodeSVG } from "qrcode.react";
-import { Smartphone, Zap, Heart, Brain, Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Smartphone, Zap, Heart, Brain, Loader2, Copy, Check } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Button } from "@/components/ui/button";
 
 interface SwipeQRSectionProps {
   listId: string;
@@ -18,12 +19,19 @@ export const SwipeQRSection = ({
 }: SwipeQRSectionProps) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [qrKey, setQrKey] = useState(0);
+  const [copied, setCopied] = useState(false);
   
-  // Build URL with query params
+  // Generate OTP (6 digits) - regenerates when filters change
+  const otp = useMemo(() => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }, [searchQuery, selectedStage, showGoodFitsOnly]);
+  
+  // Build URL with query params and OTP
   const params = new URLSearchParams();
   if (searchQuery) params.set('search', searchQuery);
   if (selectedStage && selectedStage !== 'all') params.set('stage', selectedStage);
   if (showGoodFitsOnly) params.set('goodFits', 'true');
+  params.set('otp', otp);
   
   const queryString = params.toString();
   const swipeUrl = `${window.location.origin}/swipe/${listId}${queryString ? `?${queryString}` : ''}`;
@@ -31,10 +39,17 @@ export const SwipeQRSection = ({
   // Trigger refresh animation when filters change - instant response
   useEffect(() => {
     setIsRefreshing(true);
+    setCopied(false);
     setQrKey(prev => prev + 1); // Force QR code re-render immediately
     const timer = setTimeout(() => setIsRefreshing(false), 350); // Faster animation
     return () => clearTimeout(timer);
   }, [searchQuery, selectedStage, showGoodFitsOnly]);
+
+  const copyOtp = () => {
+    navigator.clipboard.writeText(otp);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <Card className="p-6 bg-[#0a0a0a] border-[#1a1a1a] relative overflow-hidden shadow-xl isolate">
@@ -115,6 +130,33 @@ export const SwipeQRSection = ({
               <p className="text-[10px] text-center text-gray-500 mt-1.5 font-medium">
                 {isRefreshing ? "Updating filters..." : "Scan to review"}
               </p>
+              
+              {/* OTP Display */}
+              <div className="mt-3 pt-3 border-t border-gray-700">
+                <p className="text-[9px] text-gray-400 text-center mb-1.5 uppercase tracking-wider font-semibold">
+                  Access Code
+                </p>
+                <div className="flex items-center justify-center gap-2">
+                  <div className="bg-white px-4 py-2 rounded-lg font-mono text-xl font-bold text-black tracking-widest">
+                    {otp}
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={copyOtp}
+                    className="h-8 w-8 p-0 hover:bg-white/10"
+                  >
+                    {copied ? (
+                      <Check className="h-3.5 w-3.5 text-green-400" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5 text-gray-400" />
+                    )}
+                  </Button>
+                </div>
+                <p className="text-[9px] text-gray-500 text-center mt-1.5">
+                  Enter this code after scanning
+                </p>
+              </div>
             </div>
           </div>
         </div>

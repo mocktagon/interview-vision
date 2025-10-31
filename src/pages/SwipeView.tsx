@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { mockLists } from "@/data/mockLists";
 import { Candidate } from "@/types/candidate";
 import { useSpring, animated } from "@react-spring/web";
@@ -7,18 +7,25 @@ import { useDrag } from "@use-gesture/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Undo2, X, Heart, Sparkles, Briefcase, Star, TrendingUp, CheckCircle, XCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ArrowLeft, Undo2, X, Heart, Sparkles, Briefcase, Star, TrendingUp, CheckCircle, XCircle, PartyPopper } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const SwipeView = () => {
   const { listId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   
-  // Get query params for filtering
-  const searchParams = new URLSearchParams(window.location.search);
+  // Get OTP from URL and other filters
+  const urlOtp = searchParams.get('otp') || '';
   const searchQuery = searchParams.get('search') || '';
   const stageFilter = searchParams.get('stage') || '';
   const goodFitsOnly = searchParams.get('goodFits') === 'true';
+  
+  // OTP verification state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [otpInput, setOtpInput] = useState('');
+  const [otpError, setOtpError] = useState(false);
   
   const list = mockLists.find(l => l.id === listId);
   
@@ -56,6 +63,7 @@ const SwipeView = () => {
   const [history, setHistory] = useState<{ index: number; decision: 'yes' | 'no' }[]>([]);
   const [cards, setCards] = useState(filteredCandidates);
   const [swipeFeedback, setSwipeFeedback] = useState<'yes' | 'no' | null>(null);
+  const [showCelebration, setShowCelebration] = useState(false);
   
   // Update cards when filters change
   useEffect(() => {
@@ -63,6 +71,17 @@ const SwipeView = () => {
     setCurrentIndex(0);
     setHistory([]);
   }, [filteredCandidates]);
+
+  // Verify OTP
+  const verifyOtp = () => {
+    if (otpInput === urlOtp) {
+      setIsAuthenticated(true);
+      setOtpError(false);
+    } else {
+      setOtpError(true);
+      setTimeout(() => setOtpError(false), 500);
+    }
+  };
 
   const currentCandidate = cards[currentIndex];
 
@@ -120,11 +139,7 @@ const SwipeView = () => {
         setCurrentIndex(prev => prev + 1);
         api.set({ x: 0, rotate: 0, opacity: 1 });
       } else {
-        toast({
-          title: "All candidates reviewed!",
-          description: `You've reviewed all ${cards.length} candidates.`,
-        });
-        setTimeout(() => navigate(`/list/${listId}`), 1500);
+        setShowCelebration(true);
       }
     }, 400);
   };
@@ -166,7 +181,105 @@ const SwipeView = () => {
     return tags;
   };
 
-  if (!list || !currentCandidate) {
+  if (!list) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-foreground mb-2">List not found</h2>
+          <Button onClick={() => navigate('/')}>Return Home</Button>
+        </div>
+      </div>
+    );
+  }
+
+  // OTP verification screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+        <Card className="p-8 max-w-md w-full bg-[#1a1a1a] border-[#2a2a2a]">
+          <div className="text-center mb-6">
+            <div className="inline-flex p-3 rounded-full bg-white/10 mb-4">
+              <Sparkles className="h-8 w-8 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-2">Access Code Required</h2>
+            <p className="text-sm text-gray-400">Enter the 6-digit code shown on your desktop</p>
+          </div>
+          
+          <div className="space-y-4">
+            <Input
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              value={otpInput}
+              onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
+              onKeyDown={(e) => e.key === 'Enter' && verifyOtp()}
+              placeholder="000000"
+              className={`text-center text-2xl font-mono tracking-widest h-14 bg-[#0a0a0a] border-[#2a2a2a] text-white ${
+                otpError ? 'border-red-500 animate-shake' : ''
+              }`}
+            />
+            
+            {otpError && (
+              <p className="text-sm text-red-400 text-center">Invalid code. Please try again.</p>
+            )}
+            
+            <Button 
+              onClick={verifyOtp} 
+              className="w-full h-12 text-base"
+              disabled={otpInput.length !== 6}
+            >
+              Continue
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // Celebration screen
+  if (showCelebration) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Animated background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-transparent to-blue-500/10 animate-pulse" />
+        
+        <Card className="p-12 max-w-lg w-full bg-[#1a1a1a] border-[#2a2a2a] text-center relative z-10">
+          <div className="inline-flex p-6 rounded-full bg-gradient-to-br from-green-500/20 to-blue-500/20 mb-6 animate-bounce">
+            <PartyPopper className="h-16 w-16 text-green-400" />
+          </div>
+          
+          <h2 className="text-4xl font-bold text-white mb-4">All Done! 🎉</h2>
+          <p className="text-lg text-gray-300 mb-8">
+            You've reviewed all {cards.length} candidates. Great job!
+          </p>
+          
+          <div className="space-y-3">
+            <div className="flex justify-between items-center p-4 rounded-lg bg-[#0a0a0a] border border-green-500/20">
+              <span className="text-gray-400">Selected</span>
+              <span className="text-2xl font-bold text-green-400">
+                {history.filter(h => h.decision === 'yes').length}
+              </span>
+            </div>
+            <div className="flex justify-between items-center p-4 rounded-lg bg-[#0a0a0a] border border-red-500/20">
+              <span className="text-gray-400">Passed</span>
+              <span className="text-2xl font-bold text-red-400">
+                {history.filter(h => h.decision === 'no').length}
+              </span>
+            </div>
+          </div>
+          
+          <Button 
+            onClick={() => navigate(`/list/${listId}`)} 
+            className="w-full mt-8 h-12 text-base"
+          >
+            Back to List
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!currentCandidate) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
