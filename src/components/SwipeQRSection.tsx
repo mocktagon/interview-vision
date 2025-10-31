@@ -1,13 +1,38 @@
 import { Card } from "@/components/ui/card";
 import { QRCodeSVG } from "qrcode.react";
-import { Smartphone, Zap, Heart, Brain } from "lucide-react";
+import { Smartphone, Zap, Heart, Brain, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
 
 interface SwipeQRSectionProps {
   listId: string;
+  searchQuery?: string;
+  selectedStage?: string;
+  showGoodFitsOnly?: boolean;
 }
 
-export const SwipeQRSection = ({ listId }: SwipeQRSectionProps) => {
-  const swipeUrl = `${window.location.origin}/swipe/${listId}`;
+export const SwipeQRSection = ({ 
+  listId, 
+  searchQuery, 
+  selectedStage, 
+  showGoodFitsOnly 
+}: SwipeQRSectionProps) => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  // Build URL with query params
+  const params = new URLSearchParams();
+  if (searchQuery) params.set('search', searchQuery);
+  if (selectedStage && selectedStage !== 'all') params.set('stage', selectedStage);
+  if (showGoodFitsOnly) params.set('goodFits', 'true');
+  
+  const queryString = params.toString();
+  const swipeUrl = `${window.location.origin}/swipe/${listId}${queryString ? `?${queryString}` : ''}`;
+
+  // Trigger refresh animation when filters change
+  useEffect(() => {
+    setIsRefreshing(true);
+    const timer = setTimeout(() => setIsRefreshing(false), 400);
+    return () => clearTimeout(timer);
+  }, [searchQuery, selectedStage, showGoodFitsOnly]);
 
   return (
     <Card className="p-6 bg-[#0a0a0a] border-[#1a1a1a] relative overflow-hidden">
@@ -66,7 +91,12 @@ export const SwipeQRSection = ({ listId }: SwipeQRSectionProps) => {
               <div className="absolute -top-1.5 -right-1.5 bg-white text-black text-[10px] font-bold px-2.5 py-1 rounded-full z-10">
                 01
               </div>
-              <div className="p-3 bg-white rounded-xl shadow-xl">
+              <div className="p-3 bg-white rounded-xl shadow-xl relative">
+                {isRefreshing && (
+                  <div className="absolute inset-0 bg-white/90 rounded-xl flex items-center justify-center z-10">
+                    <Loader2 className="h-8 w-8 text-black animate-spin" />
+                  </div>
+                )}
                 <QRCodeSVG
                   value={swipeUrl}
                   size={100}

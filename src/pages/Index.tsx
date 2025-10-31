@@ -227,7 +227,12 @@ const Index = () => {
               <div className="flex-1 pb-4">
                 {/* Mobile Review QR Section */}
                 <div className="mb-6">
-                  <SwipeQRSection listId={listId || '1'} />
+          <SwipeQRSection 
+            listId={listId || '1'}
+            searchQuery={searchQuery}
+            selectedStage={stageFilter}
+            showGoodFitsOnly={showGoodFitsOnly}
+          />
                 </div>
 
                 <div className="mb-4 flex-shrink-0">

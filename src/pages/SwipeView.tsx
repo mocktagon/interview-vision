@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { mockLists } from "@/data/mockLists";
 import { Candidate } from "@/types/candidate";
@@ -13,11 +13,56 @@ import { toast } from "@/hooks/use-toast";
 const SwipeView = () => {
   const { listId } = useParams();
   const navigate = useNavigate();
+  
+  // Get query params for filtering
+  const searchParams = new URLSearchParams(window.location.search);
+  const searchQuery = searchParams.get('search') || '';
+  const stageFilter = searchParams.get('stage') || '';
+  const goodFitsOnly = searchParams.get('goodFits') === 'true';
+  
   const list = mockLists.find(l => l.id === listId);
+  
+  // Filter candidates based on query params
+  const filteredCandidates = useMemo(() => {
+    if (!list) return [];
+    
+    let candidates = list.candidates;
+    
+    // Apply search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      candidates = candidates.filter(c => 
+        c.name.toLowerCase().includes(query) ||
+        c.role.toLowerCase().includes(query) ||
+        c.location.toLowerCase().includes(query)
+      );
+    }
+    
+    // Apply stage filter
+    if (stageFilter && stageFilter !== 'all') {
+      candidates = candidates.filter(c => c.stage === stageFilter);
+    }
+    
+    // Apply good fits filter
+    if (goodFitsOnly) {
+      const decisions = JSON.parse(localStorage.getItem('swipeDecisions') || '{}');
+      candidates = candidates.filter(c => decisions[c.id] === 'good-fit');
+    }
+    
+    return candidates;
+  }, [list, searchQuery, stageFilter, goodFitsOnly]);
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const [history, setHistory] = useState<{ index: number; decision: 'yes' | 'no' }[]>([]);
-  const [cards, setCards] = useState(list?.candidates || []);
+  const [cards, setCards] = useState(filteredCandidates);
   const [swipeFeedback, setSwipeFeedback] = useState<'yes' | 'no' | null>(null);
+  
+  // Update cards when filters change
+  useEffect(() => {
+    setCards(filteredCandidates);
+    setCurrentIndex(0);
+    setHistory([]);
+  }, [filteredCandidates]);
 
   const currentCandidate = cards[currentIndex];
 
