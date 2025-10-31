@@ -1,15 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { mockLists } from "@/data/mockLists";
-import { mockInterviews } from "@/data/mockInterviews";
 import { CandidateList } from "@/types/list";
 import { ListCard } from "@/components/ListCard";
 import { EmptyListCard } from "@/components/EmptyListCard";
-import { InterviewCard } from "@/components/InterviewCard";
 import { ScoreDistributionChart } from "@/components/ScoreDistributionChart";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FolderOpen, Users, Star, Search, Plus, TrendingUp, Zap, Sparkles, Brain, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { FolderOpen, Users, Star, Search, Plus, TrendingUp, Zap, Sparkles, Brain, ChevronLeft, ChevronRight, Calendar, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -85,33 +83,35 @@ const Lists = () => {
             <h1 className="text-2xl font-bold text-foreground">Hi John</h1>
           </div>
 
-          {/* AI Generate List - Sticky on Scroll */}
+          {/* Manage Interviews Button - Sticky on Scroll */}
           <div 
             className={`transition-all duration-300 ${isScrolled ? 'sticky top-0 z-20 bg-background/95 backdrop-blur-sm py-4 -mx-6 px-6' : ''}`}
           >
-            <Card className="relative overflow-hidden border border-primary/20 bg-gradient-to-r from-primary/5 to-transparent hover:border-primary/30 transition-all duration-300">
+            <Card 
+              className="relative overflow-hidden border border-accent/20 bg-gradient-to-r from-accent/5 to-transparent hover:border-accent/30 transition-all duration-300 cursor-pointer"
+              onClick={() => navigate("/interviews")}
+            >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4 flex-1">
-                    <div className="p-3 rounded-xl bg-primary/10 text-primary">
-                      <Sparkles className="h-5 w-5" />
+                    <div className="p-3 rounded-xl bg-accent/10 text-accent">
+                      <Calendar className="h-5 w-5" />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-foreground">Generate AI List</h3>
-                        <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                          <Brain className="h-3 w-3 mr-1" />
-                          AI Powered
+                        <h3 className="font-semibold text-foreground">Manage Interviews</h3>
+                        <Badge variant="secondary" className="bg-accent/10 text-accent border-accent/20">
+                          New
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Create curated talent pools based on interview analysis and skills
+                        Review interview insights, assessments, and candidate evaluations
                       </p>
                     </div>
                   </div>
-                  <Button size="lg" className="gap-2">
-                    <Sparkles className="h-4 w-4" />
-                    Generate List
+                  <Button size="lg" className="gap-2 bg-accent hover:bg-accent/90">
+                    View Interviews
+                    <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
               </CardContent>
@@ -127,29 +127,6 @@ const Lists = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
             />
-          </div>
-
-          {/* Manage Interviews Section */}
-          <div>
-            <div className="mb-6">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-semibold">Manage Interviews</h2>
-              </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                Review interview insights and assessments
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {mockInterviews.slice(0, 6).map((interview) => (
-                <InterviewCard
-                  key={interview.id}
-                  interview={interview}
-                  onClick={() => console.log("View interview:", interview.id)}
-                />
-              ))}
-            </div>
           </div>
 
           {/* Lists Grid */}
