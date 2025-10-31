@@ -1,13 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { mockLists } from "@/data/mockLists";
+import { mockInterviews } from "@/data/mockInterviews";
 import { CandidateList } from "@/types/list";
 import { ListCard } from "@/components/ListCard";
 import { EmptyListCard } from "@/components/EmptyListCard";
+import { InterviewCard } from "@/components/InterviewCard";
 import { ScoreDistributionChart } from "@/components/ScoreDistributionChart";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FolderOpen, Users, Star, Search, Plus, TrendingUp, Zap, Sparkles, Brain, ChevronLeft, ChevronRight } from "lucide-react";
+import { FolderOpen, Users, Star, Search, Plus, TrendingUp, Zap, Sparkles, Brain, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -125,6 +127,29 @@ const Lists = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
             />
+          </div>
+
+          {/* Manage Interviews Section */}
+          <div>
+            <div className="mb-6">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-semibold">Manage Interviews</h2>
+              </div>
+              <p className="text-sm text-muted-foreground mt-1">
+                Review interview insights and assessments
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {mockInterviews.slice(0, 6).map((interview) => (
+                <InterviewCard
+                  key={interview.id}
+                  interview={interview}
+                  onClick={() => console.log("View interview:", interview.id)}
+                />
+              ))}
+            </div>
           </div>
 
           {/* Lists Grid */}
