@@ -12,7 +12,6 @@ interface SwipeQRSectionProps {
   minScore?: number;
   minExperience?: number;
   swipeStatus?: string;
-  starredOnly?: boolean;
 }
 
 export const SwipeQRSection = ({ 
@@ -22,8 +21,7 @@ export const SwipeQRSection = ({
   showGoodFitsOnly,
   minScore = 0,
   minExperience = 0,
-  swipeStatus = 'all',
-  starredOnly = false
+  swipeStatus = 'all'
 }: SwipeQRSectionProps) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [qrKey, setQrKey] = useState(0);
@@ -32,7 +30,7 @@ export const SwipeQRSection = ({
   // Generate OTP (6 digits) - regenerates when ANY filter changes
   const otp = useMemo(() => {
     return Math.floor(100000 + Math.random() * 900000).toString();
-  }, [searchQuery, selectedStage, showGoodFitsOnly, minScore, minExperience, swipeStatus, starredOnly]);
+  }, [searchQuery, selectedStage, showGoodFitsOnly, minScore, minExperience, swipeStatus]);
   
   // Build URL with query params and OTP
   const params = new URLSearchParams();
@@ -51,7 +49,7 @@ export const SwipeQRSection = ({
     setQrKey(prev => prev + 1); // Force QR code re-render immediately
     const timer = setTimeout(() => setIsRefreshing(false), 350); // Faster animation
     return () => clearTimeout(timer);
-  }, [searchQuery, selectedStage, showGoodFitsOnly, minScore, minExperience, swipeStatus, starredOnly]);
+  }, [searchQuery, selectedStage, showGoodFitsOnly, minScore, minExperience, swipeStatus]);
 
   const copyOtp = () => {
     navigator.clipboard.writeText(otp);

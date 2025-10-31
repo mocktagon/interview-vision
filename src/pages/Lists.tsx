@@ -7,7 +7,7 @@ import { EmptyListCard } from "@/components/EmptyListCard";
 import { ScoreDistributionChart } from "@/components/ScoreDistributionChart";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FolderOpen, Users, Star, Search, Plus, TrendingUp, Zap, Sparkles, Brain, ChevronLeft, ChevronRight, Calendar, ArrowRight } from "lucide-react";
+import { FolderOpen, Users, TrendingUp, Zap, Sparkles, Brain, ChevronLeft, ChevronRight, Calendar, ArrowRight, Search, Plus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -50,7 +50,6 @@ const Lists = () => {
   const totalCandidates = lists.reduce((sum, list) => sum + list.candidates.length, 0);
   const totalLists = lists.length;
   const avgListSize = totalLists > 0 ? Math.round(totalCandidates / totalLists) : 0;
-  const allStarred = lists.reduce((sum, list) => sum + list.candidates.filter(c => c.starred).length, 0);
   const avgDiversity = totalLists > 0 
     ? Math.round(lists.reduce((sum, list) => sum + (list.aiInsights?.diversityScore || 0), 0) / totalLists) 
     : 0;
@@ -215,10 +214,10 @@ const Lists = () => {
                 </div>
                 <div className="p-2.5 rounded-lg bg-success/10 text-center">
                   <div className="flex items-center justify-center gap-1 mb-1">
-                    <Star className="h-3.5 w-3.5 text-success" />
-                    <p className="text-xs text-success font-medium">Starred</p>
+                    <TrendingUp className="h-3.5 w-3.5 text-success" />
+                    <p className="text-xs text-success font-medium">Avg Size</p>
                   </div>
-                  <p className="text-xl font-bold text-success">{allStarred}</p>
+                  <p className="text-xl font-bold text-success">{avgListSize}</p>
                 </div>
               </div>
               

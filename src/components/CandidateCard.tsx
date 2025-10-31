@@ -8,7 +8,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { 
   MapPin, 
   Clock, 
-  Star,
   Calendar,
   Briefcase,
   Plus,
@@ -22,7 +21,6 @@ import {
 interface CandidateCardProps {
   candidate: Candidate;
   onViewDetails: (candidate: Candidate) => void;
-  onToggleStar?: (candidateId: string) => void;
   onAddToList?: (candidateId: string, listType: 'existing' | 'new') => void;
   swipeStatus?: 'good-fit' | 'nope' | 'maybe' | null;
   onSwipeStatusChange?: (candidateId: string, status: 'good-fit' | 'nope' | 'maybe') => void;
@@ -80,7 +78,7 @@ const psychIcons = {
   city: '🏙️'
 };
 
-export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToList, swipeStatus, onSwipeStatusChange }: CandidateCardProps) {
+export function CandidateCard({ candidate, onViewDetails, onAddToList, swipeStatus, onSwipeStatusChange }: CandidateCardProps) {
   const topSkills = Object.entries(candidate.skills)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 3);
@@ -123,17 +121,6 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
               </h3>
               <p className="text-sm text-muted-foreground truncate">{candidate.role}</p>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 -mr-2 -mt-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleStar?.(candidate.id);
-              }}
-            >
-              <Star className={`h-4 w-4 ${candidate.starred ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
-            </Button>
           </div>
           <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">

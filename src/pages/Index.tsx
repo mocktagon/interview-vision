@@ -19,7 +19,6 @@ import {
 import { 
   Users, 
   TrendingUp, 
-  Star, 
   CheckCircle,
   Search,
   Filter,
@@ -51,7 +50,6 @@ const Index = () => {
   const [minScore, setMinScore] = useState<number>(0);
   const [minExperience, setMinExperience] = useState<number>(0);
   const [swipeStatus, setSwipeStatus] = useState<string>("all");
-  const [starredOnly, setStarredOnly] = useState(false);
 
   // Load swipe decisions from localStorage
   useEffect(() => {
@@ -107,16 +105,13 @@ const Index = () => {
         (swipeStatus === "nope" && swipeDecisions[candidate.id] === 'nope') ||
         (swipeStatus === "not-reviewed" && !swipeDecisions[candidate.id]);
       
-      // Starred filter - show only starred candidates
-      const matchesStarred = !starredOnly || candidate.starred;
-      
       // Legacy good fits filter (kept for QR functionality)
       const matchesGoodFit = !showGoodFitsOnly || swipeDecisions[candidate.id] === 'good-fit';
       
       return matchesSearch && matchesStage && matchesScore && matchesExperience && 
-             matchesSwipeStatus && matchesStarred && matchesGoodFit;
+             matchesSwipeStatus && matchesGoodFit;
     });
-  }, [searchQuery, stageFilter, showGoodFitsOnly, swipeDecisions, minScore, minExperience, swipeStatus, starredOnly]);
+  }, [searchQuery, stageFilter, showGoodFitsOnly, swipeDecisions, minScore, minExperience, swipeStatus]);
 
   const stats = useMemo(() => {
     const topPerformers = filteredCandidates.filter(c => c.starred).length;
@@ -266,50 +261,39 @@ const Index = () => {
                     </SelectContent>
                   </Select>
 
-                  {/* Swipe Status Filter */}
-                  <Select value={swipeStatus} onValueChange={setSwipeStatus}>
-                    <SelectTrigger className="w-[180px]">
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      <SelectValue placeholder="Review Status" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border-border z-50">
-                      <SelectItem value="all">All Reviews</SelectItem>
-                      <SelectItem value="good-fit">✓ Good Fits</SelectItem>
-                      <SelectItem value="nope">✗ Rejected</SelectItem>
-                      <SelectItem value="not-reviewed">○ Not Reviewed</SelectItem>
-                    </SelectContent>
-                  </Select>
+            {/* Swipe Status Filter */}
+            <Select value={swipeStatus} onValueChange={setSwipeStatus}>
+              <SelectTrigger className="w-[180px]">
+                <CheckCircle className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Review Status" />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-border z-50">
+                <SelectItem value="all">All Reviews</SelectItem>
+                <SelectItem value="good-fit">✓ Good Fits</SelectItem>
+                <SelectItem value="nope">✗ Rejected</SelectItem>
+                <SelectItem value="not-reviewed">○ Not Reviewed</SelectItem>
+              </SelectContent>
+            </Select>
 
-                  {/* Starred Toggle */}
-                  <Button
-                    variant={starredOnly ? "default" : "outline"}
-                    onClick={() => setStarredOnly(!starredOnly)}
-                    className="gap-2"
-                  >
-                    <Star className={`h-4 w-4 ${starredOnly ? 'fill-current' : ''}`} />
-                    Starred Only
-                  </Button>
-
-                  {/* Clear Filters */}
-                  {(searchQuery || stageFilter !== "all" || minScore > 0 || minExperience > 0 || 
-                    swipeStatus !== "all" || starredOnly || showGoodFitsOnly) && (
-                    <Button
-                      variant="ghost"
-                      onClick={() => {
-                        setSearchQuery("");
-                        setStageFilter("all");
-                        setMinScore(0);
-                        setMinExperience(0);
-                        setSwipeStatus("all");
-                        setStarredOnly(false);
-                        setShowGoodFitsOnly(false);
-                      }}
-                      className="gap-2 text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="h-4 w-4" />
-                      Clear Filters
-                    </Button>
-                  )}
+            {/* Clear Filters */}
+            {(searchQuery || stageFilter !== "all" || minScore > 0 || minExperience > 0 || 
+              swipeStatus !== "all" || showGoodFitsOnly) && (
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setSearchQuery("");
+                  setStageFilter("all");
+                  setMinScore(0);
+                  setMinExperience(0);
+                  setSwipeStatus("all");
+                  setShowGoodFitsOnly(false);
+                }}
+                className="gap-2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+                Clear Filters
+              </Button>
+            )}
 
                   {/* Refresh Button */}
                   <Button
@@ -323,29 +307,29 @@ const Index = () => {
                   </Button>
                 </div>
 
-                {/* Active Filters Summary */}
-                {(minScore > 0 || minExperience > 0 || swipeStatus !== "all" || starredOnly || stageFilter !== "all") && (
-                  <div className="flex items-center gap-2 text-xs flex-wrap">
-                    <span className="font-medium text-muted-foreground">Active filters:</span>
-                    {stageFilter !== "all" && (
-                      <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
-                        Stage: {stageFilter}
-                        <X 
-                          className="h-3 w-3 hover:text-destructive transition-colors" 
-                          onClick={() => setStageFilter("all")}
-                        />
-                      </Badge>
-                    )}
-                    {minScore > 0 && (
-                      <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
-                        Score ≥ {minScore}
-                        <X 
-                          className="h-3 w-3 hover:text-destructive transition-colors" 
-                          onClick={() => setMinScore(0)}
-                        />
-                      </Badge>
-                    )}
-                    {minExperience > 0 && (
+          {/* Active Filters Summary */}
+          {(minScore > 0 || minExperience > 0 || swipeStatus !== "all" || stageFilter !== "all") && (
+            <div className="flex items-center gap-2 text-xs flex-wrap">
+              <span className="font-medium text-muted-foreground">Active filters:</span>
+              {stageFilter !== "all" && (
+                <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
+                  Stage: {stageFilter}
+                  <X 
+                    className="h-3 w-3 hover:text-destructive transition-colors" 
+                    onClick={() => setStageFilter("all")}
+                  />
+                </Badge>
+              )}
+              {minScore > 0 && (
+                <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
+                  Score ≥ {minScore}
+                  <X 
+                    className="h-3 w-3 hover:text-destructive transition-colors" 
+                    onClick={() => setMinScore(0)}
+                  />
+                </Badge>
+              )}
+              {minExperience > 0 && (
                       <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
                         {minExperience}+ years
                         <X 
@@ -360,15 +344,6 @@ const Index = () => {
                         <X 
                           className="h-3 w-3 hover:text-destructive transition-colors" 
                           onClick={() => setSwipeStatus("all")}
-                        />
-                      </Badge>
-                    )}
-                    {starredOnly && (
-                      <Badge variant="secondary" className="text-xs gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
-                        Starred
-                        <X 
-                          className="h-3 w-3 hover:text-destructive transition-colors" 
-                          onClick={() => setStarredOnly(false)}
                         />
                       </Badge>
                     )}
@@ -388,7 +363,6 @@ const Index = () => {
              minScore={minScore}
              minExperience={minExperience}
              swipeStatus={swipeStatus}
-             starredOnly={starredOnly}
            />
                  </div>
 
@@ -466,7 +440,7 @@ const Index = () => {
                   </div>
                   <div className="p-2.5 rounded-lg bg-accent/10 text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <Star className="h-3.5 w-3.5 text-accent" />
+                      <TrendingUp className="h-3.5 w-3.5 text-accent" />
                       <p className="text-xs text-accent font-medium">Top 10%</p>
                     </div>
                     <p className="text-xl font-bold text-accent">{stats.topPerformers}</p>
