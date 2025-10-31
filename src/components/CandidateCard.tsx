@@ -96,7 +96,16 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
   const performanceLevel = getPerformanceLevel(overallScore);
 
   return (
-    <Card className="p-5 hover:shadow-lg transition-all duration-200 cursor-pointer border border-border bg-card" onClick={() => onViewDetails(candidate)}>
+    <Card 
+      className={`p-5 hover:shadow-lg transition-all duration-200 cursor-pointer bg-card ${
+        swipeStatus === 'good-fit' 
+          ? 'border-2 border-success' 
+          : swipeStatus === 'nope' 
+          ? 'border-2 border-destructive' 
+          : 'border border-border'
+      }`}
+      onClick={() => onViewDetails(candidate)}
+    >
       {/* Header */}
       <div className="flex items-start gap-3 mb-4">
         <Avatar className="h-12 w-12">
@@ -211,45 +220,30 @@ export function CandidateCard({ candidate, onViewDetails, onToggleStar, onAddToL
           Add to List
         </Button>
         
-        {swipeStatus ? (
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`h-9 w-9 ${swipeStatus === 'good-fit' ? 'bg-success/10 hover:bg-success/20' : 'hover:bg-muted'}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onSwipeStatusChange?.(candidate.id, 'good-fit');
-              }}
-            >
-              <CheckCircle className={`h-4 w-4 ${swipeStatus === 'good-fit' ? 'text-success' : 'text-muted-foreground'}`} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`h-9 w-9 ${swipeStatus === 'nope' ? 'bg-destructive/10 hover:bg-destructive/20' : 'hover:bg-muted'}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onSwipeStatusChange?.(candidate.id, 'nope');
-              }}
-            >
-              <XCircle className={`h-4 w-4 ${swipeStatus === 'nope' ? 'text-destructive' : 'text-muted-foreground'}`} />
-            </Button>
-          </div>
-        ) : (
+        <div className="flex items-center gap-1">
           <Button
-            variant="outline"
-            size="sm"
-            className="flex-1 text-sm"
+            variant="ghost"
+            size="icon"
+            className={`h-9 w-9 ${swipeStatus === 'good-fit' ? 'bg-success/10 hover:bg-success/20' : 'hover:bg-muted'}`}
             onClick={(e) => {
               e.stopPropagation();
-              onAddToList?.(candidate.id, 'new');
+              onSwipeStatusChange?.(candidate.id, 'good-fit');
             }}
           >
-            <Plus className="h-4 w-4 mr-2" />
-            New List
+            <CheckCircle className={`h-4 w-4 ${swipeStatus === 'good-fit' ? 'text-success' : 'text-muted-foreground'}`} />
           </Button>
-        )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className={`h-9 w-9 ${swipeStatus === 'nope' ? 'bg-destructive/10 hover:bg-destructive/20' : 'hover:bg-muted'}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSwipeStatusChange?.(candidate.id, 'nope');
+            }}
+          >
+            <XCircle className={`h-4 w-4 ${swipeStatus === 'nope' ? 'text-destructive' : 'text-muted-foreground'}`} />
+          </Button>
+        </div>
       </div>
     </Card>
   );
