@@ -7,7 +7,7 @@ import { useDrag } from "@use-gesture/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Undo2, X, Heart, Sparkles, Briefcase, Star, TrendingUp } from "lucide-react";
+import { ArrowLeft, Undo2, X, Heart, Sparkles, Briefcase, Star, TrendingUp, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const SwipeView = () => {
@@ -17,6 +17,7 @@ const SwipeView = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [history, setHistory] = useState<{ index: number; decision: 'yes' | 'no' }[]>([]);
   const [cards, setCards] = useState(list?.candidates || []);
+  const [swipeFeedback, setSwipeFeedback] = useState<'yes' | 'no' | null>(null);
 
   const currentCandidate = cards[currentIndex];
 
@@ -57,6 +58,9 @@ const SwipeView = () => {
     
     const direction = decision === 'yes' ? 1 : -1;
     
+    // Show feedback animation
+    setSwipeFeedback(decision);
+    
     api.start({
       x: direction * 500,
       rotate: direction * 30,
@@ -64,8 +68,9 @@ const SwipeView = () => {
       config: { tension: 200, friction: 20 },
     });
 
-    // Immediately move to next card after a short delay
+    // Move to next card after feedback animation
     setTimeout(() => {
+      setSwipeFeedback(null);
       if (currentIndex < cards.length - 1) {
         setCurrentIndex(prev => prev + 1);
         api.set({ x: 0, rotate: 0, opacity: 1 });
@@ -76,7 +81,7 @@ const SwipeView = () => {
         });
         setTimeout(() => navigate(`/list/${listId}`), 1500);
       }
-    }, 250);
+    }, 400);
   };
 
   const handleUndo = () => {
@@ -200,6 +205,20 @@ const SwipeView = () => {
 
       {/* Card Stack Area */}
       <div className="flex-1 flex items-center justify-center p-6 relative bg-secondary/30">
+        {/* Swipe Feedback Animation */}
+        {swipeFeedback && (
+          <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none animate-fade-in">
+            {swipeFeedback === 'yes' ? (
+              <div className="animate-scale-in">
+                <CheckCircle className="h-32 w-32 text-success drop-shadow-2xl" strokeWidth={2.5} />
+              </div>
+            ) : (
+              <div className="animate-scale-in">
+                <XCircle className="h-32 w-32 text-destructive drop-shadow-2xl" strokeWidth={2.5} />
+              </div>
+            )}
+          </div>
+        )}
         <animated.div
           {...bind()}
           style={{ x, rotate, opacity, touchAction: 'none' }}
