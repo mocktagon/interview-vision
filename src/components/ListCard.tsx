@@ -24,9 +24,10 @@ interface ListCardProps {
   list: CandidateList;
   onClick: () => void;
   onDelete?: (listId: string) => void;
+  swipeStatus?: 'good-fit' | 'nope' | 'maybe' | null;
 }
 
-export function ListCard({ list, onClick, onDelete }: ListCardProps) {
+export function ListCard({ list, onClick, onDelete, swipeStatus }: ListCardProps) {
   const avgScore = list.candidates.length > 0
     ? (list.candidates.reduce((sum, c) => sum + (c.scores.overall || 0), 0) / list.candidates.length).toFixed(0)
     : 0;
@@ -64,7 +65,13 @@ export function ListCard({ list, onClick, onDelete }: ListCardProps) {
   return (
     <Card 
       ref={cardRef}
-      className="p-6 transition-all duration-300 hover:shadow-xl cursor-pointer group relative overflow-hidden border-2" 
+      className={`p-6 transition-all duration-300 hover:shadow-xl cursor-pointer group relative overflow-hidden ${
+        swipeStatus === 'good-fit' 
+          ? 'border-2 border-success' 
+          : swipeStatus === 'nope' 
+          ? 'border-2 border-destructive' 
+          : 'border-2'
+      }`}
       onClick={onClick}
       style={{ opacity: isDeleting ? 0 : 1 }}
     >

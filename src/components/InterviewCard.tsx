@@ -84,7 +84,13 @@ export function InterviewCard({ interview, onClick, onAddToList, swipeStatus, on
 
   return (
     <Card 
-      className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-primary/30 relative overflow-hidden !bg-card"
+      className={`group hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden !bg-card ${
+        swipeStatus === 'good-fit' 
+          ? 'border-2 border-success' 
+          : swipeStatus === 'nope' 
+          ? 'border-2 border-destructive' 
+          : 'hover:border-primary/30'
+      }`}
       onClick={onClick}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

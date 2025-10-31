@@ -18,6 +18,15 @@ const Lists = () => {
   const [isAnalyticsPanelOpen, setIsAnalyticsPanelOpen] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const mainContentRef = useRef<HTMLDivElement>(null);
+  const [swipeDecisions, setSwipeDecisions] = useState<Record<string, 'good-fit' | 'nope' | 'maybe'>>({});
+
+  // Load swipe decisions from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('listSwipeDecisions');
+    if (stored) {
+      setSwipeDecisions(JSON.parse(stored));
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -145,6 +154,7 @@ const Lists = () => {
                   list={list}
                   onClick={() => handleViewList(list.id)}
                   onDelete={handleDeleteList}
+                  swipeStatus={swipeDecisions[list.id] || null}
                 />
               ))}
               <EmptyListCard onClick={handleCreateList} />
