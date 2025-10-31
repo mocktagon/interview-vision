@@ -81,6 +81,12 @@ const SwipeView = () => {
     });
   };
 
+  const getPerformanceTier = (score: number) => {
+    if (score >= 80) return { color: 'bg-success', label: 'Top 20%', textColor: 'text-success' };
+    if (score >= 50) return { color: 'bg-yellow-500', label: 'Top 20-50%', textColor: 'text-yellow-600' };
+    return { color: 'bg-orange-500', label: 'Below 50%', textColor: 'text-orange-600' };
+  };
+
   const getInsightTags = (candidate: Candidate) => {
     const tags = [];
     
@@ -129,10 +135,27 @@ const SwipeView = () => {
       </div>
 
       {/* Role Info */}
-      <div className="px-4 py-2">
+      <div className="px-4 py-3 space-y-2">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Briefcase className="h-4 w-4" />
           <span>Evaluating for: <span className="font-semibold text-foreground">{currentCandidate.role}</span></span>
+        </div>
+        
+        {/* Performance Indicator */}
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden flex">
+            <div className="flex-1 bg-success"></div>
+            <div className="flex-1 bg-yellow-500"></div>
+            <div className="flex-1 bg-orange-500"></div>
+          </div>
+          <div className="flex items-center gap-1.5 text-xs">
+            <div className="w-2 h-2 rounded-full bg-success"></div>
+            <span className="text-muted-foreground">Top 20%</span>
+            <div className="w-2 h-2 rounded-full bg-yellow-500 ml-2"></div>
+            <span className="text-muted-foreground">20-50%</span>
+            <div className="w-2 h-2 rounded-full bg-orange-500 ml-2"></div>
+            <span className="text-muted-foreground">50%+</span>
+          </div>
         </div>
       </div>
 
@@ -143,7 +166,9 @@ const SwipeView = () => {
           style={{ x, rotate, opacity, touchAction: 'none' }}
           className="w-full max-w-md"
         >
-          <Card className="p-6 shadow-2xl border-2 cursor-grab active:cursor-grabbing relative overflow-hidden">
+          <Card className="p-6 shadow-2xl border-2 cursor-grab active:cursor-grabbing relative overflow-hidden bg-card">
+            {/* Performance Indicator Accent */}
+            <div className={`absolute top-0 left-0 right-0 h-1 ${getPerformanceTier(currentCandidate.scores.overall).color}`}></div>
             {/* Swipe Indicators */}
             <animated.div 
               style={{ opacity: x.to(x => Math.max(0, x / 100)) }}
@@ -163,19 +188,27 @@ const SwipeView = () => {
             </animated.div>
 
             {/* Candidate Info */}
-            <div className="space-y-4">
-              <div>
-                <h2 className="text-3xl font-bold text-foreground mb-1">{currentCandidate.name}</h2>
-                <p className="text-lg text-muted-foreground">{currentCandidate.role}</p>
+            <div className="space-y-4 pt-2">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-foreground mb-0.5">{currentCandidate.name}</h2>
+                  <p className="text-base text-muted-foreground">{currentCandidate.role}</p>
+                </div>
+                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${getPerformanceTier(currentCandidate.scores.overall).color}/20 border-current`}>
+                  <div className={`w-2 h-2 rounded-full ${getPerformanceTier(currentCandidate.scores.overall).color}`}></div>
+                  <span className={`text-xs font-semibold ${getPerformanceTier(currentCandidate.scores.overall).textColor}`}>
+                    {getPerformanceTier(currentCandidate.scores.overall).label}
+                  </span>
+                </div>
               </div>
 
               {/* Scores */}
               <div className="flex gap-2 flex-wrap">
-                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                <Badge variant="outline" className="bg-background border-border">
                   <Star className="h-3 w-3 mr-1" />
-                  Overall: {currentCandidate.scores.overall}
+                  Score: {currentCandidate.scores.overall}
                 </Badge>
-                <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30">
+                <Badge variant="outline" className="bg-background border-border">
                   <TrendingUp className="h-3 w-3 mr-1" />
                   {currentCandidate.experience}y exp
                 </Badge>
@@ -193,19 +226,22 @@ const SwipeView = () => {
               {/* Key Insights */}
               {currentCandidate.smartInsights && (
                 <div className="space-y-3 pt-2">
-                  <div className="flex items-start gap-2">
-                    <Sparkles className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
-                    <div>
-                      <p className="text-xs font-semibold text-primary mb-1">Personality</p>
-                      <p className="text-sm text-foreground">{currentCandidate.smartInsights.personality}</p>
+                  <div className="flex items-start gap-2.5 p-3 rounded-lg bg-primary/5 border border-primary/10">
+                    <Sparkles className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-primary mb-1">AI Personality Analysis</p>
+                      <p className="text-sm text-foreground leading-relaxed">{currentCandidate.smartInsights.personality}</p>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold text-success">Strengths</p>
-                    <div className="flex flex-wrap gap-1">
+                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                      <div className="w-1 h-1 rounded-full bg-success"></div>
+                      Key Strengths
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
                       {currentCandidate.smartInsights.strengths.map((strength, idx) => (
-                        <Badge key={idx} variant="outline" className="text-xs bg-success/10 text-success border-success/30">
+                        <Badge key={idx} variant="outline" className="text-xs bg-background border-success/30 text-foreground">
                           {strength}
                         </Badge>
                       ))}
@@ -214,10 +250,13 @@ const SwipeView = () => {
 
                   {currentCandidate.smartInsights.potentialChallenges.length > 0 && (
                     <div className="space-y-2">
-                      <p className="text-xs font-semibold text-destructive">Potential Challenges</p>
-                      <div className="flex flex-wrap gap-1">
+                      <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                        <div className="w-1 h-1 rounded-full bg-orange-500"></div>
+                        Areas to Watch
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
                         {currentCandidate.smartInsights.potentialChallenges.map((challenge, idx) => (
-                          <Badge key={idx} variant="outline" className="text-xs bg-destructive/10 text-destructive border-destructive/30">
+                          <Badge key={idx} variant="outline" className="text-xs bg-background border-orange-500/30 text-foreground">
                             {challenge}
                           </Badge>
                         ))}
@@ -229,24 +268,32 @@ const SwipeView = () => {
 
               {/* LinkedIn Insights */}
               {currentCandidate.socials?.linkedinInsights && (
-                <div className="pt-2 border-t border-border">
-                  <p className="text-xs font-semibold text-muted-foreground mb-2">LinkedIn Profile</p>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div>
+                <div className="pt-3 border-t border-border/50">
+                  <p className="text-xs font-semibold text-foreground mb-2.5">LinkedIn Insights</p>
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <span className="text-sm font-bold text-primary">{currentCandidate.socials.linkedinInsights.endorsements.length}</span>
+                      </div>
                       <p className="text-muted-foreground">Endorsements</p>
-                      <p className="font-semibold text-foreground">{currentCandidate.socials.linkedinInsights.endorsements.length}</p>
                     </div>
-                    <div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <span className="text-sm font-bold text-primary">{currentCandidate.socials.linkedinInsights.recommendations.length}</span>
+                      </div>
                       <p className="text-muted-foreground">Recommendations</p>
-                      <p className="font-semibold text-foreground">{currentCandidate.socials.linkedinInsights.recommendations.length}</p>
                     </div>
-                    <div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+                        <span className="text-sm font-bold text-accent">{currentCandidate.socials.linkedinInsights.activityScore}</span>
+                      </div>
                       <p className="text-muted-foreground">Activity Score</p>
-                      <p className="font-semibold text-foreground">{currentCandidate.socials.linkedinInsights.activityScore}/10</p>
                     </div>
-                    <div>
-                      <p className="text-muted-foreground">Influence</p>
-                      <p className="font-semibold text-foreground capitalize">{currentCandidate.socials.linkedinInsights.influenceLevel}</p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+                        <span className="text-[10px] font-bold text-accent uppercase">{currentCandidate.socials.linkedinInsights.influenceLevel.slice(0, 3)}</span>
+                      </div>
+                      <p className="text-muted-foreground capitalize">Influence</p>
                     </div>
                   </div>
                 </div>

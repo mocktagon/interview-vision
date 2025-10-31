@@ -24,7 +24,15 @@ export const SwipeQRSection = ({ listId }: SwipeQRSectionProps) => {
               <h3 className="text-lg font-bold text-foreground">Mobile Review Mode</h3>
             </div>
             <p className="text-sm text-muted-foreground">
-              Review candidates on-the-go with a dating app-inspired interface
+              Review candidates on-the-go with an intuitive swipe interface or{" "}
+              <a 
+                href={swipeUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary hover:underline font-medium"
+              >
+                open webapp
+              </a>
             </p>
           </div>
         </div>
