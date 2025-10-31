@@ -26,6 +26,13 @@ const SwipeView = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [otpInput, setOtpInput] = useState('');
   const [otpError, setOtpError] = useState(false);
+
+  // If no OTP in URL, redirect to list view
+  useEffect(() => {
+    if (!urlOtp) {
+      navigate(`/list/${listId}`);
+    }
+  }, [urlOtp, listId, navigate]);
   
   const list = mockLists.find(l => l.id === listId);
   
