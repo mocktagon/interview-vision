@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Lists from "./pages/Lists";
 import SwipeView from "./pages/SwipeView";
 import ManageInterviews from "./pages/ManageInterviews";
+import SwipeInterviews from "./pages/SwipeInterviews";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/interviews" element={<ManageInterviews />} />
           <Route path="/list/:listId" element={<Index />} />
           <Route path="/swipe/:listId" element={<SwipeView />} />
+          <Route path="/swipe-interviews/:listId" element={<SwipeInterviews />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

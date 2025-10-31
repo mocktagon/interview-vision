@@ -17,6 +17,8 @@ interface InterviewCardProps {
 }
 
 export function InterviewCard({ interview, onClick }: InterviewCardProps) {
+  const isCompleted = interview.status === "completed";
+  
   const radarData = [
     { skill: "Communication", value: interview.insights.communication },
     { skill: "Technical", value: interview.insights.technicalSkills },
@@ -25,6 +27,24 @@ export function InterviewCard({ interview, onClick }: InterviewCardProps) {
     { skill: "Leadership", value: interview.insights.leadership },
     { skill: "Adaptability", value: interview.insights.adaptability },
   ];
+
+  const overallScore = isCompleted 
+    ? Math.round(
+        (interview.insights.communication +
+          interview.insights.technicalSkills +
+          interview.insights.problemSolving +
+          interview.insights.culturalFit +
+          interview.insights.leadership +
+          interview.insights.adaptability) / 6
+      )
+    : 0;
+
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return "text-success";
+    if (score >= 80) return "text-primary";
+    if (score >= 70) return "text-accent";
+    return "text-muted-foreground";
+  };
 
   const getRecommendationConfig = () => {
     switch (interview.recommendation) {
@@ -66,20 +86,18 @@ export function InterviewCard({ interview, onClick }: InterviewCardProps) {
       .toUpperCase();
   };
 
-  const isCompleted = interview.status === "completed";
-
   return (
     <Card 
-      className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-primary/30 relative overflow-hidden"
+      className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-primary/30 relative overflow-hidden !bg-card"
       onClick={onClick}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       
       <CardContent className="p-5 relative">
-        {/* Header */}
+        {/* Header with Score Badge */}
         <div className="flex items-start justify-between mb-4">
-          <div className="flex items-start gap-3 flex-1">
-            <Avatar className="h-12 w-12 border-2 border-primary/10">
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            <Avatar className="h-12 w-12 border-2 border-primary/10 flex-shrink-0">
               <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                 {getInitials(interview.candidateName)}
               </AvatarFallback>
@@ -89,7 +107,7 @@ export function InterviewCard({ interview, onClick }: InterviewCardProps) {
                 {interview.candidateName}
               </h3>
               <p className="text-sm text-muted-foreground truncate">{interview.role}</p>
-              <div className="flex items-center gap-2 mt-1.5">
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                 <Badge variant="outline" className="text-xs">
                   {interview.round}
                 </Badge>
@@ -108,6 +126,14 @@ export function InterviewCard({ interview, onClick }: InterviewCardProps) {
               </div>
             </div>
           </div>
+          {isCompleted && (
+            <div className="flex-shrink-0 text-center ml-2">
+              <div className={`text-3xl font-bold ${getScoreColor(overallScore)}`}>
+                {overallScore}
+              </div>
+              <div className="text-xs text-muted-foreground">Score</div>
+            </div>
+          )}
         </div>
 
         {/* Mini Radar Chart */}

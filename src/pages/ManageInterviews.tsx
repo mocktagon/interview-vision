@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { mockInterviews, Interview } from "@/data/mockInterviews";
 import { InterviewCard } from "@/components/InterviewCard";
+import { InterviewSwipeQRSection } from "@/components/InterviewSwipeQRSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -76,6 +77,9 @@ const ManageInterviews = () => {
             {filteredInterviews.length} Interviews
           </Badge>
         </div>
+
+        {/* Swipe QR Section */}
+        <InterviewSwipeQRSection listId="all" />
 
         {/* Filters Section */}
         <div className="space-y-4">
