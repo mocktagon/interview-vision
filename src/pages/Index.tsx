@@ -337,44 +337,47 @@ const Index = () => {
               </div>
 
               {/* Candidates Grid - Scrollable Content */}
-              <div className="flex-1 pb-4">
-                {/* Mobile Review QR Section */}
-                <div className="mb-6">
-          <SwipeQRSection 
-            listId={listId || '1'}
-            searchQuery={searchQuery}
-            selectedStage={stageFilter}
-            showGoodFitsOnly={showGoodFitsOnly}
-          />
-                </div>
+              <div className="flex-1 pb-4 space-y-6">
+                 {/* Mobile Review QR Section */}
+                 <div className="w-full animate-slide-in-right transform-gpu" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
+           <SwipeQRSection 
+             listId={listId || '1'}
+             searchQuery={searchQuery}
+             selectedStage={stageFilter}
+             showGoodFitsOnly={showGoodFitsOnly}
+           />
+                 </div>
 
-                <div className="mb-4 flex-shrink-0">
-                  <div className="flex items-center gap-2 mb-2">
-                    <LayoutGrid className="h-5 w-5 text-primary" />
-                    <h2 className="text-lg font-semibold">Candidates</h2>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Showing {filteredCandidates.length} of {mockCandidates.length} candidates
-                  </p>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {filteredCandidates.map((candidate) => (
-                    <CandidateCard
-                      key={candidate.id}
-                      candidate={candidate}
-                      onViewDetails={handleViewCandidate}
-                      swipeStatus={swipeDecisions[candidate.id] || null}
-                      onSwipeStatusChange={handleSwipeStatusChange}
-                    />
-                  ))}
-                </div>
-                
-                {filteredCandidates.length === 0 && (
-                  <div className="text-center py-12">
-                    <p className="text-muted-foreground">No candidates match your filters</p>
-                  </div>
-                )}
+                 {/* Candidates Section */}
+                 <div className="animate-fade-in" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
+                   <div className="mb-4 flex-shrink-0">
+                     <div className="flex items-center gap-2 mb-2">
+                       <LayoutGrid className="h-5 w-5 text-primary" />
+                       <h2 className="text-lg font-semibold">Candidates</h2>
+                     </div>
+                     <p className="text-sm text-muted-foreground">
+                       Showing {filteredCandidates.length} of {mockCandidates.length} candidates
+                     </p>
+                   </div>
+                   
+                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                     {filteredCandidates.map((candidate) => (
+                       <CandidateCard
+                         key={candidate.id}
+                         candidate={candidate}
+                         onViewDetails={handleViewCandidate}
+                         swipeStatus={swipeDecisions[candidate.id] || null}
+                         onSwipeStatusChange={handleSwipeStatusChange}
+                       />
+                     ))}
+                   </div>
+                   
+                   {filteredCandidates.length === 0 && (
+                     <div className="text-center py-12">
+                       <p className="text-muted-foreground">No candidates match your filters</p>
+                     </div>
+                   )}
+                 </div>
               </div>
             </div>
           </div>

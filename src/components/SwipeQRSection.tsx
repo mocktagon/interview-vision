@@ -35,9 +35,9 @@ export const SwipeQRSection = ({
   }, [searchQuery, selectedStage, showGoodFitsOnly]);
 
   return (
-    <Card className="p-6 bg-[#0a0a0a] border-[#1a1a1a] relative overflow-hidden">
+    <Card className="p-6 bg-[#0a0a0a] border-[#1a1a1a] relative overflow-hidden shadow-xl isolate">
       {/* Background gradient effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] via-transparent to-transparent opacity-50" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] via-transparent to-transparent opacity-50 pointer-events-none" />
       
       <div className="relative z-10">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
