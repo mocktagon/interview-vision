@@ -16,8 +16,9 @@ const SwipeView = () => {
   const list = mockLists.find(l => l.id === listId);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [history, setHistory] = useState<{ index: number; decision: 'yes' | 'no' }[]>([]);
+  const [cards, setCards] = useState(list?.candidates || []);
 
-  const currentCandidate = list?.candidates[currentIndex];
+  const currentCandidate = cards[currentIndex];
 
   const [{ x, rotate, opacity }, api] = useSpring(() => ({
     x: 0,
@@ -47,19 +48,21 @@ const SwipeView = () => {
   const handleSwipe = (decision: 'yes' | 'no') => {
     setHistory(prev => [...prev, { index: currentIndex, decision }]);
     
+    const direction = decision === 'yes' ? 1 : -1;
+    
     api.start({
-      x: decision === 'yes' ? 500 : -500,
-      rotate: decision === 'yes' ? 30 : -30,
+      x: direction * 500,
+      rotate: direction * 30,
       opacity: 0,
-      config: { duration: 300 },
+      config: { tension: 200, friction: 20 },
       onRest: () => {
-        if (currentIndex < (list?.candidates.length || 0) - 1) {
+        if (currentIndex < cards.length - 1) {
           setCurrentIndex(prev => prev + 1);
           api.set({ x: 0, rotate: 0, opacity: 1 });
         } else {
           toast({
             title: "All candidates reviewed!",
-            description: `You've reviewed all ${list?.candidates.length} candidates.`,
+            description: `You've reviewed all ${cards.length} candidates.`,
           });
           setTimeout(() => navigate(`/list/${listId}`), 1500);
         }
@@ -114,19 +117,31 @@ const SwipeView = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <div className="p-4 pb-2 border-b border-border">
-        <div className="flex items-center justify-between mb-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/list/${listId}`)} className="hover:bg-secondary">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          <Badge variant="outline" className="bg-secondary border-border font-medium">
-            {currentIndex + 1} / {list.candidates.length}
+      <div className="p-4 pb-3 border-b border-border bg-card">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={() => navigate(`/list/${listId}`)} className="hover:bg-secondary">
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Back
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleUndo}
+              disabled={history.length === 0}
+              className="hover:bg-secondary"
+            >
+              <Undo2 className="h-4 w-4 mr-1" />
+              Undo
+            </Button>
+          </div>
+          <Badge variant="outline" className="bg-secondary border-border font-medium text-foreground">
+            {currentIndex + 1} / {cards.length}
           </Badge>
         </div>
         
         {/* Progress Bar */}
-        <div className="w-full h-0.5 bg-secondary rounded-full overflow-hidden">
+        <div className="w-full h-1 bg-secondary rounded-full overflow-hidden">
           <div 
             className="h-full bg-foreground transition-all duration-300"
             style={{ width: `${progressPercentage}%` }}
@@ -135,7 +150,7 @@ const SwipeView = () => {
       </div>
 
       {/* Role Info */}
-      <div className="px-4 py-4 border-b border-border space-y-3">
+      <div className="px-4 py-3 border-b border-border bg-card space-y-2.5">
         <div className="flex items-center gap-2 text-sm">
           <Briefcase className="h-4 w-4 text-muted-foreground" />
           <span className="text-muted-foreground">Evaluating for:</span>
@@ -143,24 +158,24 @@ const SwipeView = () => {
         </div>
         
         {/* Performance Indicator */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
             <div className="flex-1 h-1 bg-secondary rounded-full overflow-hidden flex">
               <div className="flex-1 bg-success"></div>
               <div className="flex-1 bg-yellow-500"></div>
               <div className="flex-1 bg-orange-500"></div>
             </div>
           </div>
-          <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
-            <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-medium">
+            <div className="flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-success"></div>
               <span>Top 20%</span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-yellow-500"></div>
               <span>20-50%</span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
               <span>Below 50%</span>
             </div>
@@ -169,15 +184,15 @@ const SwipeView = () => {
       </div>
 
       {/* Card Stack Area */}
-      <div className="flex-1 flex items-center justify-center p-6 relative">
+      <div className="flex-1 flex items-center justify-center p-6 relative bg-secondary/30">
         <animated.div
           {...bind()}
           style={{ x, rotate, opacity, touchAction: 'none' }}
           className="w-full max-w-md"
         >
-          <Card className="p-8 shadow-xl border border-border cursor-grab active:cursor-grabbing relative overflow-hidden bg-card">
+          <Card className="p-8 shadow-lg border border-border cursor-grab active:cursor-grabbing relative overflow-hidden bg-card">
             {/* Performance Indicator Accent */}
-            <div className={`absolute top-0 left-0 right-0 h-0.5 ${getPerformanceTier(currentCandidate.scores.overall).color}`}></div>
+            <div className={`absolute top-0 left-0 right-0 h-1 ${getPerformanceTier(currentCandidate.scores.overall).color}`}></div>
             {/* Swipe Indicators */}
             <animated.div 
               style={{ opacity: x.to(x => Math.max(0, x / 100)) }}
@@ -324,12 +339,12 @@ const SwipeView = () => {
       </div>
 
       {/* Action Buttons */}
-      <div className="p-6 pb-8 border-t border-border">
+      <div className="p-6 pb-8 border-t border-border bg-card">
         <div className="flex items-center justify-center gap-8 max-w-md mx-auto">
           <Button
             size="lg"
             variant="outline"
-            className="h-14 w-14 rounded-full border-2 border-border hover:bg-secondary hover:border-destructive/50 transition-all"
+            className="h-14 w-14 rounded-full border-2 border-border hover:bg-secondary hover:border-destructive transition-all"
             onClick={() => handleSwipe('no')}
           >
             <X className="h-7 w-7 text-destructive" />
@@ -338,22 +353,15 @@ const SwipeView = () => {
           <Button
             size="lg"
             variant="outline"
-            className="h-12 w-12 rounded-full border-2 border-border hover:bg-secondary transition-all"
-            onClick={handleUndo}
-            disabled={history.length === 0}
-          >
-            <Undo2 className="h-5 w-5" />
-          </Button>
-
-          <Button
-            size="lg"
-            variant="outline"
-            className="h-14 w-14 rounded-full border-2 border-border hover:bg-secondary hover:border-success/50 transition-all"
+            className="h-14 w-14 rounded-full border-2 border-border hover:bg-secondary hover:border-success transition-all"
             onClick={() => handleSwipe('yes')}
           >
             <Heart className="h-7 w-7 text-success" />
           </Button>
         </div>
+        <p className="text-center text-xs text-muted-foreground mt-4">
+          Swipe or tap buttons to decide
+        </p>
       </div>
     </div>
   );
