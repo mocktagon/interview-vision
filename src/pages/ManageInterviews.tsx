@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { mockInterviews, Interview } from "@/data/mockInterviews";
 import { InterviewCard } from "@/components/InterviewCard";
@@ -6,7 +6,7 @@ import { InterviewSwipeQRSection } from "@/components/InterviewSwipeQRSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Search, Filter, CheckCircle2, Clock, AlertCircle, XCircle } from "lucide-react";
+import { ArrowLeft, Search, Filter, CheckCircle2, Clock, AlertCircle, XCircle, RefreshCw } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -21,6 +21,19 @@ const ManageInterviews = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [recommendationFilter, setRecommendationFilter] = useState<string>("all");
   const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [swipeDecisions, setSwipeDecisions] = useState<Record<string, 'good-fit' | 'nope' | 'maybe'>>({});
+
+  // Load swipe decisions from localStorage
+  const loadSwipeDecisions = () => {
+    const stored = localStorage.getItem('swipeDecisions_all');
+    if (stored) {
+      setSwipeDecisions(JSON.parse(stored));
+    }
+  };
+
+  useEffect(() => {
+    loadSwipeDecisions();
+  }, []);
 
   const filteredInterviews = mockInterviews.filter((interview) => {
     const matchesSearch =
@@ -73,9 +86,20 @@ const ManageInterviews = () => {
               </p>
             </div>
           </div>
-          <Badge variant="outline" className="text-lg px-4 py-2">
-            {filteredInterviews.length} Interviews
-          </Badge>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={loadSwipeDecisions}
+              className="gap-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Refresh
+            </Button>
+            <Badge variant="outline" className="text-lg px-4 py-2">
+              {filteredInterviews.length} Interviews
+            </Badge>
+          </div>
         </div>
 
         {/* Filters Section */}
@@ -206,14 +230,16 @@ const ManageInterviews = () => {
             <InterviewCard
               key={interview.id}
               interview={interview}
+              swipeStatus={swipeDecisions[interview.id] || null}
               onClick={() => console.log("View interview:", interview.id)}
               onAddToList={(interviewId, listType) => {
                 console.log("Add to list:", interviewId, listType);
                 // TODO: Implement list functionality
               }}
               onSwipeStatusChange={(interviewId, status) => {
-                console.log("Swipe status change:", interviewId, status);
-                // TODO: Implement status tracking
+                const newDecisions = { ...swipeDecisions, [interviewId]: status };
+                setSwipeDecisions(newDecisions);
+                localStorage.setItem('swipeDecisions_all', JSON.stringify(newDecisions));
               }}
             />
           ))}
